@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import QueryClientProviderWrapper from "@/providers/QueryClientProvider";
 
 const inter = Inter({
   subsets: ["latin"],
   weight: ["200", "400", "600", "800"],
 });
 
-// app/layout.tsx
 export const metadata: Metadata = {
   title: "Freliq – Clear. Collaborative. Client-ready.",
   description:
@@ -57,7 +57,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} antialiased`}>{children}</body>
+      <body className={`${inter.className} antialiased`}>
+        <QueryClientProviderWrapper>{children}</QueryClientProviderWrapper>
+      </body>
     </html>
   );
 }
