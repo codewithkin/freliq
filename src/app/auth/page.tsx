@@ -7,9 +7,49 @@ import { motion } from "framer-motion";
 import { Loader2, Mail } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
+import { useMutation } from "@tanstack/react-query";
+import { authClient } from "@/lib/auth-client";
+import { useState } from "react";
+import { toast } from "sonner";
 
 function Auth() {
-  const isPending = true;
+    const [email, setEmail] = useState("");
+
+  const { mutate: signinWithGithub, isPending: signinInWithGithub } =
+    useMutation({
+      mutationKey: ["signInWithGithub"],
+      mutationFn: async () => {
+        authClient.signIn.social({
+          provider: "github",
+        });
+      },
+    });
+
+  const { mutate: signinWithGoogle, isPending: signingInWithGoogle } =
+    useMutation({
+      mutationKey: ["signInWithGoogle"],
+      mutationFn: async () => {
+        authClient.signIn.social({
+          provider: "google",
+        });
+      },
+    });
+
+  const { mutate: signinWithEmail, isPending: signinInWithEmail } = useMutation(
+    {
+      mutationKey: ["signinWithEmail"],
+      mutationFn: async () => {
+        const { data, error } = await authClient.signIn.magicLink({
+            email,
+            callbackURL: "/onboarding", //redirect after successful login
+          });
+
+          if(error) {
+            toast.error("An error occured whuke sisngin you in...please try again later");
+          }
+      },
+    },
+  );
 
   return (
     <section className="min-h-screen w-full flex flex-col justify-center items-center">
@@ -39,6 +79,7 @@ function Auth() {
             <Button
               size="lg"
               className="bg-slate-900 hover:bg-slate-800 transition duration-500 w-full text-white"
+              onClick={() => signinWithGithub()}
             >
               <FaGithub />
               Login with Github
@@ -47,6 +88,7 @@ function Auth() {
               variant="secondary"
               size="lg"
               className=" transition duration-500 w-full"
+              onClick={() => signinWithGoogle()}
             >
               <FcGoogle />
               Login with Google
@@ -54,7 +96,13 @@ function Auth() {
           </article>
 
           {/* Email link sign in */}
-          <form className="flex flex-col gap-2" action="">
+          <form
+            className="flex flex-col gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              signinWithEmail(e.currentTarget.email.value);
+            }}
+          >
             <article className="flex flex-col gap-1">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -64,8 +112,8 @@ function Auth() {
                 placeholder="codewithkin@freliq.com"
               />
             </article>
-            <Button size="lg" className="w-full">
-              {isPending ? <Loader2 className="animate-spin" /> : <Mail />}
+            <Button size="lg" className="w-full" type="submit">
+              {loading ? <Loader2 className="animate-spin" /> : <Mail />}
               Login with email
             </Button>
           </form>
