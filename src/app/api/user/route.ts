@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({fullUser});
+    return NextResponse.json({ fullUser });
   } catch (e) {
     console.log("An error occured while getting user data: ", e);
 

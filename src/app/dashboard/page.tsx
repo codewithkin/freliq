@@ -4,6 +4,7 @@ import { Axis3DIcon, Loader2 } from "lucide-react";
 import FreelancerDashboard from "./components/FreelancerDashboard";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import ClientDashboard from "./components/ClientDashboard";
 
 function DashboardPage() {
   // Get the user's full data
@@ -25,7 +26,7 @@ function DashboardPage() {
       ) : user?.type === "freelancer" ? (
         <FreelancerDashboard />
       ) : (
-        <h2>Hello, World!</h2>
+        <ClientDashboard />
       )}
     </article>
   );
