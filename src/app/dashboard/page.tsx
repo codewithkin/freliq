@@ -5,6 +5,7 @@ import FreelancerDashboard from "./components/FreelancerDashboard";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import ClientDashboard from "./components/ClientDashboard";
+import DashboardShell from "./components/DashboardShell";
 
 function DashboardPage() {
   // Get the user's full data
@@ -24,9 +25,13 @@ function DashboardPage() {
           <Loader2 className="animate-spin" size={40} />
         </article>
       ) : user?.type === "freelancer" ? (
-        <FreelancerDashboard />
+        <DashboardShell>
+          <FreelancerDashboard />
+        </DashboardShell>
       ) : (
-        <ClientDashboard />
+        <DashboardShell>
+          <ClientDashboard />
+        </DashboardShell>
       )}
     </article>
   );
