@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -14,67 +8,112 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model me {
-  id   String @unique
-  name String
-}
-
+// ────────────────
+// 🔑 User Models
+// ────────────────
 model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean
-  image         String?
-  createdAt     DateTime
-  updatedAt     DateTime
-  sessions      Session[]
-  accounts      Account[]
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  role      String   @default("FREELANCER") // "FREELANCER" or "CLIENT"
+  createdAt DateTime @default(now())
 
-  @@unique([email])
-  @@map("user")
+  // Relations
+  projects Project[] @relation("ProjectMembers") // Projects they're part of
+  tasks    Task[] // Tasks they've created
+  comments Comment[]
+  files    File[]
+  Project  Project[]
+
+  @@index([email])
+  @@index([role])
 }
 
-model Session {
-  id        String   @id
-  expiresAt DateTime
-  token     String
-  createdAt DateTime
-  updatedAt DateTime
-  ipAddress String?
-  userAgent String?
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+// ────────────────
+// 🏗️ Project (Shared Workspace)
+// ────────────────
+model Project {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  status      String    @default("ACTIVE") // "ACTIVE", "COMPLETED", "PAUSED"
+  deadline    DateTime?
+  createdAt   DateTime  @default(now())
 
-  @@unique([token])
-  @@map("session")
+  // Who owns this project (always a freelancer/agency)
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id])
+
+  // All participants (freelancer + client)
+  members User[] @relation("ProjectMembers")
+  tasks   Task[] // Breakdown of work
+  files   File[] // Shared documents/screenshots
+
+  @@index([ownerId])
+  @@index([status])
 }
 
-model Account {
-  id                    String    @id
-  accountId             String
-  providerId            String
-  userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accessToken           String?
-  refreshToken          String?
-  idToken               String?
-  accessTokenExpiresAt  DateTime?
-  refreshTokenExpiresAt DateTime?
-  scope                 String?
-  password              String?
-  createdAt             DateTime
-  updatedAt             DateTime
+// ────────────────
+// ✅ Task (Progress Tracking)
+// ────────────────
+model Task {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  status      String   @default("TODO") // "TODO", "IN_PROGRESS", "DONE"
+  proof       String? // Screenshot/Video URL (Cloudflare R2)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  @@map("account")
+  // Who created the task (freelancer or client)
+  creatorId String
+  creator   User   @relation(fields: [creatorId], references: [id])
+
+  // Which project this belongs to
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
+
+  // Comments/discussion
+  comments Comment[]
+
+  @@index([projectId])
+  @@index([status])
+  @@index([creatorId])
 }
 
-model Verification {
-  id         String    @id
-  identifier String
-  value      String
-  expiresAt  DateTime
-  createdAt  DateTime?
-  updatedAt  DateTime?
+// ────────────────
+// 💬 Comment (Discussion)
+// ────────────────
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id])
+  createdAt DateTime @default(now())
 
-  @@map("verification")
+  @@index([taskId])
+  @@index([authorId])
+}
+
+// ────────────────
+// 📁 File (Proof/Assets)
+// ────────────────
+model File {
+  id         String   @id @default(uuid())
+  url        String // Cloudflare R2 URL
+  type       String // "IMAGE", "DOCUMENT", etc.
+  uploadedAt DateTime @default(now())
+
+  // Who uploaded it
+  uploaderId String
+  uploader   User   @relation(fields: [uploaderId], references: [id])
+
+  // Project it belongs to
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
+
+  @@index([projectId])
+  @@index([uploaderId])
 }
