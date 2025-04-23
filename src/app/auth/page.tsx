@@ -13,7 +13,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 function Auth() {
-    const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("");
 
   const { mutate: signinWithGithub, isPending: signinInWithGithub } =
     useMutation({
@@ -21,6 +21,7 @@ function Auth() {
       mutationFn: async () => {
         authClient.signIn.social({
           provider: "github",
+          callbackURL: "/dashboard",
         });
       },
     });
@@ -31,6 +32,7 @@ function Auth() {
       mutationFn: async () => {
         authClient.signIn.social({
           provider: "google",
+          callbackURL: "/dashboard",
         });
       },
     });
@@ -39,14 +41,18 @@ function Auth() {
     {
       mutationKey: ["signinWithEmail"],
       mutationFn: async () => {
-        const { data, error } = await authClient.signIn.magicLink({
-            email,
-            callbackURL: "/onboarding", //redirect after successful login
-          });
+        const { error } = await authClient.signIn.magicLink({
+          email,
+          callbackURL: "/dashboard",
+        });
 
-          if(error) {
-            toast.error("An error occured whuke sisngin you in...please try again later");
-          }
+        if (error) {
+          return toast.error(
+            "An error occured while signing you in...please try again later",
+          );
+        }
+
+        toast.success("Success ! Please check your email for a sign in link");
       },
     },
   );
@@ -80,6 +86,9 @@ function Auth() {
               size="lg"
               className="bg-slate-900 hover:bg-slate-800 transition duration-500 w-full text-white"
               onClick={() => signinWithGithub()}
+              disabled={
+                signinInWithGithub || signingInWithGoogle || signinInWithEmail
+              }
             >
               <FaGithub />
               Login with Github
@@ -89,6 +98,9 @@ function Auth() {
               size="lg"
               className=" transition duration-500 w-full"
               onClick={() => signinWithGoogle()}
+              disabled={
+                signinInWithGithub || signingInWithGoogle || signinInWithEmail
+              }
             >
               <FcGoogle />
               Login with Google
@@ -113,7 +125,13 @@ function Auth() {
               />
             </article>
             <Button size="lg" className="w-full" type="submit">
-              {loading ? <Loader2 className="animate-spin" /> : <Mail />}
+              {signinInWithGithub ||
+              signingInWithGoogle ||
+              signinInWithEmail ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <Mail />
+              )}
               Login with email
             </Button>
           </form>
