@@ -8,7 +8,7 @@ export async function sendMagicLink(
 ) {
   try {
     const { data, error } = await resend.emails.send({
-      from: "Freliq <auth@helena.it.com>",
+      from: "Freliq <auth@aiseogen.com>",
       to,
       subject: "Your Magic Link is Here ✨",
       html: `
