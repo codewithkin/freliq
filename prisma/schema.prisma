@@ -32,6 +32,7 @@ model User {
   checklists    KickoffChecklist[]
   tasks         Task[]             @relation("CreatedTasks", map: "user_created_tasks")
   comments      Comment[]
+  notifications Notification[]
   projectMember ProjectMembers[]
 
   // Self relation via join table
@@ -205,6 +206,16 @@ model Task {
   creator     User      @relation("CreatedTasks", fields: [creatorId], references: [id], map: "task_creator_fkey")
   comments    Comment[]
   attachments File[]
+}
+
+model Notification {
+  id       String @id
+  type     String // system, project, message
+  priority String // low, medium, high
+  message  String
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], map: "poll_user_fkey")
 }
 
 // ────────────────
