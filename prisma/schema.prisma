@@ -9,111 +9,239 @@ datasource db {
 }
 
 // ────────────────
-// 🔑 User Models
+// 🔒 Auth Models
 // ────────────────
+
 model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  role      String   @default("FREELANCER") // "FREELANCER" or "CLIENT"
-  createdAt DateTime @default(now())
+  id            String   @id
+  name          String
+  email         String   @unique
+  emailVerified Boolean
+  image         String?
+  type          String?
+  createdAt     DateTime
+  updatedAt     DateTime
 
-  // Relations
-  projects Project[] @relation("ProjectMembers") // Projects they're part of
-  tasks    Task[] // Tasks they've created
-  comments Comment[]
-  files    File[]
-  Project  Project[]
+  sessions Session[]
+  accounts Account[]
 
-  @@index([email])
-  @@index([role])
+  projects      Project[]
+  polls         Poll[]
+  messages      Message[]
+  files         File[]
+  checklists    KickoffChecklist[]
+  tasks         Task[]             @relation("CreatedTasks", map: "user_created_tasks")
+  comments      Comment[]
+  projectMember ProjectMembers[]
+
+  // Self relation via join table
+  clientLinks     UserRelation[] @relation("ClientLinks")
+  freelancerLinks UserRelation[] @relation("FreelancerLinks")
+
+  @@map("user")
+}
+
+model UserRelation {
+  id           String @id @default(uuid())
+  clientId     String
+  freelancerId String
+
+  client     User @relation("ClientLinks", fields: [clientId], references: [id], map: "userrelation_client_fkey")
+  freelancer User @relation("FreelancerLinks", fields: [freelancerId], references: [id], map: "userrelation_freelancer_fkey")
+
+  @@unique([clientId, freelancerId])
+  @@map("user_relation")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, map: "session_user_fkey")
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade, map: "account_user_fkey")
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
 }
 
 // ────────────────
-// 🏗️ Project (Shared Workspace)
+// 📁 File Uploads
 // ────────────────
+
+model File {
+  id         String   @id @default(uuid())
+  name       String
+  url        String
+  type       String?  @default("OTHER")
+  size       Int?
+  uploadedAt DateTime @default(now())
+  uploaderId String
+  uploader   User     @relation(fields: [uploaderId], references: [id], map: "file_uploader_fkey")
+  projectId  String?
+  project    Project? @relation(fields: [projectId], references: [id])
+  taskId     String?
+  task       Task?    @relation(fields: [taskId], references: [id])
+}
+
+// ────────────────
+// ✅ Kickoff Checklists
+// ────────────────
+
+model KickoffChecklist {
+  id        String  @id @default(uuid())
+  title     String
+  completed Boolean @default(false)
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], map: "checklist_project_fkey")
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], map: "checklist_user_fkey")
+}
+
+// ────────────────
+// 📦 Projects
+// ────────────────
+
 model Project {
+  id          String             @id @default(uuid())
+  title       String
+  description String?
+  status      String?            @default("ACTIVE")
+  deadline    DateTime?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  ownerId     String
+  owner       User               @relation(fields: [ownerId], references: [id], map: "project_owner_fkey")
+  files       File[]
+  checklists  KickoffChecklist[]
+  chatRoom    ChatRoom?
+  tasks       Task[]
+  members     ProjectMembers[]
+
+  @@index([status])
+  @@index([deadline])
+}
+
+// ────────────────
+// 🤝 Project Memberships
+// ────────────────
+
+model ProjectMembers {
+  userId    String
+  projectId String
+  joinedAt  DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], map: "project_member_user_fkey")
+  project Project @relation(fields: [projectId], references: [id], map: "project_member_project_fkey")
+
+  @@id([userId, projectId])
+  @@map("project_members")
+}
+
+// ────────────────
+// 🧠 Polls
+// ────────────────
+
+model Poll {
+  id        String   @id @default(uuid())
+  question  String
+  options   Json
+  responses Json
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], map: "poll_user_fkey")
+}
+
+// ────────────────
+// 📝 Tasks
+// ────────────────
+
+model Task {
   id          String    @id @default(uuid())
   title       String
   description String?
-  status      String    @default("ACTIVE") // "ACTIVE", "COMPLETED", "PAUSED"
-  deadline    DateTime?
+  status      String    @default("TODO")
+  proof       String?
+  dueDate     DateTime?
   createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  projectId   String
+  creatorId   String
 
-  // Who owns this project (always a freelancer/agency)
-  ownerId String
-  owner   User   @relation(fields: [ownerId], references: [id])
-
-  // All participants (freelancer + client)
-  members User[] @relation("ProjectMembers")
-  tasks   Task[] // Breakdown of work
-  files   File[] // Shared documents/screenshots
-
-  @@index([ownerId])
-  @@index([status])
+  project     Project   @relation(fields: [projectId], references: [id], map: "task_project_fkey")
+  creator     User      @relation("CreatedTasks", fields: [creatorId], references: [id], map: "task_creator_fkey")
+  comments    Comment[]
+  attachments File[]
 }
 
 // ────────────────
-// ✅ Task (Progress Tracking)
+// 💬 Comments
 // ────────────────
-model Task {
-  id          String   @id @default(uuid())
-  title       String
-  description String?
-  status      String   @default("TODO") // "TODO", "IN_PROGRESS", "DONE"
-  proof       String? // Screenshot/Video URL (Cloudflare R2)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 
-  // Who created the task (freelancer or client)
-  creatorId String
-  creator   User   @relation(fields: [creatorId], references: [id])
-
-  // Which project this belongs to
-  projectId String
-  project   Project @relation(fields: [projectId], references: [id])
-
-  // Comments/discussion
-  comments Comment[]
-
-  @@index([projectId])
-  @@index([status])
-  @@index([creatorId])
-}
-
-// ────────────────
-// 💬 Comment (Discussion)
-// ────────────────
 model Comment {
   id        String   @id @default(uuid())
   content   String
-  authorId  String
-  author    User     @relation(fields: [authorId], references: [id])
-  taskId    String
-  task      Task     @relation(fields: [taskId], references: [id])
   createdAt DateTime @default(now())
+  authorId  String
+  taskId    String?
 
-  @@index([taskId])
-  @@index([authorId])
+  author User  @relation(fields: [authorId], references: [id], map: "comment_author_fkey")
+  task   Task? @relation(fields: [taskId], references: [id], map: "comment_task_fkey")
 }
 
 // ────────────────
-// 📁 File (Proof/Assets)
+// 💬 Chat Models
 // ────────────────
-model File {
+
+model ChatRoom {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  projectId String?   @unique
+  project   Project?  @relation(fields: [projectId], references: [id], map: "chatroom_project_fkey")
+  messages  Message[]
+}
+
+model Message {
   id         String   @id @default(uuid())
-  url        String // Cloudflare R2 URL
-  type       String // "IMAGE", "DOCUMENT", etc.
-  uploadedAt DateTime @default(now())
+  content    String
+  sentAt     DateTime @default(now())
+  senderId   String
+  chatRoomId String
 
-  // Who uploaded it
-  uploaderId String
-  uploader   User   @relation(fields: [uploaderId], references: [id])
-
-  // Project it belongs to
-  projectId String
-  project   Project @relation(fields: [projectId], references: [id])
-
-  @@index([projectId])
-  @@index([uploaderId])
+  sender   User     @relation(fields: [senderId], references: [id], map: "message_sender_fkey")
+  chatRoom ChatRoom @relation(fields: [chatRoomId], references: [id], map: "message_chatroom_fkey")
 }
