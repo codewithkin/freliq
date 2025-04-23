@@ -90,8 +90,16 @@ function Auth() {
                 signinInWithGithub || signingInWithGoogle || signinInWithEmail
               }
             >
-              <FaGithub />
-              Login with Github
+              {signinInWithGithub ||
+              signingInWithGoogle ||
+              signinInWithEmail ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <FaGithub />
+              )}
+              {signinInWithGithub || signingInWithGoogle || signinInWithEmail
+                ? "Signing you in..."
+                : "Sign in with Github"}
             </Button>
             <Button
               variant="secondary"
@@ -102,8 +110,16 @@ function Auth() {
                 signinInWithGithub || signingInWithGoogle || signinInWithEmail
               }
             >
-              <FcGoogle />
-              Login with Google
+              {signinInWithGithub ||
+              signingInWithGoogle ||
+              signinInWithEmail ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <FcGoogle />
+              )}
+              {signinInWithGithub || signingInWithGoogle || signinInWithEmail
+                ? "Signing you in..."
+                : "Sign in with Google"}
             </Button>
           </article>
 
@@ -112,7 +128,7 @@ function Auth() {
             className="flex flex-col gap-2"
             onSubmit={(e) => {
               e.preventDefault();
-              signinWithEmail(e.currentTarget.email.value);
+              signinWithEmail();
             }}
           >
             <article className="flex flex-col gap-1">
@@ -121,10 +137,20 @@ function Auth() {
                 type="email"
                 name="email"
                 id="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="codewithkin@freliq.com"
               />
             </article>
-            <Button size="lg" className="w-full" type="submit">
+            <Button
+              disabled={
+                signinInWithGithub || signingInWithGoogle || signinInWithEmail
+              }
+              size="lg"
+              className="w-full"
+              type="submit"
+            >
               {signinInWithGithub ||
               signingInWithGoogle ||
               signinInWithEmail ? (
@@ -132,7 +158,9 @@ function Auth() {
               ) : (
                 <Mail />
               )}
-              Login with email
+              {signinInWithGithub || signingInWithGoogle || signinInWithEmail
+                ? "Signing you in..."
+                : "Sign in with email"}
             </Button>
           </form>
         </Card>
