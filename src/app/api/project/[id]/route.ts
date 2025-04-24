@@ -17,11 +17,12 @@ export async function GET(
     });
   }
 
-  const projectId = params.id;
+  const searchParams = req.nextUrl.searchParams;
+  const projectId = searchParams.get("id");
 
   try {
     const project = await prisma.project.findUnique({
-      where: { id: projectId },
+      where: { id: projectId || "" },
       include: {
         owner: {
           select: { id: true, name: true, image: true },
