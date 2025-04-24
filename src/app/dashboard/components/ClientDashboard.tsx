@@ -49,7 +49,7 @@ export default function ClientDashboard({ user }: Props) {
 
   return (
     <section className="">
-     <h2>Client dash</h2>
+      <h2>Client dash</h2>
     </section>
   );
 }
