@@ -186,7 +186,10 @@ const TasksKanban = () => {
       {/* Spinner */}
       {isLoadingChange && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-50 bg-opacity-50 z-10">
-          <Loader2 className="text-primary animate-spin" size={40} />
+          <article className="flex flex-col justify-center items-center text-center gap-2">
+            <h2 className="text-center">Updating tasks...</h2>
+            <Loader2 className="text-primary animate-spin" size={40} />
+          </article>
         </div>
       )}
     </div>
