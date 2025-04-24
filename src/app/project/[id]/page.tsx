@@ -1,17 +1,19 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { useParams } from "next/navigation";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import axios from "axios";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { authClient } from "@/lib/auth-client";
 import DashboardShell from "@/app/dashboard/components/DashboardShell";
+import { toast } from "sonner";
 
 type Project = {
   id: string;
@@ -50,12 +52,16 @@ type Project = {
     title: string;
     completed: boolean;
   }[];
-  chatRoom: any;
+  chatRoom: {
+    id: string;
+  } | null;
 };
 
 export default function ProjectPage() {
   const { id } = useParams<{ id: string }>();
   const { data: session } = authClient.useSession();
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
   const { data: project, isLoading } = useQuery<Project>({
     queryKey: ["project", id],
@@ -66,11 +72,34 @@ export default function ProjectPage() {
     enabled: !!id,
   });
 
+  const updateTaskStatus = useMutation({
+    mutationFn: async ({
+      taskId,
+      status,
+    }: {
+      taskId: string;
+      status: string;
+    }) => {
+      await axios.patch(`/api/task/${taskId}/status`, { status });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["project", id] });
+
+      // Show a success toast
+      toast.success("Task status updated !");
+    },
+    onError: () => {
+      // Show an error toast
+      toast.error("Failed to update task status");
+    },
+  });
+
   if (isLoading || !project) {
     return <ProjectSkeleton />;
   }
 
   const isOwner = session?.user?.id === project.owner.id;
+  const isFreelancer = session?.user?.type === "freelancer";
 
   return (
     <DashboardShell>
@@ -92,77 +121,152 @@ export default function ProjectPage() {
 
         <Separator />
 
-        {/* Members Section */}
+        {/* Members */}
         <Card>
           <CardHeader>
-            <CardTitle>Members</CardTitle>
+            <CardTitle>Project Members</CardTitle>
           </CardHeader>
-          <CardContent className="flex gap-4 flex-wrap">
+          <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[project.owner, ...project.members.map((m) => m.user)].map(
               (user) => (
-                <div key={user.id} className="flex items-center gap-3">
+                <div
+                  key={user.id}
+                  className="border rounded-md p-4 shadow-sm bg-muted/50 flex items-center gap-4"
+                >
                   <Avatar>
                     <AvatarImage src={user.image ?? ""} />
                     <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                   </Avatar>
-                  <span>{user.name}</span>
-                  {user.id === project.owner.id && (
-                    <Badge variant="secondary">Owner</Badge>
-                  )}
+                  <div>
+                    <p className="font-medium">{user.name}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {user.id === project.owner.id
+                        ? "Project Owner"
+                        : "Collaborator"}
+                    </p>
+                  </div>
                 </div>
               ),
             )}
           </CardContent>
         </Card>
 
-        {/* Checklist Section */}
+        {/* Kickoff Checklist */}
         <Card>
           <CardHeader>
             <CardTitle>Kickoff Checklist</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
-            {project.checklists.map((item) => (
-              <div key={item.id} className="flex justify-between">
-                <span>{item.title}</span>
-                <Badge
-                  variant={item.completed ? "default" : "outline"}
-                  className={cn({
-                    "text-green-600": item.completed,
-                    "text-red-600": !item.completed,
-                  })}
+          <CardContent className="space-y-3">
+            {project.checklists.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                No checklist items yet.
+              </p>
+            ) : (
+              project.checklists.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between border rounded-md p-3 bg-muted/40"
                 >
-                  {item.completed ? "Completed" : "Pending"}
-                </Badge>
-              </div>
-            ))}
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={cn("h-4 w-4 rounded-full", {
+                        "bg-green-500": item.completed,
+                        "bg-red-500": !item.completed,
+                      })}
+                    />
+                    <span className="font-medium">{item.title}</span>
+                  </div>
+                  <Badge
+                    variant={item.completed ? "default" : "outline"}
+                    className={cn({
+                      "text-green-600": item.completed,
+                      "text-red-600": !item.completed,
+                    })}
+                  >
+                    {item.completed ? "Completed" : "Pending"}
+                  </Badge>
+                </div>
+              ))
+            )}
           </CardContent>
         </Card>
 
-        {/* Tasks Section */}
+        {/* Tasks */}
         <Card>
           <CardHeader>
-            <CardTitle>Tasks</CardTitle>
+            <CardTitle>All Tasks</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
-            {project.tasks.map((task) => (
-              <div
-                key={task.id}
-                className="flex justify-between border p-3 rounded-md"
-              >
-                <div>
-                  <h4 className="font-semibold">{task.title}</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Due:{" "}
-                    {task.dueDate ? format(new Date(task.dueDate), "PPP") : "—"}
-                  </p>
+          <CardContent className="space-y-4">
+            {project.tasks.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                No tasks added yet.
+              </p>
+            ) : (
+              project.tasks.map((task) => (
+                <div
+                  key={task.id}
+                  className="border p-4 rounded-md bg-white hover:bg-muted/50 transition cursor-pointer"
+                  onClick={() => router.push(`/tasks/${task.id}`)}
+                >
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h4 className="font-semibold">{task.title}</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Due:{" "}
+                        {task.dueDate
+                          ? format(new Date(task.dueDate), "PPP")
+                          : "—"}
+                      </p>
+                    </div>
+                    <Badge
+                      className={cn({
+                        "bg-green-100 text-green-700": task.status === "done",
+                        "bg-yellow-100 text-yellow-800":
+                          task.status === "in-progress",
+                        "bg-red-100 text-red-700": task.status === "rejected",
+                      })}
+                    >
+                      {task.status}
+                    </Badge>
+                  </div>
+
+                  {!isFreelancer && (
+                    <div className="mt-3 flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          updateTaskStatus.mutate({
+                            taskId: task.id,
+                            status: "done",
+                          });
+                        }}
+                      >
+                        Approve
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          updateTaskStatus.mutate({
+                            taskId: task.id,
+                            status: "rejected",
+                          });
+                        }}
+                      >
+                        Disapprove
+                      </Button>
+                    </div>
+                  )}
                 </div>
-                <Badge>{task.status}</Badge>
-              </div>
-            ))}
+              ))
+            )}
           </CardContent>
         </Card>
 
-        {/* Files Section */}
+        {/* Files + Chat Link */}
         <Card>
           <CardHeader>
             <CardTitle>Uploaded Files</CardTitle>
@@ -181,11 +285,11 @@ export default function ProjectPage() {
               </a>
             ))}
 
-            {/* Add chat room link */}
+            {/* Chat Room Link */}
             {project.chatRoom && (
               <a
                 href={`/chat/${project.chatRoom.id}`}
-                className="inline-block text-blue-600 hover:underline text-sm"
+                className="inline-block text-blue-600 hover:underline text-sm mt-2"
               >
                 Go to Chat
               </a>
