@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/prisma";
+import { seedData } from "@/seed";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
@@ -15,6 +16,8 @@ export async function GET() {
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
   });
+
+  // await seedData(user?.id || "");
 
   if (!user) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
