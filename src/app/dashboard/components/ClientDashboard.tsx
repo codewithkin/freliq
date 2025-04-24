@@ -48,10 +48,8 @@ export default function ClientDashboard({ user }: Props) {
   ];
 
   return (
-    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {cards.map((card, index) => (
-        <DashboardStatCard key={index} {...card} />
-      ))}
+    <section className="">
+     <h2>Client dash</h2>
     </section>
   );
 }
