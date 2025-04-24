@@ -5,12 +5,13 @@ import {
   ColumnsDirective,
   ColumnDirective,
 } from "@syncfusion/ej2-react-kanban";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as React from "react";
-import "../../../globals.css"; // Ensure your Tailwind CSS is loaded
+import "../../../globals.css";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 
-// Fetch tasks from the backend using React Query
+// Fetch tasks from the backend
 const fetchTasks = async () => {
   const response = await fetch("/api/tasks");
   if (!response.ok) {
@@ -19,8 +20,30 @@ const fetchTasks = async () => {
   return response.json();
 };
 
+// Update task status
+const updateTaskStatus = async ({
+  taskId,
+  newStatus,
+}: {
+  taskId: string;
+  newStatus: string;
+}) => {
+  const response = await fetch(`/api/tasks/${taskId}/status`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ status: newStatus }),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to update task status");
+  }
+  return response.json();
+};
+
 const TasksKanban = () => {
-  // Fetch tasks using the useQuery hook
+  const queryClient = useQueryClient();
+
   const {
     data: tasks,
     isLoading,
@@ -30,7 +53,52 @@ const TasksKanban = () => {
     queryFn: fetchTasks,
   });
 
-  // Card template with custom Tailwind styles
+  // Mutation for updating task status
+  const mutation = useMutation({
+    mutationFn: updateTaskStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  });
+
+  const [isLoadingChange, setIsLoadingChange] = React.useState(false);
+  const [changesMade, setChangesMade] = React.useState(false);
+  const [modifiedTasks, setModifiedTasks] = React.useState<Map<string, string>>(
+    new Map(),
+  );
+
+  // When a task is dragged and dropped to a new column
+  const onTaskDragStop = (args: any) => {
+    console.log("On task drag stop: ", args);
+    const task = args.data[0];
+    const targetColumn = args.event?.target?.closest("[data-key]");
+    if (!targetColumn) return;
+
+    const targetStatus = targetColumn.getAttribute("data-key");
+    console.log("Task: ", task);
+    console.log("Target status: ", targetStatus);
+    if (task.status === targetStatus) {
+      setModifiedTasks((prev) => {
+        const newMap = new Map(prev);
+        newMap.set(task.id, targetStatus);
+        return newMap;
+      });
+      setChangesMade(true);
+    }
+  };
+
+  // Save changes by mutating each modified task
+  const saveChanges = async () => {
+    setIsLoadingChange(true);
+    for (const [taskId, newStatus] of modifiedTasks.entries()) {
+      await mutation.mutateAsync({ taskId, newStatus });
+    }
+    setIsLoadingChange(false);
+    setChangesMade(false);
+    setModifiedTasks(new Map());
+  };
+
+  // Card UI
   const cardTemplate = (props: any) => {
     return (
       <div className="bg-white border-l-4 border-yellow-500 p-3 rounded shadow-sm hover:shadow-md transition duration-200">
@@ -42,16 +110,6 @@ const TasksKanban = () => {
         </div>
       </div>
     );
-  };
-
-  // Organize tasks by their status
-  const tasksByStatus = {
-    TODO: tasks?.filter((task: any) => task.status === "TODO") || [],
-    IN_PROGRESS:
-      tasks?.filter((task: any) => task.status === "IN_PROGRESS") || [],
-    TESTING: tasks?.filter((task: any) => task.status === "TESTING") || [],
-    DONE: tasks?.filter((task: any) => task.status === "DONE") || [],
-    VALIDATE: tasks?.filter((task: any) => task.status === "VALIDATE") || [],
   };
 
   if (isLoading) {
@@ -66,8 +124,6 @@ const TasksKanban = () => {
             <ColumnDirective headerText="Validate" keyField="VALIDATE" />
           </ColumnsDirective>
         </KanbanComponent>
-
-        {/* Skeleton loaders for each column */}
         <div className="flex gap-4 p-4">
           {["TODO", "IN_PROGRESS", "TESTING", "DONE", "VALIDATE"].map(
             (status) => (
@@ -98,6 +154,8 @@ const TasksKanban = () => {
           headerField: "id",
           template: cardTemplate,
         }}
+        dragStop={onTaskDragStop}
+        allowDragAndDrop={true}
       >
         <ColumnsDirective>
           <ColumnDirective headerText="To Do" keyField="TODO" />
@@ -107,6 +165,21 @@ const TasksKanban = () => {
           <ColumnDirective headerText="Validate" keyField="VALIDATE" />
         </ColumnsDirective>
       </KanbanComponent>
+
+      {changesMade && (
+        <div className="fixed bottom-4 right-4 z-50">
+          <Button onClick={saveChanges} size="lg">
+            {isLoadingChange ? "Saving..." : "Save Changes"}
+          </Button>
+        </div>
+      )}
+
+      {/* Spinner */}
+      {isLoadingChange && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-50 bg-opacity-50 z-10">
+          <div className="w-12 h-12 border-4 border-t-4 border-blue-500 rounded-full animate-spin"></div>
+        </div>
+      )}
     </div>
   );
 };
