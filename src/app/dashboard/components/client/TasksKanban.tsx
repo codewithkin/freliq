@@ -5,83 +5,79 @@ import {
   ColumnsDirective,
   ColumnDirective,
 } from "@syncfusion/ej2-react-kanban";
+import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
-import "../../../globals.css"; // or your custom Kanban styles here
+import "../../../globals.css"; // Ensure your Tailwind CSS is loaded
+
+const fetchTasks = async () => {
+  const response = await fetch("/api/tasks");
+  if (!response.ok) {
+    throw new Error("Failed to fetch tasks");
+  }
+  return response.json();
+};
 
 const TasksKanban = () => {
-  const data = [
-    {
-      Id: 1,
-      Status: "Open",
-      Summary: "Analyze the new requirements gathered from the customer.",
-      Type: "Story",
-      Priority: "Low",
-      Tags: "Analyze,Customer",
-      Estimate: 3.5,
-      Assignee: "Nancy Davloio",
-      RankId: 1,
-    },
-    {
-      Id: 2,
-      Status: "InProgress",
-      Summary: "Fix the issues reported in the IE browser.",
-      Type: "Bug",
-      Priority: "Release Breaker",
-      Tags: "IE",
-      Estimate: 2.5,
-      Assignee: "Janet Leverling",
-      RankId: 2,
-    },
-    {
-      Id: 3,
-      Status: "Testing",
-      Summary: "Fix the issues reported by the customer.",
-      Type: "Bug",
-      Priority: "Low",
-      Tags: "Customer",
-      Estimate: "3.5",
-      Assignee: "Steven Walker",
-      RankId: 1,
-    },
-    {
-      Id: 4,
-      Status: "Close",
-      Summary:
-        "Arrange a web meeting with the customer to get the login page requirements.",
-      Type: "Others",
-      Priority: "Low",
-      Tags: "Meeting",
-      Estimate: 2,
-      Assignee: "Michael Suyama",
-      RankId: 1,
-    },
-    {
-      Id: 5,
-      Status: "Validate",
-      Summary: "Validate new requirements",
-      Type: "Improvement",
-      Priority: "Low",
-      Tags: "Validation",
-      Estimate: 1.5,
-      Assignee: "Robert King",
-      RankId: 1,
-    },
-  ];
+  // Fetch tasks using the useQuery hook
+  const {
+    data: tasks,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["tasks"],
+    queryFn: fetchTasks,
+  });
+
+  // Card template with custom Tailwind styles
+  const cardTemplate = (props: any) => {
+    return (
+      <div className="bg-white border-l-4 border-yellow-500 p-3 rounded shadow-sm hover:shadow-md transition duration-200">
+        <h5 className="text-primary font-semibold">#{props.id}</h5>
+        <p className="text-gray-700 mt-1">{props.title}</p>
+        <div className="text-xs text-gray-500 mt-2 flex justify-between">
+          <span>{props.status}</span>
+          <span>{props.assignee?.name}</span>
+        </div>
+      </div>
+    );
+  };
+
+  // Organize tasks by their status
+  const tasksByStatus = {
+    TODO: tasks?.filter((task: any) => task.status === "TODO") || [],
+    IN_PROGRESS:
+      tasks?.filter((task: any) => task.status === "IN_PROGRESS") || [],
+    TESTING: tasks?.filter((task: any) => task.status === "TESTING") || [],
+    DONE: tasks?.filter((task: any) => task.status === "DONE") || [],
+    VALIDATE: tasks?.filter((task: any) => task.status === "VALIDATE") || [],
+  };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>Error loading tasks.</div>;
+  }
 
   return (
     <div className="w-full h-full p-4">
       <KanbanComponent
         id="kanban"
-        keyField="Status"
-        dataSource={data}
-        cardSettings={{ contentField: "Summary", headerField: "Id" }}
+        keyField="status"
+        dataSource={tasks}
+        cardSettings={{
+          contentField: "title",
+          headerField: "id",
+          template: cardTemplate,
+        }}
       >
         <ColumnsDirective>
-          <ColumnDirective headerText="To Do" keyField="Open" />
-          <ColumnDirective headerText="In Progress" keyField="InProgress" />
-          <ColumnDirective headerText="Testing" keyField="Testing" />
-          <ColumnDirective headerText="Done" keyField="Close" />
-          <ColumnDirective headerText="Validate" keyField="Validate" />
+          <ColumnDirective headerText="To Do" keyField="TODO" />
+          <ColumnDirective headerText="In Progress" keyField="IN_PROGRESS" />
+          <ColumnDirective headerText="Testing" keyField="TESTING" />
+          <ColumnDirective headerText="Done" keyField="DONE" />
+          <ColumnDirective headerText="Validate" keyField="VALIDATE" />
         </ColumnsDirective>
       </KanbanComponent>
     </div>
