@@ -12,7 +12,7 @@ export const Greeting: React.FC = () => {
   }
 
   return (
-    <p className="text-2xl font-semibold text-primary mb-4">
+    <p className="text-xl font-medium flex justify-center items-center">
       <span className="text-gray-500">Hey there,</span> {greeting}
     </p>
   );
