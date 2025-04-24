@@ -28,6 +28,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
 
 type Task = {
   status: string;
@@ -68,6 +69,8 @@ export const ProjectsList = () => {
       setPage(newPage);
     }
   };
+
+  const router = useRouter();
 
   if (isLoading) {
     return (
@@ -111,7 +114,13 @@ export const ProjectsList = () => {
                   : 0;
 
               return (
-                <TableRow className="p-4" key={project.id}>
+                <TableRow
+                  onClick={() => {
+                    router.push(`/project/${project.id}`);
+                  }}
+                  className="p-4 hover:cursor-pointer"
+                  key={project.id}
+                >
                   <TableCell className="font-medium">{project.title}</TableCell>
                   <TableCell>
                     {format(new Date(project.createdAt), "MMM d, yyyy")}
