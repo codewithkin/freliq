@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDistanceToNow } from "date-fns";
+import axios from "axios";
 
 type Project = {
   id: string;
@@ -20,9 +21,10 @@ export const ProjectsList = () => {
   const { data, isLoading } = useQuery<Project[]>({
     queryKey: ["projects"],
     queryFn: async () => {
-      const res = await fetch("/api/projects/list");
-      if (!res.ok) throw new Error("Failed to fetch projects");
-      return res.json();
+      const res = await axios.get("/api/projects/list");
+      if (!res.data) throw new Error("Failed to fetch projects");
+
+      return res.data.projects;
     },
   });
 
@@ -52,11 +54,13 @@ export const ProjectsList = () => {
           </CardHeader>
           <CardContent>
             <div className="mb-2 text-sm">
-              <span className="font-semibold">In Progress:</span> {project.inProgress}
+              <span className="font-semibold">In Progress:</span>{" "}
+              {project.inProgress}
               <br />
               <span className="font-semibold">Done:</span> {project.done}
               <br />
-              <span className="font-semibold">Total Tasks:</span> {project.totalTasks}
+              <span className="font-semibold">Total Tasks:</span>{" "}
+              {project.totalTasks}
             </div>
             <Progress value={project.progress} />
           </CardContent>
