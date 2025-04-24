@@ -10,6 +10,8 @@ import * as React from "react";
 import "../../../globals.css";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 // Fetch tasks from the backend
 const fetchTasks = async () => {
@@ -59,6 +61,12 @@ const TasksKanban = () => {
     mutationFn: updateTaskStatus,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
+
+      // Show a success toast
+      toast.success("Tasks updated successfully");
+    },
+    onError: () => {
+      toast.error("An error occured while updating tasks");
     },
   });
 
@@ -178,7 +186,7 @@ const TasksKanban = () => {
       {/* Spinner */}
       {isLoadingChange && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-50 bg-opacity-50 z-10">
-          <div className="w-12 h-12 border-4 border-t-4 border-blue-500 rounded-full animate-spin"></div>
+          <Loader2 className="text-primary animate-spin" size={40} />
         </div>
       )}
     </div>
