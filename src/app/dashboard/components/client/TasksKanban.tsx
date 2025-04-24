@@ -154,7 +154,7 @@ const TasksKanban = () => {
 
   return (
     <div className="w-full h-full p-4">
-      <div className="w-screen h-full p-4 overflow-x-scroll">
+      <div className="w-screen h-full p-4 overflow-x-auto no-scrollbar">
         <div className="min-w-[800px]">
           <KanbanComponent
             id="kanban"
