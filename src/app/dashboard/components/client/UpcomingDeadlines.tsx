@@ -85,8 +85,14 @@ export default function UpcomingDeadlines() {
     );
   }
 
-  const upcomingProjects = data.projects;
-  const upcomingTasks = data.tasks;
+  const upcomingProjects = data.projects.filter(
+    (p) => p.deadline && isUpcoming(p.deadline),
+  );
+
+  const upcomingTasks = data.tasks.filter(
+    (t) => t.dueDate && isUpcoming(t.dueDate),
+  );
+
   return (
     <section className="space-y-6 mt-8">
       <h2 className="text-xl font-bold text-gray-800">
