@@ -29,6 +29,7 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar";
 import { FaTasks } from "react-icons/fa";
+import { Greeting } from "./Greeting";
 
 // Sidebar items
 const sidebarItems = [
@@ -135,6 +136,8 @@ function DashboardShell({ children }: { children: ReactNode }) {
               </SheetContent>
             </Sheet>
           </div>
+
+          <Greeting />
 
           {/* Topbar right */}
           <div className="flex items-center gap-4 ml-auto">
