@@ -20,7 +20,7 @@ function DashboardPage() {
   });
 
   return (
-    <article className="w-full h-full">
+    <article className="">
       {isPending ? (
         <article className="w-screen h-screen flex flex-col gap-2 items-center justify-center text-center">
           <Loader2 className="animate-spin" size={40} />

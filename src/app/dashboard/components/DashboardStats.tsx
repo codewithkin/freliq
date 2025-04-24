@@ -48,10 +48,10 @@ export default function DashboardStats({ user }: Props) {
   ];
 
   return (
-    <section className="w-full space-y-4">
+    <section className="">
       {/* Mobile: horizontal scroll only on the cards container */}
       <article className="block sm:hidden">
-        <div className="overflow-x-auto overflow-y-hidden no-scrollbar">
+        <div className="overflow-x-scroll w-screen overflow-y-hidden no-scrollbar">
           <div className="flex gap-4 w-max px-4 py-2">
             {cards.map((card, index) => (
               <div key={index} className="min-w-[240px]">
