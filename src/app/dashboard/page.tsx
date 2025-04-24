@@ -23,7 +23,10 @@ function DashboardPage() {
     <article className="">
       {isPending ? (
         <article className="w-screen h-screen flex flex-col gap-2 items-center justify-center text-center">
-          <Loader2 className="animate-spin" size={40} />
+          <article className="flex flex-col justify-center items-center text-center gap-2">
+            <h2 className="text-center">Preparing something awesome...</h2>
+            <Loader2 className="text-primary animate-spin" size={40} />
+          </article>
         </article>
       ) : (
         <DashboardShell>
