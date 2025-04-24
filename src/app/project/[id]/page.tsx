@@ -50,6 +50,7 @@ type Project = {
     title: string;
     completed: boolean;
   }[];
+  chatRoom: any;
 };
 
 export default function ProjectPage() {
@@ -179,6 +180,16 @@ export default function ProjectPage() {
                 <p className="text-sm text-muted-foreground">{file.type}</p>
               </a>
             ))}
+
+            {/* Add chat room link */}
+            {project.chatRoom && (
+              <a
+                href={`/chat/${project.chatRoom.id}`}
+                className="inline-block text-blue-600 hover:underline text-sm"
+              >
+                Go to Chat
+              </a>
+            )}
           </CardContent>
         </Card>
       </div>
