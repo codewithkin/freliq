@@ -84,7 +84,7 @@ export const ProjectsList = () => {
   }
 
   return (
-    <Card className="overflow-x-auto">
+    <Card>
       <CardContent>
         <Table>
           <TableCaption>A list of your current projects.</TableCaption>

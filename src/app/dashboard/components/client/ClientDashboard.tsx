@@ -49,7 +49,7 @@ export default function ClientDashboard({ user }: Props) {
   ];
 
   return (
-    <section className="my-8 max-w-screen">
+    <section className="my-8 max-w-screen overflow-x-hidden">
       <TasksKanban />
       <ProjectsList />
     </section>

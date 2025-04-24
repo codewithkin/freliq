@@ -47,7 +47,7 @@ export const metadata: Metadata = {
 };
 
 function DashboardLayout({ children }: Readonly<{ children: ReactNode }>) {
-  return <section>{children}</section>;
+  return <section className="overflow-x-hidden w-screen">{children}</section>;
 }
 
 export default DashboardLayout;
