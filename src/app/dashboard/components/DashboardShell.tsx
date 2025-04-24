@@ -16,7 +16,12 @@ import {
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import {
   Sidebar,
   SidebarContent,
@@ -109,30 +114,20 @@ function DashboardShell({ children }: { children: ReactNode }) {
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-64 p-4">
-                <Sidebar>
-                  <SidebarContent>
-                    <SidebarGroup>
-                      <SidebarGroupLabel className="text-lg font-bold tracking-tight mb-4">
-                        Freliq
-                      </SidebarGroupLabel>
-                      <SidebarGroupContent>
-                        <SidebarMenu>
-                          {sidebarItems.map((item) => (
-                            <SidebarMenuItem key={item.title}>
-                              <SidebarMenuButton asChild>
-                                <Link href={item.url}>
-                                  <item.icon className="h-4 w-4" />
-                                  <span>{item.title}</span>
-                                </Link>
-                              </SidebarMenuButton>
-                            </SidebarMenuItem>
-                          ))}
-                        </SidebarMenu>
-                      </SidebarGroupContent>
-                    </SidebarGroup>
-                  </SidebarContent>
-                </Sidebar>
+              <SheetContent side="left" className="w-full p-4">
+                <SheetTitle className="text-2xl font-semibold tracking-tight mb-4 text-primary">
+                  Freliq
+                </SheetTitle>
+                <div className="flex flex-col gap-2">
+                  {sidebarItems.map((item) => (
+                    <Button key={item.title} variant="outline" asChild>
+                      <Link href={item.url} className="flex items-center gap-2">
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.title}</span>
+                      </Link>
+                    </Button>
+                  ))}
+                </div>
               </SheetContent>
             </Sheet>
           </div>
