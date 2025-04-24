@@ -14,6 +14,7 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { format, formatDate } from "date-fns";
+import { Card, CardTitle } from "@/components/ui/card";
 
 // Fetch tasks from the backend
 const fetchTasks = async () => {
@@ -112,9 +113,11 @@ const TasksKanban = () => {
   // Card UI
   const cardTemplate = (props: any) => {
     return (
-      <div className="bg-white border-l-4 border-yellow-500 p-3 rounded shadow-sm hover:shadow-md transition duration-200">
-        <h5 className="text-primary font-semibold">{props.title}</h5>
-        <p className="text-gray-700 mt-1">{props.description}</p>
+      <Card className="bg-white border-l-4 border-yellow-500 p-2 transition duration-200">
+        <CardTitle className="text-primary text-lg font-semibold">
+          {props.title}
+        </CardTitle>
+        <p className="text-gray-700">{props.description}</p>
         <div className="text-xs text-gray-500 mt-2 flex justify-between">
           <Badge className="text-xs font-regular">{props.status}</Badge>
           <span>{props.assignee?.name}</span>
@@ -122,7 +125,7 @@ const TasksKanban = () => {
         <p className="text-slate-500">
           Due {format(new Date(props.dueDate), "MMM d, yyyy")}
         </p>
-      </div>
+      </Card>
     );
   };
 
