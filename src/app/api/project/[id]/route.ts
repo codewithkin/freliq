@@ -17,8 +17,9 @@ export async function GET(
     });
   }
 
-  const searchParams = req.nextUrl.searchParams;
-  const projectId = searchParams.get("id");
+  const { id: projectId } = await params;
+
+  console;
 
   try {
     const project = await prisma.project.findUnique({
