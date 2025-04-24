@@ -8,7 +8,9 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
 import "../../../globals.css"; // Ensure your Tailwind CSS is loaded
+import { Skeleton } from "@/components/ui/skeleton";
 
+// Fetch tasks from the backend using React Query
 const fetchTasks = async () => {
   const response = await fetch("/api/tasks");
   if (!response.ok) {
@@ -53,7 +55,32 @@ const TasksKanban = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="w-full h-full p-4">
+        <KanbanComponent id="kanban" keyField="status" dataSource={[]}>
+          <ColumnsDirective>
+            <ColumnDirective headerText="To Do" keyField="TODO" />
+            <ColumnDirective headerText="In Progress" keyField="IN_PROGRESS" />
+            <ColumnDirective headerText="Testing" keyField="TESTING" />
+            <ColumnDirective headerText="Done" keyField="DONE" />
+            <ColumnDirective headerText="Validate" keyField="VALIDATE" />
+          </ColumnsDirective>
+        </KanbanComponent>
+
+        {/* Skeleton loaders for each column */}
+        <div className="flex gap-4 p-4">
+          {["TODO", "IN_PROGRESS", "TESTING", "DONE", "VALIDATE"].map(
+            (status) => (
+              <div key={status} className="w-1/5">
+                <Skeleton className="w-full h-40 mb-4" />
+                <Skeleton className="w-full h-6" />
+                <Skeleton className="w-full h-6 mt-2" />
+              </div>
+            ),
+          )}
+        </div>
+      </div>
+    );
   }
 
   if (isError) {
