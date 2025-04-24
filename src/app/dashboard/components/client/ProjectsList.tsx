@@ -27,7 +27,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 
 type Task = {
   status: string;
@@ -42,7 +42,7 @@ type Project = {
   tasks: Task[];
 };
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 10;
 
 export const ProjectsList = () => {
   const [page, setPage] = useState(1);
@@ -84,8 +84,9 @@ export const ProjectsList = () => {
   }
 
   return (
-    <Card>
+    <Card className="overflow-x-auto w-full">
       <CardContent>
+        <CardTitle>Projects</CardTitle>
         <Table>
           <TableCaption>A list of your current projects.</TableCaption>
           <TableHeader>
@@ -98,7 +99,7 @@ export const ProjectsList = () => {
               <TableHead>Progress</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody className="overflow-hidden">
             {paginatedData?.map((project) => {
               const totalTasks = project.tasks.length;
               const incompleteTasks = project.tasks.filter(
