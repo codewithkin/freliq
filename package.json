@@ -10,6 +10,7 @@
     "format": "npx prettier --write ."
   },
   "dependencies": {
+    "@hello-pangea/dnd": "^18.0.1",
     "@prisma/client": "^6.6.0",
     "@radix-ui/react-alert-dialog": "^1.1.10",
     "@radix-ui/react-avatar": "^1.1.6",
@@ -21,6 +22,7 @@
     "@radix-ui/react-slot": "^1.2.0",
     "@radix-ui/react-switch": "^1.2.2",
     "@radix-ui/react-tooltip": "^1.2.4",
+    "@syncfusion/ej2-react-kanban": "^29.1.37",
     "@tanstack/react-query": "^5.74.4",
     "axios": "^1.8.4",
     "better-auth": "^1.2.7",
@@ -33,6 +35,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
+    "react-kanban": "^0.0.0-test",
     "resend": "^4.4.0",
     "sonner": "^2.0.3",
     "tailwind-merge": "^3.2.0",

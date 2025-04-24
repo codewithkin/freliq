@@ -7,7 +7,7 @@ import {
   Notebook,
   PieChart,
 } from "lucide-react";
-import { DashboardStatCard } from "../DashboardStatCard";
+import TasksKanban from "./TasksKanban";
 
 interface Props {
   user: any; // Ideally, type this properly
@@ -48,8 +48,8 @@ export default function ClientDashboard({ user }: Props) {
   ];
 
   return (
-    <section className="">
-      <h2>Client dash</h2>
+    <section className="my-8">
+      <TasksKanban />
     </section>
   );
 }
