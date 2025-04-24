@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import TasksKanban from "./TasksKanban";
 import { ProjectsList } from "./ProjectsList";
+import UpcomingDeadlines from "./UpcomingDeadlines";
 
 interface Props {
   user: any;
@@ -52,6 +53,7 @@ export default function ClientDashboard({ user }: Props) {
     <section className="my-8 max-w-screen overflow-x-hidden">
       <TasksKanban />
       <ProjectsList />
+      <UpcomingDeadlines />
     </section>
   );
 }
