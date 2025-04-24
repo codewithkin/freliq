@@ -7,8 +7,8 @@ import axios from "axios";
 
 import DashboardShell from "./components/DashboardShell";
 import DashboardStats from "./components/DashboardStats";
-import FreelancerDashboard from "./components/FreelancerDashboard";
-import ClientDashboard from "./components/ClientDashboard";
+import FreelancerDashboard from "./components/freelancer/FreelancerDashboard";
+import ClientDashboard from "./components/client/ClientDashboard";
 
 function DashboardPage() {
   const { data: user, isPending } = useQuery({

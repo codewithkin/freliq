@@ -7,13 +7,13 @@ import {
   Notebook,
   PieChart,
 } from "lucide-react";
-import { DashboardStatCard } from "./DashboardStatCard";
+import { DashboardStatCard } from "../DashboardStatCard";
 
 interface Props {
   user: any; // Ideally, type this properly
 }
 
-export default function FreelancerDashboard({ user }: Props) {
+export default function ClientDashboard({ user }: Props) {
   const cards = [
     {
       title: "projects",
@@ -48,8 +48,8 @@ export default function FreelancerDashboard({ user }: Props) {
   ];
 
   return (
-    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <h2>freelancer dash</h2>
+    <section className="">
+      <h2>Client dash</h2>
     </section>
   );
 }
