@@ -11,7 +11,7 @@ import TasksKanban from "./TasksKanban";
 import { ProjectsList } from "./ProjectsList";
 
 interface Props {
-  user: any; // Ideally, type this properly
+  user: any;
 }
 
 export default function ClientDashboard({ user }: Props) {
@@ -49,7 +49,7 @@ export default function ClientDashboard({ user }: Props) {
   ];
 
   return (
-    <section className="my-8">
+    <section className="my-8 max-w-screen">
       <TasksKanban />
       <ProjectsList />
     </section>

@@ -154,8 +154,8 @@ const TasksKanban = () => {
 
   return (
     <div className="w-full h-full p-4">
-      <div className="w-screen h-full p-4 overflow-x-auto no-scrollbar">
-        <div className="min-w-[800px]">
+      <div className="w-screen h-full overflow-x-auto no-scrollbar">
+        <div className="min-w-[800px] w-fit">
           <KanbanComponent
             id="kanban"
             keyField="status"
@@ -174,7 +174,6 @@ const TasksKanban = () => {
                 headerText="In Progress"
                 keyField="IN_PROGRESS"
               />
-              <ColumnDirective headerText="Testing" keyField="TESTING" />
               <ColumnDirective headerText="Done" keyField="DONE" />
               <ColumnDirective headerText="Validate" keyField="VALIDATE" />
             </ColumnsDirective>
