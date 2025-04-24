@@ -154,26 +154,33 @@ const TasksKanban = () => {
 
   return (
     <div className="w-full h-full p-4">
-      <KanbanComponent
-        id="kanban"
-        keyField="status"
-        dataSource={tasks}
-        cardSettings={{
-          contentField: "title",
-          headerField: "id",
-          template: cardTemplate,
-        }}
-        dragStop={onTaskDragStop}
-        allowDragAndDrop={true}
-      >
-        <ColumnsDirective>
-          <ColumnDirective headerText="To Do" keyField="TODO" />
-          <ColumnDirective headerText="In Progress" keyField="IN_PROGRESS" />
-          <ColumnDirective headerText="Testing" keyField="TESTING" />
-          <ColumnDirective headerText="Done" keyField="DONE" />
-          <ColumnDirective headerText="Validate" keyField="VALIDATE" />
-        </ColumnsDirective>
-      </KanbanComponent>
+      <div className="w-screen h-full p-4 overflow-x-scroll">
+        <div className="min-w-[800px]">
+          <KanbanComponent
+            id="kanban"
+            keyField="status"
+            dataSource={tasks}
+            cardSettings={{
+              contentField: "title",
+              headerField: "id",
+              template: cardTemplate,
+            }}
+            dragStop={onTaskDragStop}
+            allowDragAndDrop={true}
+          >
+            <ColumnsDirective>
+              <ColumnDirective headerText="To Do" keyField="TODO" />
+              <ColumnDirective
+                headerText="In Progress"
+                keyField="IN_PROGRESS"
+              />
+              <ColumnDirective headerText="Testing" keyField="TESTING" />
+              <ColumnDirective headerText="Done" keyField="DONE" />
+              <ColumnDirective headerText="Validate" keyField="VALIDATE" />
+            </ColumnsDirective>
+          </KanbanComponent>
+        </div>
+      </div>
 
       {changesMade && (
         <div className="fixed bottom-4 right-4 z-50">
