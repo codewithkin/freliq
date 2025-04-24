@@ -32,6 +32,13 @@ export async function GET(req: NextRequest) {
       where: {
         id,
       },
+      include: {
+        polls: true,
+        projects: true,
+        checklists: true,
+        tasks: true,
+        files: true,
+      },
     });
 
     return NextResponse.json({ fullUser });

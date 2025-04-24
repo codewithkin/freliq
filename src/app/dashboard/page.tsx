@@ -18,6 +18,8 @@ function DashboardPage() {
     },
   });
 
+  console.log("User: ", user);
+
   return (
     <article className="w-full h-full">
       {isPending ? (
@@ -26,11 +28,11 @@ function DashboardPage() {
         </article>
       ) : user?.type === "freelancer" ? (
         <DashboardShell>
-          <FreelancerDashboard />
+          <FreelancerDashboard user={user} />
         </DashboardShell>
       ) : (
         <DashboardShell>
-          <ClientDashboard />
+          <ClientDashboard user={user} />
         </DashboardShell>
       )}
     </article>
