@@ -21,6 +21,7 @@ const fetchTasks = async () => {
 };
 
 // Update task status
+// Update task status
 const updateTaskStatus = async ({
   taskId,
   newStatus,
@@ -28,12 +29,12 @@ const updateTaskStatus = async ({
   taskId: string;
   newStatus: string;
 }) => {
-  const response = await fetch(`/api/tasks/${taskId}/status`, {
+  const response = await fetch("/api/tasks/update-status", {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ status: newStatus }),
+    body: JSON.stringify([{ id: taskId, status: newStatus }]),
   });
   if (!response.ok) {
     throw new Error("Failed to update task status");
