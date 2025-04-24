@@ -10,7 +10,6 @@ import {
   Menu,
   MessageSquare,
   Settings,
-  Task,
   User,
   LayoutDashboard,
   FolderKanban,
@@ -27,7 +26,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarProvider,
 } from "@/components/ui/sidebar";
+import { FaTasks } from "react-icons/fa";
 
 // Sidebar items
 const sidebarItems = [
@@ -44,7 +45,7 @@ const sidebarItems = [
   {
     title: "Tasks",
     url: "/tasks",
-    icon: Task,
+    icon: FaTasks,
   },
   {
     title: "Files",
@@ -68,29 +69,31 @@ function DashboardShell({ children }: { children: ReactNode }) {
     <section className="min-h-screen flex bg-muted/40">
       {/* Sidebar for large screens */}
       <aside className="hidden lg:flex w-64 border-r bg-white shadow-sm">
-        <Sidebar>
-          <SidebarContent>
-            <SidebarGroup>
-              <SidebarGroupLabel className="text-lg font-bold tracking-tight pl-3 pb-3">
-                Freliq
-              </SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {sidebarItems.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild>
-                        <Link href={item.url}>
-                          <item.icon className="h-4 w-4" />
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          </SidebarContent>
-        </Sidebar>
+        <SidebarProvider>
+          <Sidebar>
+            <SidebarContent className="py-8">
+              <SidebarGroup>
+                <SidebarGroupLabel className="text-2xl text-primary font-bold tracking-tight mb-4 pl-3 pb-3">
+                  Freliq
+                </SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {sidebarItems.map((item) => (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton asChild>
+                          <Link href={item.url}>
+                            <item.icon className="h-4 w-4" />
+                            <span>{item.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            </SidebarContent>
+          </Sidebar>
+        </SidebarProvider>
       </aside>
 
       {/* Main */}
