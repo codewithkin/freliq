@@ -18,6 +18,13 @@ export async function GET() {
       where: {
         ownerId: id,
       },
+      include: {
+        tasks: true,
+        files: true,
+        members: true,
+        checklists: true,
+        chatRoom: true,
+      },
     });
 
     return NextResponse.json(projects);
