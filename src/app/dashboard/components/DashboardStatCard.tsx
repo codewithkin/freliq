@@ -23,13 +23,11 @@ export function DashboardStatCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      <Card className={`p-4 flex items-center gap-4 ${className}`}>
+      <Card className={`p-8 flex justify-center gap-4 ${className}`}>
         <Icon className="h-8 w-8 text-white" />
         <CardContent className="p-0">
+          <p className="text-3xl font-semibold text-white">{count}</p>
           <p className="text-sm text-white capitalize">{title}</p>
-          <p className="text-lg font-bold text-white">
-            {count} {title}
-          </p>
         </CardContent>
       </Card>
     </motion.div>
