@@ -24,7 +24,7 @@ export const ProjectsList = () => {
       const res = await axios.get("/api/projects/list");
       if (!res.data) throw new Error("Failed to fetch projects");
 
-      return res.data.projects;
+      return res.data;
     },
   });
 
