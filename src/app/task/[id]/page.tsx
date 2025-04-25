@@ -11,7 +11,12 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import DashboardShell from "@/app/dashboard/components/DashboardShell";
@@ -178,7 +183,9 @@ export default function TaskPage() {
                 <Button variant="destructive">Reject</Button>
               </DialogTrigger>
               <DialogContent>
-                <h2 className="font-semibold text-lg mb-2">Provide feedback</h2>
+                <DialogTitle className="font-semibold text-lg mb-2">
+                  Provide feedback
+                </DialogTitle>
                 <Textarea
                   value={feedback}
                   onChange={(e) => setFeedback(e.target.value)}
