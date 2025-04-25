@@ -211,6 +211,17 @@ export default function TaskPage() {
                 </Button>
               </DialogContent>
             </Dialog>
+
+            {/* New Button for Approving or Updating Status */}
+            <Button
+              variant="outline"
+              onClick={() =>
+                updateTaskStatus.mutate({ status: "IN_PROGRESS", feedback: "" })
+              }
+              disabled={task.status === "DONE"}
+            >
+              {task.status === "TODO" ? "Start" : "Update Status"}
+            </Button>
           </div>
         )}
 
