@@ -97,10 +97,10 @@ export default function ProjectPage() {
       await axios.patch(`/api/task/${taskId}/status`, { status, feedback });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["project", id] });
-
       // Show a success toast
       toast.success("Task status updated !");
+
+      queryClient.invalidateQueries({ queryKey: ["project", id] });
     },
     onError: () => {
       // Show an error toast
@@ -233,10 +233,10 @@ export default function ProjectPage() {
                     </div>
                     <Badge
                       className={cn({
-                        "bg-green-100 text-green-700": task.status === "done",
+                        "bg-green-100 text-green-700": task.status === "DONE",
                         "bg-yellow-100 text-yellow-800":
                           task.status === "in-progress",
-                        "bg-red-100 text-red-700": task.status === "rejected",
+                        "bg-red-100 text-red-700": task.status === "REJECTED",
                       })}
                     >
                       {task.status}
@@ -259,7 +259,7 @@ export default function ProjectPage() {
                           e.stopPropagation();
                           updateTaskStatus.mutate({
                             taskId: task.id,
-                            status: "done",
+                            status: "DONE",
                           });
                         }}
                       >
@@ -281,7 +281,7 @@ export default function ProjectPage() {
                               This will help the freelancer improve their work
                             </DialogDescription>
 
-                            <form action="">
+                            <article>
                               <Textarea
                                 name="feedback"
                                 placeholder="I think you should..."
@@ -312,7 +312,7 @@ export default function ProjectPage() {
                                   ? "Submitting..."
                                   : "Reject and Send Feedback"}
                               </Button>
-                            </form>
+                            </article>
                           </div>
                         </DialogContent>
                       </Dialog>
