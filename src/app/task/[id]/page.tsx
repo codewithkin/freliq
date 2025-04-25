@@ -5,13 +5,22 @@ import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import { format } from "date-fns";
 import { useState } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+} from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import DashboardShell from "@/app/dashboard/components/DashboardShell";
@@ -41,8 +50,6 @@ export default function TaskPage() {
     },
     enabled: !!id,
   });
-
-  console.log("Task: ", task);
 
   const updateTaskStatus = useMutation({
     mutationFn: async ({
@@ -81,18 +88,33 @@ export default function TaskPage() {
   return (
     <DashboardShell>
       <div className="p-6 space-y-6">
+        {/* Header */}
         <div>
           <h1 className="text-3xl font-bold">{task.title}</h1>
           {task.description && (
             <p className="text-muted-foreground mt-2">{task.description}</p>
           )}
-          <div className="flex items-center gap-4 mt-4">
+
+          <div className="flex flex-wrap items-center gap-4 mt-4">
             <Badge variant="outline">{task.status}</Badge>
             {task.dueDate && (
               <span className="text-sm text-muted-foreground">
                 Due: {format(new Date(task.dueDate), "PPP")}
               </span>
             )}
+            <span className="text-sm text-muted-foreground">
+              Created: {format(new Date(task.createdAt), "PPP")}
+            </span>
+          </div>
+
+          <div className="text-sm text-muted-foreground mt-1">
+            Project: <span className="font-medium">{task.project?.title}</span>
+          </div>
+          <div className="text-sm text-muted-foreground mt-1">
+            Created by:{" "}
+            <span className="font-medium">
+              {task.creator?.email || "Unknown"}
+            </span>
           </div>
         </div>
 
@@ -125,6 +147,25 @@ export default function TaskPage() {
             </CardHeader>
             <CardContent>
               <p>{task.feedback}</p>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Comments */}
+        {task.comments && task.comments.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Comments</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {task.comments.map((comment: any) => (
+                <div key={comment.id}>
+                  <p className="text-sm">{comment.content}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {format(new Date(comment.createdAt), "PPP p")}
+                  </p>
+                </div>
+              ))}
             </CardContent>
           </Card>
         )}
