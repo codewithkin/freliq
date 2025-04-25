@@ -30,6 +30,7 @@ import DashboardShell from "@/app/dashboard/components/DashboardShell";
 import { authClient } from "@/lib/auth-client";
 import { Input } from "@/components/ui/input";
 import { queryClient } from "@/providers/QueryClientProvider";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 // Add the CommentForm component
 const CommentForm = ({
@@ -110,6 +111,8 @@ export default function TaskPage() {
     },
     enabled: !!id,
   });
+
+  console.log("Task: ", task);
 
   const updateTaskStatus = useMutation({
     mutationFn: async ({
@@ -280,11 +283,26 @@ export default function TaskPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               {task.comments.map((comment: any) => (
-                <div key={comment.id}>
-                  <p className="text-sm">{comment.content}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {format(new Date(comment.createdAt), "PPP p")}
-                  </p>
+                <div key={comment.id} className="flex items-start gap-2">
+                  <Avatar className="w-10 h-10">
+                    <AvatarImage
+                      src={comment.author.image}
+                      alt={comment.author.name}
+                    />
+                    <AvatarFallback>
+                      {comment.author.name.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-medium">{comment.author.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {comment.author.role} | {comment.author.email}
+                    </p>
+                    <p className="text-sm mt-1">{comment.content}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {format(new Date(comment.createdAt), "PPP p")}
+                    </p>
+                  </div>
                 </div>
               ))}
             </CardContent>
@@ -367,15 +385,9 @@ export default function TaskPage() {
               <CardTitle>Submit Proof</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground mb-2">
-                Start working and submit your work when done.
-              </p>
-              <Button
-                onClick={() =>
-                  updateTaskStatus.mutate({ status: "IN_PROGRESS" })
-                }
-              >
-                Start Task
+              <Button disabled={updateTaskStatus.isPending}>
+                <FileText className="mr-2" />
+                Submit Proof
               </Button>
             </CardContent>
           </Card>
