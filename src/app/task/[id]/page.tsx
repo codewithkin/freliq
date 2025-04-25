@@ -42,6 +42,8 @@ export default function TaskPage() {
     enabled: !!id,
   });
 
+  console.log("Task: ", task);
+
   const updateTaskStatus = useMutation({
     mutationFn: async ({
       status,
