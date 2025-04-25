@@ -21,7 +21,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Eye } from "lucide-react";
+import { Eye, Loader2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 
 type Project = {
@@ -285,15 +285,21 @@ export default function ProjectPage() {
                               <Button
                                 className="mt-2"
                                 variant="secondary"
+                                disabled={updateTaskStatus.isPending}
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   updateTaskStatus.mutate({
                                     taskId: task.id,
-                                    status: "rejected",
+                                    status: "REJECTED",
                                   });
                                 }}
                               >
-                                Decline and Send Feedback
+                                {updateTaskStatus.isPending && (
+                                  <Loader2 className="animate-spin" />
+                                )}
+                                {updateTaskStatus.isPending
+                                  ? "Submitting..."
+                                  : "Reject and Send Feedback"}
                               </Button>
                             </form>
                           </div>
