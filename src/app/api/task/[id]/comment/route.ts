@@ -8,6 +8,7 @@ export async function POST(
   { params }: { params: { id: string } },
 ) {
   const { content } = await req.json();
+  const { id } = await params;
 
   // Get the user's session
   const session = await auth.api.getSession({
@@ -30,6 +31,11 @@ export async function POST(
         author: {
           connect: {
             id: userId,
+          },
+        },
+        task: {
+          connect: {
+            id,
           },
         },
       },
