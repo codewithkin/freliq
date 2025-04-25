@@ -1,3 +1,4 @@
+"use client";
 import { authClient } from "@/lib/auth-client";
 import { Loader2 } from "lucide-react";
 import { redirect } from "next/navigation";
