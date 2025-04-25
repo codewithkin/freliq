@@ -201,6 +201,7 @@ model Task {
   updatedAt   DateTime  @updatedAt
   projectId   String
   creatorId   String
+  feedback    String?
 
   project     Project   @relation(fields: [projectId], references: [id], map: "task_project_fkey")
   creator     User      @relation("CreatedTasks", fields: [creatorId], references: [id], map: "task_creator_fkey")
