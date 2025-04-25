@@ -20,7 +20,13 @@ export async function PATCH(
     const body = await req.json();
     const { status } = body;
 
-    const allowedStatuses = ["done", "in-progress", "rejected", "todo"];
+    const allowedStatuses = [
+      "DONE",
+      "IN_PROGESS",
+      "REJECTED",
+      "TODO",
+      "AWAITING_REVIEW",
+    ];
     if (!allowedStatuses.includes(status)) {
       return new NextResponse("Invalid status", { status: 400 });
     }
