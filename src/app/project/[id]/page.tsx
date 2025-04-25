@@ -14,6 +14,8 @@ import { cn } from "@/lib/utils";
 import { authClient } from "@/lib/auth-client";
 import DashboardShell from "@/app/dashboard/components/DashboardShell";
 import { toast } from "sonner";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Eye } from "lucide-react";
 
 type Project = {
   id: string;
@@ -133,16 +135,16 @@ export default function ProjectPage() {
                   key={user.id}
                   className="border rounded-md p-4 shadow-sm bg-muted/50 flex items-center gap-4"
                 >
-                  <Avatar>
+                  <Avatar className="bg-slate-500 w-8 h-8">
                     <AvatarImage src={user.image ?? ""} />
-                    <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                    <AvatarFallback className="text-primary">
+                      {user.name.charAt(0)}
+                    </AvatarFallback>
                   </Avatar>
                   <div>
                     <p className="font-medium">{user.name}</p>
                     <p className="text-sm text-muted-foreground">
-                      {user.id === project.owner.id
-                        ? "Project Owner"
-                        : "Collaborator"}
+                      {user.id === project.owner.id ? "Freelancer" : "Client"}
                     </p>
                   </div>
                 </div>
@@ -206,7 +208,6 @@ export default function ProjectPage() {
                 <div
                   key={task.id}
                   className="border p-4 rounded-md bg-white hover:bg-muted/50 transition cursor-pointer"
-                  onClick={() => router.push(`/tasks/${task.id}`)}
                 >
                   <div className="flex justify-between items-center">
                     <div>
@@ -233,6 +234,13 @@ export default function ProjectPage() {
                   {!isFreelancer && (
                     <div className="mt-3 flex gap-2">
                       <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => router.push(`/tasks/${task.id}`)}
+                      >
+                        <Eye />
+                      </Button>
+                      <Button
                         size="sm"
                         variant="outline"
                         onClick={(e) => {
@@ -245,19 +253,36 @@ export default function ProjectPage() {
                       >
                         Approve
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          updateTaskStatus.mutate({
-                            taskId: task.id,
-                            status: "rejected",
-                          });
-                        }}
-                      >
-                        Disapprove
-                      </Button>
+
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button size="sm" variant="destructive">
+                            Disapprove
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <div className="space-y-4">
+                            <h3 className="text-lg font-semibold">
+                              Are you sure?
+                            </h3>
+                            <p className="text-sm text-muted-foreground">
+                              This will mark the task as rejected.
+                            </p>
+                            <Button
+                              variant="destructive"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                updateTaskStatus.mutate({
+                                  taskId: task.id,
+                                  status: "rejected",
+                                });
+                              }}
+                            >
+                              Confirm
+                            </Button>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
                     </div>
                   )}
                 </div>
