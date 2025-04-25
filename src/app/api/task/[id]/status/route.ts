@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { taskId: string } },
+  { params }: { params: { id: string } },
 ) {
   try {
     const session = await auth.api.getSession({
@@ -16,7 +16,7 @@ export async function PATCH(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const { taskId } = params;
+    const { id } = await params;
     const body = await req.json();
     const { status, feedback } = body;
 
@@ -32,7 +32,7 @@ export async function PATCH(
     }
 
     const existingTask = await prisma.task.findUnique({
-      where: { id: taskId },
+      where: { id },
     });
 
     if (!existingTask) {
@@ -43,7 +43,7 @@ export async function PATCH(
     // or is allowed to update this task
 
     const updatedTask = await prisma.task.update({
-      where: { id: taskId },
+      where: { id },
       data: { status, feedback },
     });
 
