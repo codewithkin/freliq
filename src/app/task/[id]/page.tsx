@@ -5,22 +5,13 @@ import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import { format } from "date-fns";
 import { useState } from "react";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-} from "@/components/ui/dialog";
+import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import DashboardShell from "@/app/dashboard/components/DashboardShell";
@@ -83,7 +74,7 @@ export default function TaskPage() {
   }
 
   const isFreelancer = user.type === "freelancer";
-  const isClient = user.type === "client";
+  const isClient = user.type !== "freelancer";
 
   return (
     <DashboardShell>
