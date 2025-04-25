@@ -13,6 +13,7 @@ export async function PATCH(
     });
 
     if (!session?.user?.id) {
+      console.error("Unauthorized access attempt");
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
@@ -22,12 +23,13 @@ export async function PATCH(
 
     const allowedStatuses = [
       "DONE",
-      "IN_PROGESS",
+      "IN_PROGRESS",
       "REJECTED",
       "TODO",
       "AWAITING_REVIEW",
     ];
     if (!allowedStatuses.includes(status)) {
+      console.error(`Invalid status: ${status}`);
       return new NextResponse("Invalid status", { status: 400 });
     }
 
@@ -36,11 +38,9 @@ export async function PATCH(
     });
 
     if (!existingTask) {
+      console.error(`Task not found: ${id}`);
       return new NextResponse("Task not found", { status: 404 });
     }
-
-    // Optional: You could also check if user is part of the project here
-    // or is allowed to update this task
 
     const updatedTask = await prisma.task.update({
       where: { id },
