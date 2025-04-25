@@ -218,7 +218,7 @@ export default function TaskPage() {
               }
               disabled={task.status === "DONE"}
             >
-              {task.status === "TODO" ? "Start" : "Update Status"}
+              {task.status === "TODO" ? "Start" : "Set to in progress"}
             </Button>
           </div>
         )}
