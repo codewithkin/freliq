@@ -279,7 +279,7 @@ export default function ProjectPage() {
                             <Button
                               variant="outline"
                               size="icon"
-                              onClick={() => router.push(`/tasks/${task.id}`)}
+                              onClick={() => router.push(`/task/${task.id}`)}
                             >
                               <Eye />
                             </Button>
