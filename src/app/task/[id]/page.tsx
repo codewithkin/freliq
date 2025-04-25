@@ -17,18 +17,78 @@ import {
   DialogContent,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Loader2, Edit, Trash, CheckCircle, XCircle } from "lucide-react"; // Added icons here
+import {
+  Loader2,
+  Edit,
+  Trash,
+  CheckCircle,
+  XCircle,
+  FileText,
+} from "lucide-react";
 import { toast } from "sonner";
 import DashboardShell from "@/app/dashboard/components/DashboardShell";
 import { authClient } from "@/lib/auth-client";
 import { Input } from "@/components/ui/input";
+
+// Add the CommentForm component
+const CommentForm = ({
+  taskId,
+  onCommentAdded,
+}: {
+  taskId: string;
+  onCommentAdded: () => void;
+}) => {
+  const [commentContent, setCommentContent] = useState("");
+  const addCommentMutation = useMutation({
+    mutationFn: async () => {
+      await axios.post(`/api/task/${taskId}/comment`, {
+        content: commentContent,
+      });
+    },
+    onSuccess: () => {
+      toast.success("Comment added!");
+      setCommentContent(""); // Clear the textarea
+      onCommentAdded(); // Refresh the comments list
+    },
+    onError: () => {
+      toast.error("Failed to add comment.");
+    },
+  });
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Add Comment</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Textarea
+          value={commentContent}
+          onChange={(e) => setCommentContent(e.target.value)}
+          placeholder="Add your comment here"
+          className="resize-none"
+        />
+        <Button
+          className="mt-2"
+          disabled={addCommentMutation.isPending || commentContent.length === 0}
+          onClick={() => addCommentMutation.mutate()}
+        >
+          {addCommentMutation.isPending ? (
+            <Loader2 className="animate-spin mr-2 h-4 w-4" />
+          ) : (
+            "Add Comment"
+          )}
+        </Button>
+      </CardContent>
+    </Card>
+  );
+};
 
 export default function TaskPage() {
   const { id } = useParams<{ id: string }>();
   const queryClient = useQueryClient();
   const router = useRouter();
   const [feedback, setFeedback] = useState("");
-  const [editing, setEditing] = useState(false); // for handling title/description edits
+  const [editing, setEditing] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newDescription, setNewDescription] = useState("");
 
@@ -83,7 +143,7 @@ export default function TaskPage() {
     onSuccess: () => {
       toast.success("Task details updated!");
       queryClient.invalidateQueries({ queryKey: ["task", id] });
-      setEditing(false); // Close the editing mode after success
+      setEditing(false);
     },
     onError: () => {
       toast.error("Failed to update task details.");
@@ -135,6 +195,7 @@ export default function TaskPage() {
                 className="mt-2"
               >
                 Save Changes
+                <CheckCircle className="ml-2" />
               </Button>
             </div>
           ) : (
@@ -229,6 +290,14 @@ export default function TaskPage() {
             </CardContent>
           </Card>
         )}
+
+        {/* Add New Comment Form */}
+        <CommentForm
+          taskId={id}
+          onCommentAdded={() =>
+            queryClient.invalidateQueries({ queryKey: ["task", id] })
+          }
+        />
 
         {/* Actions */}
         {isClient && task.status !== "DONE" && (
