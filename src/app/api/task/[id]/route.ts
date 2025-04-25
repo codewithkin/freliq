@@ -34,7 +34,11 @@ export async function GET(
             title: true,
           },
         },
-        comments: true,
+        comments: {
+          include: {
+            author: true,
+          },
+        },
         attachments: true,
       },
     });
