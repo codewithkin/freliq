@@ -24,6 +24,7 @@ import {
 import { Eye, Loader2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
+import { Label } from "@/components/ui/label";
 
 type Project = {
   id: string;
@@ -132,9 +133,7 @@ export default function ProjectPage() {
             </span>
           </div>
         </div>
-
         <Separator />
-
         {/* Members */}
         <Card>
           <CardHeader>
@@ -204,126 +203,155 @@ export default function ProjectPage() {
             )}
           </CardContent>
         </Card>
-
         {/* Tasks */}
         <Card>
           <CardHeader>
             <CardTitle>All Tasks</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             {project.tasks.length === 0 ? (
               <p className="text-sm text-muted-foreground">
                 No tasks added yet.
               </p>
             ) : (
-              project.tasks.map((task) => (
-                <div
-                  key={task.id}
-                  className="border p-4 rounded-md bg-white hover:bg-muted/50 transition cursor-pointer"
-                >
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h4 className="font-semibold">{task.title}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Due:{" "}
-                        {task.dueDate
-                          ? format(new Date(task.dueDate), "PPP")
-                          : "—"}
-                      </p>
-                    </div>
-                    <Badge
-                      className={cn({
-                        "bg-green-100 text-green-700": task.status === "DONE",
-                        "bg-yellow-100 text-yellow-800":
-                          task.status === "in-progress",
-                        "bg-red-100 text-red-700": task.status === "REJECTED",
-                      })}
-                    >
-                      {task.status}
-                    </Badge>
-                  </div>
+              [
+                "TODO",
+                "IN_PROGRESS",
+                "AWAITING_REVIEW",
+                "REJECTED",
+                "DONE",
+              ].map((status) => {
+                const tasks = project.tasks.filter(
+                  (task) => task.status === status,
+                );
+                if (tasks.length === 0) return null;
 
-                  {!isFreelancer && (
-                    <div className="mt-3 flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => router.push(`/tasks/${task.id}`)}
+                return (
+                  <div key={status} className="space-y-4">
+                    <Label className="text-base uppercase tracking-wider text-muted-foreground">
+                      {status.replace("_", " ")}
+                    </Label>
+
+                    {tasks.map((task) => (
+                      <div
+                        key={task.id}
+                        className="border p-4 rounded-md bg-white hover:bg-muted/50"
                       >
-                        <Eye />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          updateTaskStatus.mutate({
-                            taskId: task.id,
-                            status: "DONE",
-                          });
-                        }}
-                      >
-                        Approve
-                      </Button>
-
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button size="sm" variant="destructive">
-                            Disapprove
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <div className="space-y-4">
-                            <DialogTitle className="text-lg font-semibold">
-                              Please provide some feedback
-                            </DialogTitle>
-                            <DialogDescription className="text-sm text-muted-foreground">
-                              This will help the freelancer improve their work
-                            </DialogDescription>
-
-                            <article>
-                              <Textarea
-                                name="feedback"
-                                placeholder="I think you should..."
-                                value={feedback}
-                                onChange={(e) => setFeedback(e.target.value)}
-                                className="resize-none"
-                              />
-                              <Button
-                                className="mt-2"
-                                variant="secondary"
-                                disabled={
-                                  updateTaskStatus.isPending ||
-                                  feedback.length === 0
-                                }
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  updateTaskStatus.mutate({
-                                    taskId: task.id,
-                                    status: "REJECTED",
-                                    feedback,
-                                  });
-                                }}
-                              >
-                                {updateTaskStatus.isPending && (
-                                  <Loader2 className="animate-spin" />
-                                )}
-                                {updateTaskStatus.isPending
-                                  ? "Submitting..."
-                                  : "Reject and Send Feedback"}
-                              </Button>
-                            </article>
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <h4 className="font-semibold">{task.title}</h4>
+                            <p className="text-sm text-muted-foreground">
+                              Due:{" "}
+                              {task.dueDate
+                                ? format(new Date(task.dueDate), "PPP")
+                                : "—"}
+                            </p>
                           </div>
-                        </DialogContent>
-                      </Dialog>
-                    </div>
-                  )}
-                </div>
-              ))
+                          <Badge
+                            className={cn({
+                              "bg-green-100 text-green-700":
+                                task.status === "DONE",
+                              "bg-yellow-100 text-yellow-800":
+                                task.status === "IN_PROGRESS",
+                              "bg-red-100 text-red-700":
+                                task.status === "REJECTED",
+                              "bg-blue-100 text-blue-700":
+                                task.status === "AWAITING_REVIEW",
+                              "bg-gray-100 text-gray-800":
+                                task.status === "TODO",
+                            })}
+                          >
+                            {task.status}
+                          </Badge>
+                        </div>
+
+                        {/* If not DONE and user is a client, show actions */}
+                        {!isFreelancer && task.status !== "DONE" && (
+                          <div className="mt-3 flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() => router.push(`/tasks/${task.id}`)}
+                            >
+                              <Eye />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                updateTaskStatus.mutate({
+                                  taskId: task.id,
+                                  status: "DONE",
+                                });
+                              }}
+                            >
+                              Approve
+                            </Button>
+
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button size="sm" variant="destructive">
+                                  Disapprove
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <div className="space-y-4">
+                                  <DialogTitle className="text-lg font-semibold">
+                                    Please provide some feedback
+                                  </DialogTitle>
+                                  <DialogDescription className="text-sm text-muted-foreground">
+                                    This will help the freelancer improve their
+                                    work
+                                  </DialogDescription>
+
+                                  <article>
+                                    <Textarea
+                                      name="feedback"
+                                      placeholder="I think you should..."
+                                      value={feedback}
+                                      onChange={(e) =>
+                                        setFeedback(e.target.value)
+                                      }
+                                      className="resize-none"
+                                    />
+                                    <Button
+                                      className="mt-2"
+                                      variant="secondary"
+                                      disabled={
+                                        updateTaskStatus.isPending ||
+                                        feedback.length === 0
+                                      }
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        updateTaskStatus.mutate({
+                                          taskId: task.id,
+                                          status: "REJECTED",
+                                          feedback,
+                                        });
+                                      }}
+                                    >
+                                      {updateTaskStatus.isPending && (
+                                        <Loader2 className="animate-spin" />
+                                      )}
+                                      {updateTaskStatus.isPending
+                                        ? "Submitting..."
+                                        : "Reject and Send Feedback"}
+                                    </Button>
+                                  </article>
+                                </div>
+                              </DialogContent>
+                            </Dialog>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                );
+              })
             )}
           </CardContent>
         </Card>
-
         {/* Files + Chat Link */}
         <Card>
           <CardHeader>
