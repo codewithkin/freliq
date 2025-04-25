@@ -162,8 +162,8 @@ export default function TaskPage() {
     );
   }
 
-  const isFreelancer = user.type === "freelancer";
-  const isClient = user.type !== "freelancer";
+  const isFreelancer = user.type !== "freelancer";
+  const isClient = user.type === "freelancer";
 
   return (
     <DashboardShell>
