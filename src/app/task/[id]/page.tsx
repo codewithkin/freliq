@@ -17,16 +17,20 @@ import {
   DialogContent,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Loader2 } from "lucide-react";
+import { Loader2, Edit, Trash, CheckCircle, XCircle } from "lucide-react"; // Added icons here
 import { toast } from "sonner";
 import DashboardShell from "@/app/dashboard/components/DashboardShell";
 import { authClient } from "@/lib/auth-client";
+import { Input } from "@/components/ui/input";
 
 export default function TaskPage() {
   const { id } = useParams<{ id: string }>();
   const queryClient = useQueryClient();
   const router = useRouter();
   const [feedback, setFeedback] = useState("");
+  const [editing, setEditing] = useState(false); // for handling title/description edits
+  const [newTitle, setNewTitle] = useState("");
+  const [newDescription, setNewDescription] = useState("");
 
   const { data: session } = authClient.useSession();
 
@@ -66,6 +70,26 @@ export default function TaskPage() {
     },
   });
 
+  const updateTaskDetails = useMutation({
+    mutationFn: async ({
+      title,
+      description,
+    }: {
+      title: string;
+      description: string;
+    }) => {
+      await axios.patch(`/api/task/${id}/details`, { title, description });
+    },
+    onSuccess: () => {
+      toast.success("Task details updated!");
+      queryClient.invalidateQueries({ queryKey: ["task", id] });
+      setEditing(false); // Close the editing mode after success
+    },
+    onError: () => {
+      toast.error("Failed to update task details.");
+    },
+  });
+
   if (isLoading || !task || !user) {
     return (
       <div className="p-6">
@@ -86,9 +110,52 @@ export default function TaskPage() {
       <div className="p-6 space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold">{task.title}</h1>
-          {task.description && (
-            <p className="text-muted-foreground mt-2">{task.description}</p>
+          {editing ? (
+            <div>
+              <Input
+                type="text"
+                value={newTitle}
+                onChange={(e) => setNewTitle(e.target.value)}
+                className="text-3xl font-bold border-b-2 border-gray-300 focus:outline-none"
+              />
+              <Textarea
+                value={newDescription}
+                onChange={(e) => setNewDescription(e.target.value)}
+                className="mt-4 w-full p-2 border-2 border-gray-300"
+                placeholder="Edit description..."
+              />
+              <Button
+                variant="outline"
+                onClick={() =>
+                  updateTaskDetails.mutate({
+                    title: newTitle,
+                    description: newDescription,
+                  })
+                }
+                className="mt-2"
+              >
+                Save Changes
+              </Button>
+            </div>
+          ) : (
+            <div>
+              <h1 className="text-3xl font-bold">{task.title}</h1>
+              {task.description && (
+                <p className="text-muted-foreground mt-2">{task.description}</p>
+              )}
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setEditing(true);
+                  setNewTitle(task.title);
+                  setNewDescription(task.description || "");
+                }}
+                className="mt-4"
+              >
+                <Edit className="mr-2" />
+                Edit Task
+              </Button>
+            </div>
           )}
 
           <div className="flex flex-wrap items-center gap-4 mt-4">
@@ -116,21 +183,18 @@ export default function TaskPage() {
 
         <Separator />
 
-        {/* Proof */}
+        {/* Proof Image */}
         {task.proof && (
           <Card>
             <CardHeader>
               <CardTitle>Proof of Work</CardTitle>
             </CardHeader>
             <CardContent>
-              <a
-                href={task.proof}
-                className="text-blue-600 underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                View Proof
-              </a>
+              <img
+                src={task.proof}
+                alt="Proof of work"
+                className="w-full rounded-md"
+              />
             </CardContent>
           </Card>
         )}
@@ -175,12 +239,16 @@ export default function TaskPage() {
                 updateTaskStatus.mutate({ status: "DONE", feedback: "" })
               }
             >
+              <CheckCircle className="mr-2" />
               Approve
             </Button>
 
             <Dialog>
               <DialogTrigger asChild>
-                <Button variant="destructive">Reject</Button>
+                <Button variant="destructive">
+                  <XCircle className="mr-2" />
+                  Reject
+                </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogTitle className="font-semibold text-lg mb-2">
