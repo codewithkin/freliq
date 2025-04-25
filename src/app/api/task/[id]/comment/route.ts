@@ -8,7 +8,6 @@ export async function POST(
   { params }: { params: { id: string } },
 ) {
   const { content } = await req.json();
-  const { id } = await params;
 
   // Get the user's session
   const session = await auth.api.getSession({
@@ -28,7 +27,6 @@ export async function POST(
     const comment = await prisma.comment.create({
       data: {
         content,
-        id,
         author: {
           connect: {
             id: userId,

@@ -29,6 +29,7 @@ import { toast } from "sonner";
 import DashboardShell from "@/app/dashboard/components/DashboardShell";
 import { authClient } from "@/lib/auth-client";
 import { Input } from "@/components/ui/input";
+import { queryClient } from "@/providers/QueryClientProvider";
 
 // Add the CommentForm component
 const CommentForm = ({
@@ -85,7 +86,6 @@ const CommentForm = ({
 
 export default function TaskPage() {
   const { id } = useParams<{ id: string }>();
-  const queryClient = useQueryClient();
   const router = useRouter();
   const [feedback, setFeedback] = useState("");
   const [editing, setEditing] = useState(false);
