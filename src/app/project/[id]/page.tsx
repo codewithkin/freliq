@@ -14,8 +14,15 @@ import { cn } from "@/lib/utils";
 import { authClient } from "@/lib/auth-client";
 import DashboardShell from "@/app/dashboard/components/DashboardShell";
 import { toast } from "sonner";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Eye } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 
 type Project = {
   id: string;
@@ -262,24 +269,33 @@ export default function ProjectPage() {
                         </DialogTrigger>
                         <DialogContent>
                           <div className="space-y-4">
-                            <h3 className="text-lg font-semibold">
-                              Are you sure?
-                            </h3>
-                            <p className="text-sm text-muted-foreground">
-                              This will mark the task as rejected.
-                            </p>
-                            <Button
-                              variant="destructive"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                updateTaskStatus.mutate({
-                                  taskId: task.id,
-                                  status: "rejected",
-                                });
-                              }}
-                            >
-                              Confirm
-                            </Button>
+                            <DialogTitle className="text-lg font-semibold">
+                              Please provide some feedback
+                            </DialogTitle>
+                            <DialogDescription className="text-sm text-muted-foreground">
+                              This will help the freelancer improve their work
+                            </DialogDescription>
+
+                            <form action="">
+                              <Textarea
+                                name="feedback"
+                                placeholder="I think you should..."
+                                className="resize-none"
+                              />
+                              <Button
+                                className="mt-2"
+                                variant="secondary"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  updateTaskStatus.mutate({
+                                    taskId: task.id,
+                                    status: "rejected",
+                                  });
+                                }}
+                              >
+                                Decline and Send Feedback
+                              </Button>
+                            </form>
                           </div>
                         </DialogContent>
                       </Dialog>
