@@ -88,13 +88,13 @@ export default function ProjectPage() {
     mutationFn: async ({
       taskId,
       status,
-      feedback,
+      feedback = "",
     }: {
       taskId: string;
       status: string;
       feedback?: string | null;
     }) => {
-      await axios.patch(`/api/task/${taskId}/status`, { status });
+      await axios.patch(`/api/task/${taskId}/status`, { status, feedback });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["project", id] });

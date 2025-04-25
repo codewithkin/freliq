@@ -18,7 +18,7 @@ export async function PATCH(
 
     const { taskId } = params;
     const body = await req.json();
-    const { status } = body;
+    const { status, feedback } = body;
 
     const allowedStatuses = [
       "DONE",
@@ -44,7 +44,7 @@ export async function PATCH(
 
     const updatedTask = await prisma.task.update({
       where: { id: taskId },
-      data: { status },
+      data: { status, feedback },
     });
 
     return NextResponse.json(updatedTask);
