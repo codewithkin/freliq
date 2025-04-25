@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import { Eye, Loader2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
 
 type Project = {
   id: string;
@@ -72,6 +73,8 @@ export default function ProjectPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
 
+  const [feedback, setFeedback] = useState<string>("");
+
   const { data: project, isLoading } = useQuery<Project>({
     queryKey: ["project", id],
     queryFn: async () => {
@@ -85,9 +88,11 @@ export default function ProjectPage() {
     mutationFn: async ({
       taskId,
       status,
+      feedback,
     }: {
       taskId: string;
       status: string;
+      feedback?: string | null;
     }) => {
       await axios.patch(`/api/task/${taskId}/status`, { status });
     },
@@ -280,17 +285,23 @@ export default function ProjectPage() {
                               <Textarea
                                 name="feedback"
                                 placeholder="I think you should..."
+                                value={feedback}
+                                onChange={(e) => setFeedback(e.target.value)}
                                 className="resize-none"
                               />
                               <Button
                                 className="mt-2"
                                 variant="secondary"
-                                disabled={updateTaskStatus.isPending}
+                                disabled={
+                                  updateTaskStatus.isPending ||
+                                  feedback.length === 0
+                                }
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   updateTaskStatus.mutate({
                                     taskId: task.id,
                                     status: "REJECTED",
+                                    feedback,
                                   });
                                 }}
                               >
