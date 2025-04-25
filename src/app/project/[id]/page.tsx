@@ -25,6 +25,7 @@ import { Eye, Loader2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
+import { File, KickoffChecklist, Task } from "@/generated/prisma";
 
 type Project = {
   id: string;
@@ -76,11 +77,18 @@ export default function ProjectPage() {
 
   const [feedback, setFeedback] = useState<string>("");
 
-  const { data: project, isLoading } = useQuery<Project>({
-    queryKey: ["project", id],
+  const { data, isLoading, isPending } = useQuery({
+    queryKey: ["project-with-user", id],
     queryFn: async () => {
-      const res = await axios.get(`/api/project/${id}`);
-      return res.data;
+      const [projectRes, userRes] = await Promise.all([
+        axios.get(`/api/project/${id}`),
+        axios.get(`/api/user`),
+      ]);
+
+      return {
+        project: projectRes.data,
+        user: userRes.data.fullUser,
+      };
     },
     enabled: !!id,
   });
@@ -98,23 +106,23 @@ export default function ProjectPage() {
       await axios.patch(`/api/task/${taskId}/status`, { status, feedback });
     },
     onSuccess: () => {
-      // Show a success toast
-      toast.success("Task status updated !");
-
-      queryClient.invalidateQueries({ queryKey: ["project", id] });
+      toast.success("Task status updated!");
+      queryClient.invalidateQueries({ queryKey: ["project-with-user", id] });
     },
     onError: () => {
-      // Show an error toast
       toast.error("Failed to update task status");
     },
   });
 
-  if (isLoading || !project) {
+  if (isLoading || isPending || !data?.project) {
     return <ProjectSkeleton />;
   }
 
+  const project = data.project;
+  const user = data.user;
+
   const isOwner = session?.user?.id === project.owner.id;
-  const isFreelancer = session?.user?.type === "freelancer";
+  const isFreelancer = user?.type === "freelancer";
 
   return (
     <DashboardShell>
@@ -140,7 +148,7 @@ export default function ProjectPage() {
             <CardTitle>Project Members</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[project.owner, ...project.members.map((m) => m.user)].map(
+            {[project.owner, ...project.members.map((m: any) => m.user)].map(
               (user) => (
                 <div
                   key={user.id}
@@ -175,7 +183,7 @@ export default function ProjectPage() {
                 No checklist items yet.
               </p>
             ) : (
-              project.checklists.map((item) => (
+              project.checklists.map((item: KickoffChecklist) => (
                 <div
                   key={item.id}
                   className="flex items-center justify-between border rounded-md p-3 bg-muted/40"
@@ -222,7 +230,7 @@ export default function ProjectPage() {
                 "DONE",
               ].map((status) => {
                 const tasks = project.tasks.filter(
-                  (task) => task.status === status,
+                  (task: Task) => task.status === status,
                 );
                 if (tasks.length === 0) return null;
 
@@ -232,7 +240,7 @@ export default function ProjectPage() {
                       {status.replace("_", " ")}
                     </Label>
 
-                    {tasks.map((task) => (
+                    {tasks.map((task: Task) => (
                       <div
                         key={task.id}
                         className="border p-4 rounded-md bg-white hover:bg-muted/50"
@@ -358,7 +366,7 @@ export default function ProjectPage() {
             <CardTitle>Uploaded Files</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {project.files.map((file) => (
+            {project.files.map((file: File) => (
               <a
                 key={file.id}
                 href={file.url}
