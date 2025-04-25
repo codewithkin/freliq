@@ -136,21 +136,28 @@ const TasksKanban = () => {
           <ColumnsDirective>
             <ColumnDirective headerText="To Do" keyField="TODO" />
             <ColumnDirective headerText="In Progress" keyField="IN_PROGRESS" />
-            <ColumnDirective headerText="Testing" keyField="TESTING" />
+            <ColumnDirective
+              headerText="Testing"
+              keyField="AWAITING_VALIDATION"
+            />
+            <ColumnDirective headerText="Rejected" keyField="REJECTED" />
             <ColumnDirective headerText="Done" keyField="DONE" />
-            <ColumnDirective headerText="Validate" keyField="VALIDATE" />
           </ColumnsDirective>
         </KanbanComponent>
         <div className="flex gap-4 p-4">
-          {["TODO", "IN_PROGRESS", "TESTING", "DONE", "VALIDATE"].map(
-            (status) => (
-              <div key={status} className="w-1/5">
-                <Skeleton className="w-full h-40 mb-4" />
-                <Skeleton className="w-full h-6" />
-                <Skeleton className="w-full h-6 mt-2" />
-              </div>
-            ),
-          )}
+          {[
+            "TODO",
+            "IN_PROGRESS",
+            "AWAITING_VALIDATION",
+            "DONE",
+            "REJECTED",
+          ].map((status) => (
+            <div key={status} className="w-1/5">
+              <Skeleton className="w-full h-40 mb-4" />
+              <Skeleton className="w-full h-6" />
+              <Skeleton className="w-full h-6 mt-2" />
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -182,8 +189,12 @@ const TasksKanban = () => {
                 headerText="In Progress"
                 keyField="IN_PROGRESS"
               />
+              <ColumnDirective
+                headerText="Awaiting Validation"
+                keyField="AWAITING_VALIDATION"
+              />
+              <ColumnDirective headerText="Rejected" keyField="REJECTED" />
               <ColumnDirective headerText="Done" keyField="DONE" />
-              <ColumnDirective headerText="Validate" keyField="VALIDATE" />
             </ColumnsDirective>
           </KanbanComponent>
         </div>
