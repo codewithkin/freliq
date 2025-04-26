@@ -26,6 +26,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { File, KickoffChecklist, Task } from "@/generated/prisma";
+import NewTaskDialog from "./components/NewTaskDialog";
 
 type Project = {
   id: string;
@@ -215,6 +216,9 @@ export default function ProjectPage() {
         <Card>
           <CardHeader>
             <CardTitle>All Tasks</CardTitle>
+            <article className="flex gap-2 items-center mt-2">
+              <NewTaskDialog projectId={project.id} />
+            </article>
           </CardHeader>
           <CardContent className="space-y-6">
             {project.tasks.length === 0 ? (
@@ -243,7 +247,7 @@ export default function ProjectPage() {
                     {tasks.map((task: Task) => (
                       <div
                         key={task.id}
-                        className="border p-4 rounded-md bg-white hover:bg-muted/50"
+                        className="border p-4 rounded-md bg-white"
                       >
                         <div className="flex justify-between items-center">
                           <div>
