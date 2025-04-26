@@ -156,12 +156,12 @@ export default function ProjectPage() {
                 >
                   <Avatar className="bg-slate-500 w-8 h-8">
                     <AvatarImage src={user.image ?? ""} />
-                    <AvatarFallback className="text-primary">
-                      {user.name.charAt(0)}
+                    <AvatarFallback>
+                      {user.email ? user.email.charAt(0) : "U"}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="font-medium">{user.name}</p>
+                    <p className="font-medium">{user.email}</p>
                     <p className="text-sm text-muted-foreground">
                       {user.id === project.owner.id ? "Freelancer" : "Client"}
                     </p>
