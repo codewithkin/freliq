@@ -105,14 +105,6 @@ export function ProjectsLineChart({ projects }: ProjectsLineChartProps) {
           </LineChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Showing total projects for the last months
-        </div>
-      </CardFooter>
     </Card>
   );
 }
