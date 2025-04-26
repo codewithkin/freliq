@@ -16,6 +16,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import axios from "axios";
 
 function NewTaskDialog({ projectId }: { projectId: string }) {
   const [title, setTitle] = useState("");
@@ -23,7 +24,9 @@ function NewTaskDialog({ projectId }: { projectId: string }) {
 
   const { mutate: createNewTask, isPending: loading } = useMutation({
     mutationKey: ["createNewTask"],
-    mutationFn: async () => {},
+    mutationFn: async () => {
+      const res = await axios.post("/api/task");
+    },
     onSuccess: () => {
       toast.success("Task created successfully");
 
@@ -77,6 +80,12 @@ function NewTaskDialog({ projectId }: { projectId: string }) {
               onChange={(e) => setDescription(e.target.value)}
               placeholder="e.g I have to set the text to 3xl or 5xl instead of 2xl on mobile screens in order to increase readability"
             />
+          </article>
+
+          <article className="flex flex-col gap-2">
+            <Label htmlFor="dueDate">Due Date</Label>
+
+            <Input type="date" name="dueDate" id="dueDate" />
           </article>
 
           <DialogFooter>
