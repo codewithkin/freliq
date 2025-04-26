@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { LayoutGrid, List, Table } from "lucide-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { LayoutGrid, List, Table } from "lucide-react";
 
 interface ProjectsViewTabsProps {
-  value: string
-  onChange: (value: string) => void
+  value: string;
+  onChange: (value: string) => void;
 }
 
 export function ProjectsViewTabs({ value, onChange }: ProjectsViewTabsProps) {
@@ -16,6 +16,7 @@ export function ProjectsViewTabs({ value, onChange }: ProjectsViewTabsProps) {
           <Table className="w-4 h-4" />
           Table
         </TabsTrigger>
+        <TabsContent value="table"></TabsContent>
         <TabsTrigger value="cards" className="flex items-center gap-2">
           <LayoutGrid className="w-4 h-4" />
           Cards
@@ -26,5 +27,5 @@ export function ProjectsViewTabs({ value, onChange }: ProjectsViewTabsProps) {
         </TabsTrigger>
       </TabsList>
     </Tabs>
-  )
+  );
 }
