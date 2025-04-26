@@ -276,86 +276,89 @@ export default function ProjectPage() {
                             {task.status}
                           </Badge>
                         </div>
-
-                        {/* If not DONE and user is a client, show actions */}
-                        {!isFreelancer && task.status !== "DONE" && (
-                          <div className="mt-3 flex gap-2">
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              onClick={() => router.push(`/task/${task.id}`)}
-                            >
-                              <Eye />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                updateTaskStatus.mutate({
-                                  taskId: task.id,
-                                  status: "DONE",
-                                });
-                              }}
-                            >
-                              Approve
-                            </Button>
-
-                            <Dialog>
-                              <DialogTrigger asChild>
-                                <Button size="sm" variant="destructive">
-                                  Disapprove
+                        <div className="mt-3 flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => router.push(`/task/${task.id}`)}
+                          >
+                            <Eye />
+                          </Button>
+                          {/* If not DONE and user is a client, show actions */}
+                          {!isFreelancer &&
+                            task.status !== "DONE" &&
+                            task.status !== "REJECTED" && (
+                              <>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    updateTaskStatus.mutate({
+                                      taskId: task.id,
+                                      status: "DONE",
+                                    });
+                                  }}
+                                >
+                                  Approve
                                 </Button>
-                              </DialogTrigger>
-                              <DialogContent>
-                                <div className="space-y-4">
-                                  <DialogTitle className="text-lg font-semibold">
-                                    Please provide some feedback
-                                  </DialogTitle>
-                                  <DialogDescription className="text-sm text-muted-foreground">
-                                    This will help the freelancer improve their
-                                    work
-                                  </DialogDescription>
 
-                                  <article>
-                                    <Textarea
-                                      name="feedback"
-                                      placeholder="I think you should..."
-                                      value={feedback}
-                                      onChange={(e) =>
-                                        setFeedback(e.target.value)
-                                      }
-                                      className="resize-none"
-                                    />
-                                    <Button
-                                      className="mt-2"
-                                      variant="secondary"
-                                      disabled={
-                                        updateTaskStatus.isPending ||
-                                        feedback.length === 0
-                                      }
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        updateTaskStatus.mutate({
-                                          taskId: task.id,
-                                          status: "REJECTED",
-                                          feedback,
-                                        });
-                                      }}
-                                    >
-                                      {updateTaskStatus.isPending && (
-                                        <Loader2 className="animate-spin" />
-                                      )}
-                                      {updateTaskStatus.isPending
-                                        ? "Submitting..."
-                                        : "Reject and Send Feedback"}
+                                <Dialog>
+                                  <DialogTrigger asChild>
+                                    <Button size="sm" variant="destructive">
+                                      Disapprove
                                     </Button>
-                                  </article>
-                                </div>
-                              </DialogContent>
-                            </Dialog>
-                          </div>
-                        )}
+                                  </DialogTrigger>
+                                  <DialogContent>
+                                    <div className="space-y-4">
+                                      <DialogTitle className="text-lg font-semibold">
+                                        Please provide some feedback
+                                      </DialogTitle>
+                                      <DialogDescription className="text-sm text-muted-foreground">
+                                        This will help the freelancer improve
+                                        their work
+                                      </DialogDescription>
+
+                                      <article>
+                                        <Textarea
+                                          name="feedback"
+                                          placeholder="I think you should..."
+                                          value={feedback}
+                                          onChange={(e) =>
+                                            setFeedback(e.target.value)
+                                          }
+                                          className="resize-none"
+                                        />
+                                        <Button
+                                          className="mt-2"
+                                          variant="secondary"
+                                          disabled={
+                                            updateTaskStatus.isPending ||
+                                            feedback.length === 0
+                                          }
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            updateTaskStatus.mutate({
+                                              taskId: task.id,
+                                              status: "REJECTED",
+                                              feedback,
+                                            });
+                                          }}
+                                        >
+                                          {updateTaskStatus.isPending && (
+                                            <Loader2 className="animate-spin" />
+                                          )}
+                                          {updateTaskStatus.isPending
+                                            ? "Submitting..."
+                                            : "Reject and Send Feedback"}
+                                        </Button>
+                                      </article>
+                                    </div>
+                                  </DialogContent>
+                                </Dialog>
+                              </>
+                            )}
+                        </div>
                       </div>
                     ))}
                   </div>

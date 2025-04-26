@@ -38,7 +38,7 @@ function NewTaskDialog({ projectId }: { projectId: string }) {
       toast.success("Task created successfully");
 
       // Invalidate queries
-      queryClient.invalidateQueries({queryKey: ["project", "task"]})
+      queryClient.invalidateQueries({ queryKey: ["project", "task"] });
 
       // Close the dialog
       document.getElementById("close")?.click();
