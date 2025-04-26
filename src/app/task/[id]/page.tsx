@@ -31,6 +31,7 @@ import { authClient } from "@/lib/auth-client";
 import { Input } from "@/components/ui/input";
 import { queryClient } from "@/providers/QueryClientProvider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import SubmitProofDialog from "./components/SubmitProofDialog";
 
 // Add the CommentForm component
 const CommentForm = ({
@@ -392,20 +393,18 @@ export default function TaskPage() {
         )}
 
         {/* Freelancer view to submit proof (if not done yet) */}
-        {(isFreelancer && task.status !== "DONE") &&
-          (task.status !== "AWAITING_REVIEW" && (
+        {isFreelancer &&
+          task.status !== "DONE" &&
+          task.status !== "AWAITING_REVIEW" && (
             <Card>
               <CardHeader>
                 <CardTitle>Submit Proof</CardTitle>
               </CardHeader>
               <CardContent>
-                <Button disabled={updateTaskStatus.isPending}>
-                  <FileText />
-                  Submit Proof
-                </Button>
+                <SubmitProofDialog />
               </CardContent>
             </Card>
-          ))}
+          )}
       </div>
     </DashboardShell>
   );
