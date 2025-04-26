@@ -30,9 +30,7 @@ function SubmitProofDialog() {
         </DialogHeader>
 
         <article>
-          <FileUploader onFileSelected={(file) => {
-            console.log(file.arrayBuffer)
-          }} />
+          <FileUploader />
         </article>
 
         <DialogFooter>
