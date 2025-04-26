@@ -87,13 +87,10 @@ const CommentForm = ({
 
 export default function TaskPage() {
   const { id } = useParams<{ id: string }>();
-  const router = useRouter();
   const [feedback, setFeedback] = useState("");
   const [editing, setEditing] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newDescription, setNewDescription] = useState("");
-
-  const { data: session } = authClient.useSession();
 
   const { data: user } = useQuery({
     queryKey: ["full-user"],
