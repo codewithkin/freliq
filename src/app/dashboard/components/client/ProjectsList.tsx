@@ -94,7 +94,7 @@ export const ProjectsList = () => {
           <TableCaption>A list of your current projects.</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead>Project</TableHead>
+              <TableHead>Name</TableHead>
               <TableHead>Created</TableHead>
               <TableHead>Deadline</TableHead>
               <TableHead>Files</TableHead>
