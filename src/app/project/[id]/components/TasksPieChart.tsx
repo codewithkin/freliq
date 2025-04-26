@@ -48,15 +48,15 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 function getChartIndex(status: string) {
-    const indexMap: Record<string, number> = {
-      TODO: 1,
-      IN_PROGRESS: 2,
-      AWAITING_VALIDATION: 3,
-      DONE: 4,
-      REJECTED: 5,
-    }
-    return indexMap[status] || 0
-  }
+  const indexMap: Record<string, number> = {
+    TODO: 1,
+    IN_PROGRESS: 2,
+    AWAITING_VALIDATION: 3,
+    DONE: 4,
+    REJECTED: 5,
+  };
+  return indexMap[status] || 0;
+}
 
 export function TaskPieChart({ tasks }: TaskPieChartProps) {
   // Process tasks into chart data
