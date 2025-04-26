@@ -47,6 +47,17 @@ const STATUS_COLORS: Record<string, string> = {
   REJECTED: "hsl(var(--chart-5))",
 };
 
+function getChartIndex(status: string) {
+    const indexMap: Record<string, number> = {
+      TODO: 1,
+      IN_PROGRESS: 2,
+      AWAITING_VALIDATION: 3,
+      DONE: 4,
+      REJECTED: 5,
+    }
+    return indexMap[status] || 0
+  }
+
 export function TaskPieChart({ tasks }: TaskPieChartProps) {
   // Process tasks into chart data
   const chartData = React.useMemo(() => {
@@ -127,16 +138,18 @@ export function TaskPieChart({ tasks }: TaskPieChartProps) {
           </PieChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2 font-medium leading-none">
-          {totalTasks > 0
-            ? "Showing distribution of project tasks"
-            : "No tasks to display"}{" "}
-          {totalTasks > 0 && <TrendingUp className="h-4 w-4" />}
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Statuses: TODO, IN_PROGRESS, DONE, AWAITING_VALIDATION, REJECTED
-        </div>
+      <CardFooter className="flex flex-wrap justify-center gap-4 mt-4">
+        {chartData.map((entry) => (
+          <div key={entry.status} className="flex items-center gap-2">
+            <span
+              className="inline-block h-3 w-3 rounded-full"
+              style={{
+                backgroundColor: `var(--chart-${getChartIndex(entry.status)})`,
+              }}
+            />
+            <span>{entry.status}</span>
+          </div>
+        ))}
       </CardFooter>
     </Card>
   );
