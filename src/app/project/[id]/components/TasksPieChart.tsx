@@ -64,6 +64,8 @@ export function TaskPieChart({ tasks }: TaskPieChartProps) {
     }));
   }, [tasks]);
 
+  console.log("Task data: ", chartData);
+
   const totalTasks = React.useMemo(() => {
     return tasks.length;
   }, [tasks]);
