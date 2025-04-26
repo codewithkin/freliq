@@ -332,6 +332,7 @@ export default function TaskPage() {
           <div className="flex gap-3 mt-4">
             <Button
               variant="default"
+              disabled={updateTaskStatus.isPending}
               onClick={() =>
                 updateTaskStatus.mutate({ status: "DONE", feedback: "" })
               }
