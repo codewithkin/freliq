@@ -43,6 +43,7 @@
     "react-dropzone": "^14.3.8",
     "react-icons": "^5.5.0",
     "react-kanban": "^0.0.0-test",
+    "recharts": "^2.15.3",
     "resend": "^4.4.0",
     "sonner": "^2.0.3",
     "tailwind-merge": "^3.2.0",
