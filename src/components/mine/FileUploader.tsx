@@ -3,12 +3,36 @@
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
 
 export default function FileUploader() {
   const [file, setFile] = useState<File | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
+
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["uploadProof"],
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append("proof", file);
+
+      const res = await fetch("/api/upload/proof", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error("Upload failed");
+
+      return res.json();
+    },
+    onSuccess: () => {
+      toast.success("File uploaded successfully!");
+      setFile(null);
+    },
+    onError: (err) => {
+      toast.error("Failed to upload file.");
+    },
+  });
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length) {
@@ -21,25 +45,7 @@ export default function FileUploader() {
   const handleUpload = async () => {
     if (!file) return;
 
-    const formData = new FormData();
-    formData.append("proof", file);
-
-    try {
-      setIsUploading(true);
-      const res = await fetch("/api/upload/proof", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!res.ok) throw new Error("Upload failed");
-
-      toast.success("File uploaded successfully!");
-      setFile(null);
-    } catch (err) {
-      toast.error("Failed to upload file.");
-    } finally {
-      setIsUploading(false);
-    }
+    mutate(file);
   };
 
   return (
@@ -59,8 +65,8 @@ export default function FileUploader() {
       </div>
 
       {file && (
-        <Button onClick={handleUpload} disabled={isUploading}>
-          {isUploading ? (
+        <Button onClick={handleUpload} disabled={isPending}>
+          {isPending ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Uploading...

@@ -29,9 +29,7 @@ function SubmitProofDialog() {
           </DialogDescription>
         </DialogHeader>
 
-        <article>
-          <FileUploader />
-        </article>
+        <FileUploader />
 
         <DialogFooter>
           <DialogClose>Close</DialogClose>
