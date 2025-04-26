@@ -30,6 +30,7 @@ function NewTaskDialog({ projectId }: { projectId: string }) {
         title,
         description,
         dueDate,
+        projectId,
       });
     },
     onSuccess: () => {

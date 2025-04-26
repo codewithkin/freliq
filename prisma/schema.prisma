@@ -210,7 +210,7 @@ model Task {
 }
 
 model Notification {
-  id       String @id
+  id       String @id @default(uuid())
   type     String // system, project, message
   priority String // low, medium, high
   message  String

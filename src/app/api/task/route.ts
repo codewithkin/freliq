@@ -1,34 +1,68 @@
+import { auth } from "@/lib/auth";
 import { prisma } from "@/prisma";
+import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
     // Get the task title and description from the request body
     const data = await req.json();
-    const { title, description, dueDate } = data;
+    const { title, description, dueDate, projectId } = data;
 
     // Make sure the title and description exist
     if (!title || !description || dueDate) {
-      console.log("Missing either title, description or due date not found");
+      console.log(
+        "Missing either title, description, project Id or due date not found",
+      );
 
       return NextResponse.json(
         {
-          message: "Title or description not found",
+          message:
+            "Missing either title, description, project Id or due date not found",
         },
         { status: 400 },
       );
     }
+
+    // Get the user's data
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
 
     // Create a new task
     const newTask = await prisma.task.create({
       data: {
         title,
         description,
-        dueDate
+        dueDate,
+        project: {
+          connect: {
+            id: projectId,
+          },
+        },
+        creator: {
+          connect: {
+            id: session?.user?.id || "",
+          },
+        },
       },
     });
 
-    return NextResponse.json(newTask);
+    // Create a new notification
+    const newNotification = await prisma.notification.create({
+      data: {
+        type: "task",
+        priority: "low",
+        message: `The task "${title} has been created"`,
+        user: {
+          connect: {
+            id: session?.user?.id || "",
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(newTask, { status: 201 });
   } catch (e) {
     console.log("An error occured whie creating task: ", e);
 
