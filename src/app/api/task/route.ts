@@ -7,10 +7,14 @@ export async function POST(req: NextRequest) {
   try {
     // Get the task title and description from the request body
     const data = await req.json();
-    const { title, description, dueDate, projectId } = data;
+    let { title, description, dueDate, projectId } = data;
+
+    console.log("Body: ", data);
+
+    dueDate = new Date(dueDate).toISOString();
 
     // Make sure the title and description exist
-    if (!title || !description || dueDate) {
+    if (!title || !description || !dueDate || !projectId) {
       console.log(
         "Missing either title, description, project Id or due date not found",
       );
@@ -62,7 +66,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(newTask, { status: 201 });
+    return NextResponse.json({ newTask, newNotification }, { status: 201 });
   } catch (e) {
     console.log("An error occured whie creating task: ", e);
 

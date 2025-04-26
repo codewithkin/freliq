@@ -26,7 +26,7 @@ function NewTaskDialog({ projectId }: { projectId: string }) {
   const { mutate: createNewTask, isPending: loading } = useMutation({
     mutationKey: ["createNewTask"],
     mutationFn: async () => {
-      const res = await axios.post("/api/task", {
+      await axios.post("/api/task", {
         title,
         description,
         dueDate,
