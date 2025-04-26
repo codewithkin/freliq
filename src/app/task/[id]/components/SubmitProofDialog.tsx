@@ -1,14 +1,15 @@
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { FileText } from "lucide-react";
-import React from "react";
 
 function SubmitProofDialog() {
   return (
@@ -26,6 +27,11 @@ function SubmitProofDialog() {
             You can upload an image, short video or file
           </DialogDescription>
         </DialogHeader>
+
+        <DialogFooter>
+          <DialogClose>Close</DialogClose>
+          <Button>Submit</Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
