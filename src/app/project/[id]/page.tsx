@@ -27,6 +27,7 @@ import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { File, KickoffChecklist, Task } from "@/generated/prisma";
 import NewTaskDialog from "./components/NewTaskDialog";
+import { TaskPieChart } from "./components/TasksPieChart";
 
 type Project = {
   id: string;
@@ -121,6 +122,8 @@ export default function ProjectPage() {
 
   const project = data.project;
   const user = data.user;
+
+  console.log("Tasks: ", project.tasks);
 
   const isOwner = session?.user?.id === project.owner.id;
   const isFreelancer = user?.type === "freelancer";
@@ -397,6 +400,8 @@ export default function ProjectPage() {
             )}
           </CardContent>
         </Card>
+
+        <TaskPieChart tasks={project.tasks || []} />
       </div>
     </DashboardShell>
   );
