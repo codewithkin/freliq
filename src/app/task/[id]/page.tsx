@@ -188,7 +188,7 @@ export default function TaskPage() {
                 placeholder="Edit description..."
               />
               <Button
-                variant="outline"
+                variant="default"
                 onClick={() =>
                   updateTaskDetails.mutate({
                     title: newTitle,
@@ -223,7 +223,20 @@ export default function TaskPage() {
           )}
 
           <div className="flex flex-wrap items-center gap-4 mt-4">
-            <Badge variant="outline">{task.status}</Badge>
+            <Badge
+              variant="outline"
+              className={
+                {
+                  DONE: "bg-green-500 text-white",
+                  AWAITING_VALIDATION: "bg-blue-500 text-white",
+                  REJECTED: "bg-red-500 text-white",
+                  TODO: "bg-slate-400 text-slate-800",
+                  IN_PROGRESS: "bg-yellow-500 text-black",
+                }[task.status as keyof typeof task.status]
+              }
+            >
+              {task.status}
+            </Badge>
             {task.dueDate && (
               <span className="text-sm text-muted-foreground">
                 Due: {format(new Date(task.dueDate), "PPP")}
