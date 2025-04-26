@@ -119,7 +119,21 @@ const TasksKanban = () => {
         </CardTitle>
         <p className="text-gray-700">{props.description}</p>
         <div className="text-xs text-gray-500 mt-2 flex justify-between">
-          <Badge className="text-xs font-regular">{props.status}</Badge>
+          <Badge
+            className={`text-xs font-regular ${
+              props.status === "DONE"
+                ? "bg-green-500 text-white"
+                : props.status === "TODO"
+                  ? "bg-slate-400 text-black"
+                  : props.status === "IN_PROGRESS"
+                    ? "bg-yellow-500 text-black"
+                    : props.status === "AWAITING_VALIDATION"
+                      ? "bg-blue-500 text-white"
+                      : "bg-red-500 text-white"
+            }`}
+          >
+            {props.status}
+          </Badge>
           <span>{props.assignee?.name}</span>
         </div>
         <p className="text-slate-500">
