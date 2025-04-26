@@ -22,11 +22,11 @@ export default function FileUploader() {
     if (!file) return;
 
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("proof", file);
 
     try {
       setIsUploading(true);
-      const res = await fetch("/api/upload/", {
+      const res = await fetch("/api/upload/proof", {
         method: "POST",
         body: formData,
       });

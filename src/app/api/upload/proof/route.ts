@@ -6,7 +6,7 @@ import path from "path";
 
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
-  const file: File | null = formData.get("file") as unknown as File;
+  const file: File | null = formData.get("proof") as unknown as File;
 
   if (!file)
     return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
