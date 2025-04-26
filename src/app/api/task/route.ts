@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
       data: {
         title,
         description,
-        dueDate,
+        dueDate
       },
     });
 

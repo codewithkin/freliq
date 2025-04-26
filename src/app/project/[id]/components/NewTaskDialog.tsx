@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useMutation } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import axios from "axios";
@@ -21,11 +21,16 @@ import axios from "axios";
 function NewTaskDialog({ projectId }: { projectId: string }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [dueDate, setDueDate] = useState("");
 
   const { mutate: createNewTask, isPending: loading } = useMutation({
     mutationKey: ["createNewTask"],
     mutationFn: async () => {
-      const res = await axios.post("/api/task");
+      const res = await axios.post("/api/task", {
+        title,
+        description,
+        dueDate,
+      });
     },
     onSuccess: () => {
       toast.success("Task created successfully");
@@ -85,12 +90,19 @@ function NewTaskDialog({ projectId }: { projectId: string }) {
           <article className="flex flex-col gap-2">
             <Label htmlFor="dueDate">Due Date</Label>
 
-            <Input type="date" name="dueDate" id="dueDate" />
+            <Input
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+              type="date"
+              name="dueDate"
+              id="dueDate"
+            />
           </article>
 
           <DialogFooter>
             <DialogClose>Close</DialogClose>
             <Button disabled={loading}>
+              {loading && <Loader2 className="animate-spin" />}
               {loading ? "Creating Task..." : "Create Task"}
             </Button>
           </DialogFooter>
