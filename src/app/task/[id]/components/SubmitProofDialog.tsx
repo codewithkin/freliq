@@ -15,7 +15,7 @@ import { FileText } from "lucide-react";
 function SubmitProofDialog() {
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button>
           <FileText />
           Submit Proof
@@ -30,7 +30,9 @@ function SubmitProofDialog() {
         </DialogHeader>
 
         <article>
-          <FileUploader onFileSelected={(file) => console.log(file)} />
+          <FileUploader onFileSelected={(file) => {
+            console.log(file.arrayBuffer)
+          }} />
         </article>
 
         <DialogFooter>
