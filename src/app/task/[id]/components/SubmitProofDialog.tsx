@@ -1,3 +1,4 @@
+import FileUploader from "@/components/mine/FileUploader";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -27,6 +28,10 @@ function SubmitProofDialog() {
             You can upload an image, short video or file
           </DialogDescription>
         </DialogHeader>
+
+        <article>
+          <FileUploader onFileSelected={(file) => console.log(file)} />
+        </article>
 
         <DialogFooter>
           <DialogClose>Close</DialogClose>
