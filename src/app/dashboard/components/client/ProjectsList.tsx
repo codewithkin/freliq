@@ -106,7 +106,7 @@ export const ProjectsList = () => {
             {paginatedData?.map((project) => {
               const totalTasks = project.tasks.length;
               const incompleteTasks = project.tasks.filter(
-                (t) => t.status !== "done",
+                (t) => t.status !== "DONE",
               ).length;
               const progress =
                 totalTasks > 0
@@ -132,7 +132,7 @@ export const ProjectsList = () => {
                     <Badge variant="secondary">{project.files.length}</Badge>
                   </TableCell>
                   <TableCell>
-                    {incompleteTasks} / {totalTasks}
+                    {totalTasks - incompleteTasks} / {totalTasks}
                   </TableCell>
                   <TableCell>
                     <Progress value={progress} className="h-2" />
