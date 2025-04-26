@@ -165,8 +165,8 @@ export default function TaskPage() {
     );
   }
 
-  const isFreelancer = user.type !== "freelancer";
-  const isClient = user.type === "freelancer";
+  const isFreelancer = user.type === "freelancer";
+  const isClient = user.type !== "freelancer";
 
   return (
     <DashboardShell>
@@ -216,7 +216,7 @@ export default function TaskPage() {
                 }}
                 className="mt-4"
               >
-                <Edit className="mr-2" />
+                <Edit  />
                 Edit Task
               </Button>
             </div>
@@ -300,10 +300,10 @@ export default function TaskPage() {
                   <Avatar className="w-10 h-10">
                     <AvatarImage
                       src={comment.author.image}
-                      alt={comment.author.name}
+                      alt={comment.author.email}
                     />
                     <AvatarFallback>
-                      {comment.author.name.charAt(0)}
+                      {comment.author.email.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
                   <div>
@@ -334,19 +334,20 @@ export default function TaskPage() {
         {isClient && task.status !== "DONE" && (
           <div className="flex gap-3 mt-4">
             <Button
-              variant="outline"
+              variant="default"
               onClick={() =>
                 updateTaskStatus.mutate({ status: "DONE", feedback: "" })
               }
+              className="bg-green-500"
             >
-              <CheckCircle className="mr-2" />
+              <CheckCircle />
               Approve
             </Button>
 
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="destructive">
-                  <XCircle className="mr-2" />
+                  <XCircle  />
                   Reject
                 </Button>
               </DialogTrigger>
@@ -399,7 +400,7 @@ export default function TaskPage() {
             </CardHeader>
             <CardContent>
               <Button disabled={updateTaskStatus.isPending}>
-                <FileText className="mr-2" />
+                <FileText  />
                 Submit Proof
               </Button>
             </CardContent>
