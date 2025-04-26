@@ -162,8 +162,9 @@ export default function TaskPage() {
     );
   }
 
-  const isFreelancer = user.type === "freelancer";
-  const isClient = user.type !== "freelancer";
+  // const isFreelancer = user.type === "freelancer";
+  const isFreelancer = true;
+  const isClient = user.type === "freelancer";
 
   return (
     <DashboardShell>
@@ -213,7 +214,7 @@ export default function TaskPage() {
                 }}
                 className="mt-4"
               >
-                <Edit  />
+                <Edit />
                 Edit Task
               </Button>
             </div>
@@ -345,7 +346,7 @@ export default function TaskPage() {
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="destructive">
-                  <XCircle  />
+                  <XCircle />
                   Reject
                 </Button>
               </DialogTrigger>
@@ -391,19 +392,20 @@ export default function TaskPage() {
         )}
 
         {/* Freelancer view to submit proof (if not done yet) */}
-        {isFreelancer && task.status === "TODO" && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Submit Proof</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Button disabled={updateTaskStatus.isPending}>
-                <FileText  />
-                Submit Proof
-              </Button>
-            </CardContent>
-          </Card>
-        )}
+        {(isFreelancer && task.status !== "DONE") &&
+          (task.status !== "AWAITING_REVIEW" && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Submit Proof</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Button disabled={updateTaskStatus.isPending}>
+                  <FileText />
+                  Submit Proof
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
       </div>
     </DashboardShell>
   );
