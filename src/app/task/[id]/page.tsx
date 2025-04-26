@@ -197,7 +197,7 @@ export default function TaskPage() {
                 className="mt-2"
               >
                 Save Changes
-                <CheckCircle className="ml-2" />
+                <CheckCircle />
               </Button>
             </div>
           ) : (
