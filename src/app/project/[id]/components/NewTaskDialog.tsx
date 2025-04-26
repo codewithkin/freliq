@@ -17,6 +17,7 @@ import { Loader2, Plus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import axios from "axios";
+import { queryClient } from "@/providers/QueryClientProvider";
 
 function NewTaskDialog({ projectId }: { projectId: string }) {
   const [title, setTitle] = useState("");
@@ -37,6 +38,10 @@ function NewTaskDialog({ projectId }: { projectId: string }) {
       toast.success("Task created successfully");
 
       // Invalidate queries
+      queryClient.invalidateQueries({queryKey: ["project", "task"]})
+
+      // Close the dialog
+      document.getElementById("close")?.click();
     },
 
     onError: () => {
@@ -101,7 +106,7 @@ function NewTaskDialog({ projectId }: { projectId: string }) {
           </article>
 
           <DialogFooter>
-            <DialogClose>Close</DialogClose>
+            <DialogClose id="close">Close</DialogClose>
             <Button disabled={loading}>
               {loading && <Loader2 className="animate-spin" />}
               {loading ? "Creating Task..." : "Create Task"}
