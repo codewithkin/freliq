@@ -102,6 +102,7 @@ export function TaskPieChart({ tasks }: TaskPieChartProps) {
               dataKey="count"
               nameKey="status"
               innerRadius={60}
+              outerRadius={100}
               strokeWidth={5}
               isAnimationActive={false}
             >
@@ -147,7 +148,7 @@ export function TaskPieChart({ tasks }: TaskPieChartProps) {
                 backgroundColor: `var(--chart-${getChartIndex(entry.status)})`,
               }}
             />
-            <span>{entry.status}</span>
+            <span className="text-sm">{entry.status}</span>
           </div>
         ))}
       </CardFooter>
