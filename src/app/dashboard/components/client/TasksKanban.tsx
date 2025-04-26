@@ -10,11 +10,18 @@ import * as React from "react";
 import "../../../globals.css";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Eye, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { format, formatDate } from "date-fns";
-import { Card, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import Link from "next/link";
 
 // Fetch tasks from the backend
 const fetchTasks = async () => {
@@ -66,7 +73,7 @@ const TasksKanban = () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
 
       // Show a success toast
-      toast.success("Tasks updated successfully");
+      toast.success("Tasks status updated");
     },
     onError: () => {
       toast.error("An error occured while updating tasks");
@@ -114,31 +121,113 @@ const TasksKanban = () => {
   const cardTemplate = (props: any) => {
     return (
       <Card className="bg-white border-l-4 border-yellow-500 p-2 transition duration-200">
-        <CardTitle className="text-primary text-lg font-semibold">
-          {props.title}
-        </CardTitle>
-        <p className="text-gray-700">{props.description}</p>
-        <div className="text-xs text-gray-500 mt-2 flex justify-between">
-          <Badge
-            className={`text-xs font-regular ${
-              props.status === "DONE"
-                ? "bg-green-500 text-white"
-                : props.status === "TODO"
-                  ? "bg-slate-400 text-black"
-                  : props.status === "IN_PROGRESS"
-                    ? "bg-yellow-500 text-black"
-                    : props.status === "AWAITING_VALIDATION"
-                      ? "bg-blue-500 text-white"
-                      : "bg-red-500 text-white"
-            }`}
-          >
-            {props.status}
-          </Badge>
-          <span>{props.assignee?.name}</span>
-        </div>
-        <p className="text-slate-500">
-          Due {format(new Date(props.dueDate), "MMM d, yyyy")}
-        </p>
+        <CardContent className="p-4">
+          <CardTitle className="text-primary text-lg font-semibold">
+            {props.title}
+          </CardTitle>
+          <p className="text-gray-700">{props.description}</p>
+          <div className="text-xs text-gray-500 mt-2 flex justify-between">
+            <Badge
+              className={`text-xs font-regular ${
+                props.status === "DONE"
+                  ? "bg-green-500 text-white"
+                  : props.status === "TODO"
+                    ? "bg-slate-400 text-black"
+                    : props.status === "IN_PROGRESS"
+                      ? "bg-yellow-500 text-black"
+                      : props.status === "AWAITING_VALIDATION"
+                        ? "bg-blue-500 text-white"
+                        : "bg-red-500 text-white"
+              }`}
+            >
+              {props.status}
+            </Badge>
+            <span>{props.assignee?.name}</span>
+          </div>
+          <p className="text-slate-500">
+            Due {format(new Date(props.dueDate), "MMM d, yyyy")}
+          </p>
+
+          {/* Action buttons */}
+          <CardFooter className="px-0 flex gap-2">
+            {/* View more details */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size={
+                      props.status == "AWAITING_VALIDATION" ? "icon" : "default"
+                    }
+                    asChild
+                  >
+                    <Link href={`/task/${props.id}`}>
+                      <Eye />
+                      {props.status !== "AWAITING_VALIDATION" && (
+                        <span>View details</span>
+                      )}
+                    </Link>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>View task details</p>
+                </TooltipContent>
+              </Tooltip>
+
+              {/* Approve / Reject btns */}
+              {props.status == "AWAITING_VALIDATION" && (
+                <>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        className="text-xs"
+                        onClick={() => {
+                          mutation.mutateAsync({
+                            taskId: props.id,
+                            newStatus: "DONE",
+                          });
+                        }}
+                        disabled={mutation.isPending}
+                        variant="default"
+                      >
+                        {mutation.isPending && (
+                          <Loader2 className="animate-spin" />
+                        )}
+                        Approve
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Approve task</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        className="text-xs"
+                        onClick={() => {
+                          mutation.mutateAsync({
+                            taskId: props.id,
+                            newStatus: "REJECTED",
+                          });
+                        }}
+                        disabled={mutation.isPending}
+                        variant="destructive"
+                      >
+                        {mutation.isPending && (
+                          <Loader2 className="animate-spin" />
+                        )}
+                        Reject
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-red-500 text-white">
+                      <p>Reject task</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </>
+              )}
+            </TooltipProvider>
+          </CardFooter>
+        </CardContent>
       </Card>
     );
   };
