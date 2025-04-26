@@ -163,9 +163,8 @@ export default function TaskPage() {
     );
   }
 
-  // const isFreelancer = user.type === "freelancer";
-  const isFreelancer = true;
-  const isClient = user.type === "freelancer";
+  const isFreelancer = user.type === "freelancer";
+  const isClient = user.type !== "freelancer";
 
   return (
     <DashboardShell>
@@ -328,58 +327,62 @@ export default function TaskPage() {
             queryClient.invalidateQueries({ queryKey: ["task", id] })
           }
         />
+        <div className="flex gap-3 mt-4">
+          {/* Actions */}
+          {isClient && task.status !== "DONE" && (
+            <>
+              <Button
+                variant="default"
+                disabled={updateTaskStatus.isPending}
+                onClick={() =>
+                  updateTaskStatus.mutate({ status: "DONE", feedback: "" })
+                }
+                className="bg-green-500"
+              >
+                <CheckCircle />
+                Approve
+              </Button>
 
-        {/* Actions */}
-        {isClient && task.status !== "DONE" && (
-          <div className="flex gap-3 mt-4">
-            <Button
-              variant="default"
-              disabled={updateTaskStatus.isPending}
-              onClick={() =>
-                updateTaskStatus.mutate({ status: "DONE", feedback: "" })
-              }
-              className="bg-green-500"
-            >
-              <CheckCircle />
-              Approve
-            </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="destructive">
+                    <XCircle />
+                    Reject
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogTitle className="font-semibold text-lg mb-2">
+                    Provide feedback
+                  </DialogTitle>
+                  <Textarea
+                    value={feedback}
+                    onChange={(e) => setFeedback(e.target.value)}
+                    placeholder="I think you should improve..."
+                    className="resize-none"
+                  />
+                  <Button
+                    className="mt-2"
+                    disabled={
+                      updateTaskStatus.isPending || feedback.length === 0
+                    }
+                    onClick={() =>
+                      updateTaskStatus.mutate({
+                        status: "REJECTED",
+                        feedback,
+                      })
+                    }
+                  >
+                    {updateTaskStatus.isPending && (
+                      <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                    )}
+                    Reject & Send Feedback
+                  </Button>
+                </DialogContent>
+              </Dialog>
+            </>
+          )}
 
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="destructive">
-                  <XCircle />
-                  Reject
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogTitle className="font-semibold text-lg mb-2">
-                  Provide feedback
-                </DialogTitle>
-                <Textarea
-                  value={feedback}
-                  onChange={(e) => setFeedback(e.target.value)}
-                  placeholder="I think you should improve..."
-                  className="resize-none"
-                />
-                <Button
-                  className="mt-2"
-                  disabled={updateTaskStatus.isPending || feedback.length === 0}
-                  onClick={() =>
-                    updateTaskStatus.mutate({
-                      status: "REJECTED",
-                      feedback,
-                    })
-                  }
-                >
-                  {updateTaskStatus.isPending && (
-                    <Loader2 className="animate-spin mr-2 h-4 w-4" />
-                  )}
-                  Reject & Send Feedback
-                </Button>
-              </DialogContent>
-            </Dialog>
-
-            {/* New Button for Approving or Updating Status */}
+          {isFreelancer && (
             <Button
               variant="outline"
               onClick={() =>
@@ -389,8 +392,8 @@ export default function TaskPage() {
             >
               {task.status === "TODO" ? "Start" : "Set to in progress"}
             </Button>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Freelancer view to submit proof (if not done yet) */}
         {isFreelancer &&
