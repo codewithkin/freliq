@@ -1,5 +1,12 @@
 import { Badge } from "@/components/ui/badge";
 import { Project } from "@/generated/prisma";
+import {
+  CheckCircle,
+  XCircle,
+  Clock,
+  PlayCircle,
+  StopCircle,
+} from "lucide-react";
 
 interface ProjectsTableViewProps {
   projects: Project[];
@@ -46,6 +53,24 @@ export function ProjectsTableView({ projects }: ProjectsTableViewProps) {
                               : "bg-gray-500 text-white"
                     }`}
                   >
+                    {/* Icon based on status */}
+                    {project.status === "IN_PROGRESS" && (
+                      <PlayCircle />
+                    )}
+                    {project.status === "DONE" && (
+                      <CheckCircle />
+                    )}
+                    {project.status === "REJECTED" && (
+                      <XCircle />
+                    )}
+                    {project.status === "TODO" && <Clock />}
+                    {project.status !== "IN_PROGRESS" &&
+                      project.status !== "DONE" &&
+                      project.status !== "REJECTED" &&
+                      project.status !== "TODO" && (
+                        <StopCircle />
+                      )}
+
                     {project.status}
                   </Badge>
                 </td>
