@@ -141,7 +141,7 @@ export function ProjectsTableView({ projects }: ProjectsTableViewProps) {
             </Button>
           </article>
         </CardHeader>
-        <Table>
+        <Table className="">
           <TableCaption>A list of your projects.</TableCaption>
           <TableHeader className="bg-gray-200 p-4 rounded-full mb-8">
             <TableRow>
