@@ -219,9 +219,11 @@ export default function ProjectPage() {
         <Card>
           <CardHeader>
             <CardTitle>All Tasks</CardTitle>
-            <article className="flex gap-2 items-center mt-2">
-              <NewTaskDialog projectId={project.id} />
-            </article>
+            {isFreelancer && (
+              <article className="flex gap-2 items-center mt-2">
+                <NewTaskDialog projectId={project.id} />
+              </article>
+            )}
           </CardHeader>
           <CardContent className="space-y-6">
             {project.tasks.length === 0 ? (
