@@ -1,9 +1,7 @@
-interface Project {
-  id: string;
-  name: string;
-  status: string;
-  createdAt: string;
-}
+import { Badge } from "@/components/ui/badge";
+import { format } from "date-fns";
+import { Card } from "@/components/ui/card";
+import { Project } from "@/generated/prisma";
 
 interface ProjectsListViewProps {
   projects: Project[];
@@ -11,20 +9,38 @@ interface ProjectsListViewProps {
 
 export function ProjectsListView({ projects }: ProjectsListViewProps) {
   return (
-    <ul className="space-y-4">
+    <div className="space-y-2">
       {projects.map((project) => (
-        <li key={project.id} className="border-b pb-2">
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="font-medium">{project.name}</p>
-              <p className="text-xs text-gray-400">
-                {new Date(project.createdAt).toLocaleDateString()}
+        <Card
+          key={project.id}
+          className="p-4 hover:shadow-sm transition-shadow"
+        >
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <h3 className="font-medium text-sm md:text-base">
+                {project.title}
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                Created {format(new Date(project.createdAt), "MMM d, yyyy")}
               </p>
             </div>
-            <span className="text-sm">{project.status}</span>
+            <Badge
+              variant={
+                project.status === "TODO"
+                  ? "default"
+                  : project.status === "ACTIVE"
+                    ? "secondary"
+                    : project.status === "DONE"
+                      ? "outline"
+                      : "destructive"
+              }
+              className="text-xs capitalize"
+            >
+              {project.status.toLowerCase()}
+            </Badge>
           </div>
-        </li>
+        </Card>
       ))}
-    </ul>
+    </div>
   );
 }
