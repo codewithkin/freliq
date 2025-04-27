@@ -21,6 +21,7 @@ export async function GET() {
       include: {
         tasks: true,
         files: true,
+        owner: true,
         members: true,
         checklists: true,
         chatRoom: true,
