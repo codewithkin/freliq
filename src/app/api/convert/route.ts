@@ -1,55 +1,57 @@
+// /pages/api/convert.ts (or .js)
 import { NextRequest, NextResponse } from "next/server";
-import { parse } from "json2csv";
+
+// Helper function to convert JSON to CSV
+function convertToCSV(jsonObj: any) {
+  const headers = Object.keys(jsonObj[0]);
+  const csvRows = [
+    headers.join(","), // Add headers row
+    ...jsonObj.map((row: any) =>
+      headers.map((header) => row[header]).join(","),
+    ),
+  ];
+
+  return csvRows.join("\n");
+}
 
 export async function POST(req: NextRequest) {
-  try {
-    const data = await req.json();
-    const { type } = data;
-    const projects = data.projects;
+  const data = await req.json();
+  const type = req.headers.get("type"); // Get type from headers (json or csv)
 
-    if (!projects || projects.length === 0) {
-      return NextResponse.json(
-        { error: "No projects data provided" },
-        { status: 400 },
-      );
-    }
+  const projects = data.projects;
 
-    if (type === "json") {
-      const jsonContent = JSON.stringify(projects, null, 2);
-      return new NextResponse(jsonContent, {
-        headers: {
-          "Content-Type": "application/json",
-          "Content-Disposition": `attachment; filename=projects.json`,
-        },
-      });
-    } else if (type === "csv") {
-      try {
-        const csvContent = parse(projects);
-        return new NextResponse(csvContent, {
-          headers: {
-            "Content-Type": "text/csv",
-            "Content-Disposition": `attachment; filename=projects.csv`,
-          },
-        });
-      } catch (csvError) {
-        console.error("Error converting to CSV: ", csvError);
-        return NextResponse.json(
-          { error: "Error converting data to CSV" },
-          { status: 500 },
-        );
-      }
-    } else {
-      return NextResponse.json(
-        { error: "Invalid 'type' provided. Use 'json' or 'csv'." },
-        { status: 400 },
-      );
-    }
-  } catch (error) {
-    console.error("Error processing request: ", error);
+  // Convert the data to a JSON object
+  const jsonObj = Object.assign(
+    {},
+    ...projects.map((item: any) => ({ [item.id]: item })),
+  );
 
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 },
-    );
+  // If the type is JSON, return a JSON file
+  if (type === "json") {
+    const jsonString = JSON.stringify(jsonObj);
+
+    return new NextResponse(jsonString, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Content-Disposition": "attachment; filename=projects.json",
+      },
+    });
   }
+
+  // If the type is CSV, convert and return a CSV file
+  else if (type === "csv") {
+    const csvString = convertToCSV(Object.values(jsonObj)); // Convert object to CSV
+
+    return new NextResponse(csvString, {
+      status: 200,
+      headers: {
+        "Content-Type": "text/csv",
+        "Content-Disposition": "attachment; filename=projects.csv",
+      },
+    });
+  }
+
+  // If type is invalid
+  return new NextResponse("Invalid type", { status: 400 });
 }

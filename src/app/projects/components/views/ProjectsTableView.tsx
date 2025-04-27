@@ -39,48 +39,44 @@ interface ProjectsTableViewProps {
 export function ProjectsTableView({ projects }: ProjectsTableViewProps) {
   const [type, setType] = useState("json");
 
-  const {
-    data: convertedData,
-    isPending: loading,
-    mutate: convert,
-  } = useMutation({
+  const { isPending: loading, mutate: convert } = useMutation({
     mutationKey: ["convertedData"],
     mutationFn: async () => {
       const res = await axios.post(
         "/api/convert",
         { projects, type },
         {
-          responseType: "blob", // Ensure the response is a Blob (file)
+          headers: {
+            type: "json", // or "csv" depending on what you need
+          },
+          responseType: "blob", // Ensure we're receiving binary data
         },
       );
-      return res.data; // This is the file content
+
+      return res.data;
     },
-    onSuccess: (data: any) => {
-      // Create a URL for the Blob
-      const url = window.URL.createObjectURL(new Blob([data]));
+    onSuccess: (data) => {
+      // Log the response to verify
+      console.log("Downloaded data:", data);
 
-      // Create an anchor element to trigger the download
+      // Determine file name and type (based on the response type or header info)
+      const fileType = data.type; // Assuming the type is correctly set
+      const fileName =
+        fileType === "application/json" ? "projects.json" : "projects.csv";
+
+      // Create a blob from the response data
+      const blob = new Blob([data], { type: fileType });
+
+      // Create a temporary download link and trigger the download
       const link = document.createElement("a");
-
-      // Dynamically set the file name based on the response
-      const contentDisposition = data.headers["content-disposition"];
-      const fileName = contentDisposition
-        ? contentDisposition.split("filename=")[1].replace(/"/g, "")
-        : "file";
-
-      link.href = url;
-      link.setAttribute("download", fileName); // Set the file name
-      document.body.appendChild(link);
-
-      // Trigger the download
+      link.href = URL.createObjectURL(blob);
+      link.download = fileName; // Set the file name dynamically
       link.click();
-
-      // Clean up the URL object after the download
-      window.URL.revokeObjectURL(url);
 
       toast.success("Downloaded file successfully");
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Error during mutation:", error);
       toast.error("Failed to download file");
     },
   });
