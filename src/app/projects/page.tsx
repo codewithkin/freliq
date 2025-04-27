@@ -5,6 +5,7 @@ import { ProjectsLineChart } from "./components/charts/ProjectsLineChart";
 import axios from "axios";
 import { ProjectsStatusPieChart } from "./components/charts/ProjectsStatusPieChart";
 import { MiniProjectStatsCard } from "./components/MiniProjectsStatCard";
+import { ProjectsViewTabs } from "./components/ProjectsViewTabs";
 
 function ProjectsPage() {
   const { data: projects, isLoading: loading } = useQuery({
@@ -31,6 +32,8 @@ function ProjectsPage() {
           <MiniProjectStatsCard />
         </div>
       </article>
+
+      <ProjectsViewTabs projects={projects} />
     </DashboardShell>
   );
 }
