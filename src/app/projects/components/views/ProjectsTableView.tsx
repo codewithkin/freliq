@@ -6,6 +6,10 @@ import {
   Clock,
   PlayCircle,
   StopCircle,
+  FileText,
+  Calendar,
+  Circle,
+  File,
 } from "lucide-react";
 import {
   Table,
@@ -29,18 +33,43 @@ export function ProjectsTableView({ projects }: ProjectsTableViewProps) {
         <TableCaption>A list of your projects.</TableCaption>
         <TableHeader className="bg-gray-200 p-4 rounded-full">
           <TableRow>
-            <TableHead className="w-[200px]">Name</TableHead>
-            <TableHead>Created</TableHead>
-            <TableHead>Due Date</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Actions</TableHead>
+            <TableHead className="w-[200px]">
+              <div className="flex items-center">
+                <FileText size={18} className="mr-2" />
+                Name
+              </div>
+            </TableHead>
+            <TableHead>
+              <div className="flex items-center">
+                <Calendar size={18} className="mr-2" />
+                Created
+              </div>
+            </TableHead>
+            <TableHead>
+              <div className="flex items-center">
+                <Calendar size={18} className="mr-2" />
+                Due Date
+              </div>
+            </TableHead>
+            <TableHead>
+              <div className="flex items-center">
+                <Circle size={18} className="mr-2" />
+                Status
+              </div>
+            </TableHead>
+            <TableHead>
+              <div className="flex items-center">
+                <File size={18} className="mr-2" />
+                Actions
+              </div>
+            </TableHead>
           </TableRow>
         </TableHeader>
         {projects ? (
           <TableBody>
             {projects.map((project) => (
               <TableRow key={project.id}>
-                <TableCell className="font-medium">{project.title}</TableCell>
+                <TableCell className="font-semibold">{project.title}</TableCell>
                 <TableCell>
                   {new Date(project.createdAt).toLocaleDateString()}
                 </TableCell>
