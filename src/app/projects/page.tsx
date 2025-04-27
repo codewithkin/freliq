@@ -36,7 +36,7 @@ function ProjectsPage() {
             <article className="col-span-3">
               <ProjectsLineChart projects={projects || []} />
             </article>
-            <article className="col-span-1">
+            <article className="col-span-1 h-full">
               <ProjectsStatusPieChart projects={projects || []} />
             </article>
           </>
