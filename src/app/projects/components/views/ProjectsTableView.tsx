@@ -222,7 +222,7 @@ export function ProjectsTableView({ projects }: ProjectsTableViewProps) {
                   <TableCell className="text-right flex gap-2">
                     <TooltipProvider>
                       <Tooltip>
-                        <TooltipTrigger>
+                        <TooltipTrigger asChild>
                           <Button size="icon" variant="outline" asChild>
                             <Link href={`/project/${project.id}`}>
                               <Eye />
@@ -234,7 +234,7 @@ export function ProjectsTableView({ projects }: ProjectsTableViewProps) {
                         </TooltipContent>
                       </Tooltip>
                       <Tooltip>
-                        <TooltipTrigger>
+                        <TooltipTrigger asChild>
                           <Button
                             disabled={deletingProject}
                             size="icon"
@@ -242,15 +242,12 @@ export function ProjectsTableView({ projects }: ProjectsTableViewProps) {
                             onClick={() => {
                               deleteProject({ id: project.id });
                             }}
-                            asChild
                           >
-                            <Link href={`/project/${project.id}`}>
-                              {deletingProject ? (
-                                <Loader2 className="animate-spin" />
-                              ) : (
-                                <Trash />
-                              )}
-                            </Link>
+                            {deletingProject ? (
+                              <Loader2 className="animate-spin" />
+                            ) : (
+                              <Trash />
+                            )}
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent className="bg-red-500 text-white">
