@@ -155,7 +155,7 @@ function DashboardShell({ children }: { children: ReactNode }) {
         </header>
 
         {/* Page content */}
-        <section className="flex-1 p-6">{children}</section>
+        <section className="flex-1 p-2 sm:p-3 md:p-6">{children}</section>
       </main>
     </section>
   );
