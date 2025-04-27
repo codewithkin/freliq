@@ -10,6 +10,14 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
+import { Eye, Trash, Loader2 } from "lucide-react";
+import Link from "next/link";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Project {
   id: string;
@@ -50,9 +58,15 @@ interface Project {
 
 interface ProjectsCardViewProps {
   projects: Project[];
+  deleteFn: (params: { id: string }) => void;
+  deletingProject: boolean;
 }
 
-export function ProjectsCardView({ projects }: ProjectsCardViewProps) {
+export function ProjectsCardView({
+  projects,
+  deleteFn,
+  deletingProject,
+}: ProjectsCardViewProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {projects.map((project) => {
@@ -181,7 +195,7 @@ export function ProjectsCardView({ projects }: ProjectsCardViewProps) {
               </div>
             </CardContent>
 
-            <CardFooter className="flex justify-between items-center border-t pt-4">
+            <CardFooter className="flex justify-between items-center border-t pt-4 gap-2">
               <div className="flex -space-x-2">
                 {project.members.slice(0, 5).map((member) => (
                   <Avatar
@@ -205,9 +219,29 @@ export function ProjectsCardView({ projects }: ProjectsCardViewProps) {
                   </Avatar>
                 )}
               </div>
-              <Button variant="outline" size="sm">
-                View
-              </Button>
+
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline" className="gap-1" asChild>
+                  <Link href={`/project/${project.id}`}>
+                    <Eye className="h-4 w-4" />
+                    <span>Details</span>
+                  </Link>
+                </Button>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  className="gap-1"
+                  disabled={deletingProject}
+                  onClick={() => deleteFn({ id: project.id })}
+                >
+                  {deletingProject ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Trash className="h-4 w-4" />
+                  )}
+                  <span>Delete</span>
+                </Button>
+              </div>
             </CardFooter>
           </Card>
         );
