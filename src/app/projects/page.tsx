@@ -22,11 +22,11 @@ function ProjectsPage() {
     <DashboardShell>
       <h2 className="font-semibold text-2xl">Your Projects</h2>
 
-      <article className="flex gap-4 mt-4">
-        <div className="flex-[3]">
+      <article className="flex flex-col md:flex-row gap-4 mt-4">
+        <div className="md:flex-[3]">
           <ProjectsLineChart projects={projects || []} />
         </div>
-        <div className="flex-[1] grid gap-4">
+        <div className="md:flex-[1] grid gap-4">
           <ProjectsStatusPieChart projects={projects || []} />
           <MiniProjectStatsCard />
         </div>
