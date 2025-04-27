@@ -44,102 +44,22 @@ import Link from "next/link";
 
 interface ProjectsTableViewProps {
   projects: Project[];
+  deleteFn: any;
+  deletingProject: any;
 }
 
-export function ProjectsTableView({ projects }: ProjectsTableViewProps) {
-  const [type, setType] = useState("json");
-
-  const { isPending: loading, mutate: convert } = useMutation({
-    mutationKey: ["convertedData"],
-    mutationFn: async () => {
-      const res = await axios.post(
-        "/api/convert",
-        { projects, type },
-        {
-          headers: {
-            type: "json", // or "csv" depending on what you need
-          },
-          responseType: "blob", // Ensure we're receiving binary data
-        },
-      );
-
-      return res.data;
-    },
-    onSuccess: (data) => {
-      // Log the response to verify
-      console.log("Downloaded data:", data);
-
-      // Determine file name and type (based on the response type or header info)
-      const fileType = data.type; // Assuming the type is correctly set
-      const fileName =
-        fileType === "application/json" ? "projects.json" : "projects.csv";
-
-      // Create a blob from the response data
-      const blob = new Blob([data], { type: fileType });
-
-      // Create a temporary download link and trigger the download
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = fileName; // Set the file name dynamically
-      link.click();
-
-      toast.success("Downloaded file successfully");
-    },
-    onError: (error) => {
-      console.error("Error during mutation:", error);
-      toast.error("Failed to download file");
-    },
-  });
-
-  const { isPending: deletingProject, mutate: deleteProject } = useMutation({
-    mutationKey: ["deleteProject"],
-    mutationFn: async ({ id }: { id: any }) => {
-      // Make a request to the delete endpoint
-      const res = await axios.delete(`/api/project/${id}`);
-
-      return res.data;
-    },
-    onSuccess: () => {
-      toast.success("Project deleted successfully");
-    },
-    onError: (e) => {
-      console.log("An error occured while deleting project: ", e);
-      toast.error("Failed to delete project");
-    },
-  });
-
+export function ProjectsTableView({
+  projects,
+  deleteFn,
+  deletingProject,
+}: ProjectsTableViewProps) {
   return (
     <Card className="w-full overflow-x-auto">
       <CardContent>
         <CardHeader className="px-0 py-4 flex items-center justify-between">
-          <CardTitle className="text-lg text-slate-800">Projects</CardTitle>
-
-          <article className="flex items-center gap-4">
-            <Button
-              onClick={() => {
-                setType("csv");
-                convert();
-              }}
-              disabled={loading}
-              size="sm"
-              variant="default"
-            >
-              <FaFileExcel />
-              <p>Download as CSV</p>
-            </Button>
-            <Button
-              onClick={() => {
-                setType("json");
-                convert();
-              }}
-              disabled={loading}
-              size="sm"
-              variant="secondary"
-            >
-              <Braces />
-              <p>Download as JSON</p>
-            </Button>
-          </article>
+          <CardTitle className="text-lg text-slate-800">
+            Projects Table
+          </CardTitle>
         </CardHeader>
         <Table className="">
           <TableCaption>A list of your projects.</TableCaption>
@@ -240,7 +160,7 @@ export function ProjectsTableView({ projects }: ProjectsTableViewProps) {
                             size="icon"
                             variant="destructive"
                             onClick={() => {
-                              deleteProject({ id: project.id });
+                              deleteFn({ id: project.id });
                             }}
                           >
                             {deletingProject ? (
