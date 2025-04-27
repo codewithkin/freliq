@@ -54,7 +54,7 @@ export function ProjectsStatusPieChart({
         <CardDescription>Distribution of project statuses</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer>
+        <ChartContainer config={{}}>
           <PieChart width={300} height={300}>
             <Pie
               data={pieData}
