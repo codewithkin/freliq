@@ -34,31 +34,31 @@ export function ProjectsTableView({ projects }: ProjectsTableViewProps) {
         <TableHeader className="bg-gray-200 p-4 rounded-full">
           <TableRow>
             <TableHead className="w-[200px]">
-              <div className="flex items-center">
+              <div className="flex items-center text-slate-800 font-semibold">
                 <FileText size={18} className="mr-2" />
                 Name
               </div>
             </TableHead>
             <TableHead>
-              <div className="flex items-center">
+              <div className="flex items-center text-slate-800 font-semibold">
                 <Calendar size={18} className="mr-2" />
                 Created
               </div>
             </TableHead>
             <TableHead>
-              <div className="flex items-center">
+              <div className="flex items-center text-slate-800 font-semibold">
                 <Calendar size={18} className="mr-2" />
                 Due Date
               </div>
             </TableHead>
             <TableHead>
-              <div className="flex items-center">
+              <div className="flex items-center text-slate-800 font-semibold">
                 <Circle size={18} className="mr-2" />
                 Status
               </div>
             </TableHead>
             <TableHead>
-              <div className="flex items-center">
+              <div className="flex items-center text-slate-800 font-semibold">
                 <File size={18} className="mr-2" />
                 Actions
               </div>
