@@ -13,6 +13,9 @@ import {
   Download,
   Brackets,
   Braces,
+  Eye,
+  Trash,
+  Loader2,
 } from "lucide-react";
 import {
   Table,
@@ -31,6 +34,13 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "sonner";
 import { useState } from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import Link from "next/link";
 
 interface ProjectsTableViewProps {
   projects: Project[];
@@ -78,6 +88,23 @@ export function ProjectsTableView({ projects }: ProjectsTableViewProps) {
     onError: (error) => {
       console.error("Error during mutation:", error);
       toast.error("Failed to download file");
+    },
+  });
+
+  const { isPending: deletingProject, mutate: deleteProject } = useMutation({
+    mutationKey: ["deleteProject"],
+    mutationFn: async ({ id }: { id: any }) => {
+      // Make a request to the delete endpoint
+      const res = await axios.delete(`/api/project/${id}`);
+
+      return res.data;
+    },
+    onSuccess: () => {
+      toast.success("Project deleted successfully");
+    },
+    onError: (e) => {
+      console.log("An error occured while deleting project: ", e);
+      toast.error("Failed to delete project");
     },
   });
 
@@ -192,8 +219,45 @@ export function ProjectsTableView({ projects }: ProjectsTableViewProps) {
                       {project.status}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right">
-                    {/* Add actions here if needed */}
+                  <TableCell className="text-right flex gap-2">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Button size="icon" variant="outline" asChild>
+                            <Link href={`/project/${project.id}`}>
+                              <Eye />
+                            </Link>
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>View project details</p>
+                        </TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Button
+                            disabled={deletingProject}
+                            size="icon"
+                            variant="destructive"
+                            onClick={() => {
+                              deleteProject({ id: project.id });
+                            }}
+                            asChild
+                          >
+                            <Link href={`/project/${project.id}`}>
+                              {deletingProject ? (
+                                <Loader2 className="animate-spin" />
+                              ) : (
+                                <Trash />
+                              )}
+                            </Link>
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent className="bg-red-500 text-white">
+                          <p>Delete project</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </TableCell>
                 </TableRow>
               ))}
