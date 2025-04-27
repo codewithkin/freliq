@@ -11,6 +11,7 @@ import axios from "axios";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FaFileExcel } from "react-icons/fa";
+import { queryClient } from "@/providers/QueryClientProvider";
 
 interface Project {
   id: string;
@@ -78,6 +79,10 @@ export function ProjectsViewTabs({ projects }: ProjectsViewTabsProps) {
     },
     onSuccess: () => {
       toast.success("Project deleted successfully");
+
+      queryClient.invalidateQueries({
+        queryKey: ["projects"],
+      });
     },
     onError: (e) => {
       console.log("An error occured while deleting project: ", e);
