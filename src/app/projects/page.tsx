@@ -21,9 +21,26 @@ function ProjectsPage() {
     <DashboardShell>
       <h2 className="font-semibold text-2xl">Your Projects</h2>
 
-      <article className="grid gap-4">
-        {!loading && <ProjectsLineChart projects={projects || []} />}
-        {!loading && <ProjectsStatusPieChart projects={projects || []} />}
+      <article className="grid grid-cols-1 gap-4 md:grid-cols-4">
+        {loading ? (
+          <>
+            <article className="col-span-3">
+              <div className="h-[400px] w-full animate-pulse rounded-lg bg-muted" />
+            </article>
+            <article className="col-span-1">
+              <div className="h-[400px] w-full animate-pulse rounded-lg bg-muted" />
+            </article>
+          </>
+        ) : (
+          <>
+            <article className="col-span-3">
+              <ProjectsLineChart projects={projects || []} />
+            </article>
+            <article className="col-span-1">
+              <ProjectsStatusPieChart projects={projects || []} />
+            </article>
+          </>
+        )}
       </article>
     </DashboardShell>
   );
