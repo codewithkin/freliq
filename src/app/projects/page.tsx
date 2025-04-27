@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import DashboardShell from "../dashboard/components/DashboardShell";
 import { ProjectsLineChart } from "./components/charts/ProjectsLineChart";
 import axios from "axios";
+import { ProjectsStatusPieChart } from "./components/charts/ProjectsStatusPieChart";
 
 function ProjectsPage() {
   const { data: projects, isLoading: loading } = useQuery({
@@ -20,7 +21,10 @@ function ProjectsPage() {
     <DashboardShell>
       <h2 className="font-semibold text-2xl">Your Projects</h2>
 
-      {!loading && <ProjectsLineChart projects={projects || []} />}
+      <article className="grid gap-4">
+        {!loading && <ProjectsLineChart projects={projects || []} />}
+        {!loading && <ProjectsStatusPieChart projects={projects || []} />}
+      </article>
     </DashboardShell>
   );
 }
