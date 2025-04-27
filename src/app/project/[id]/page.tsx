@@ -28,6 +28,12 @@ import { Label } from "@/components/ui/label";
 import { File, KickoffChecklist, Task } from "@/generated/prisma";
 import NewTaskDialog from "./components/NewTaskDialog";
 import { TaskPieChart } from "./components/TasksPieChart";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type Project = {
   id: string;
@@ -282,13 +288,24 @@ export default function ProjectPage() {
                           </Badge>
                         </div>
                         <div className="mt-3 flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={() => router.push(`/task/${task.id}`)}
-                          >
-                            <Eye />
-                          </Button>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  onClick={() =>
+                                    router.push(`/task/${task.id}`)
+                                  }
+                                >
+                                  <Eye />
+                                  <span className="block md:hidden">
+                                    Task details
+                                  </span>
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>View task details</TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                           {/* If not DONE and user is a client, show actions */}
                           {!isFreelancer &&
                             task.status !== "DONE" &&
@@ -296,7 +313,7 @@ export default function ProjectPage() {
                               <>
                                 <Button
                                   size="sm"
-                                  variant="outline"
+                                  variant="default"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     updateTaskStatus.mutate({
