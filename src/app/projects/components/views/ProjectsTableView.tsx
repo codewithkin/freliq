@@ -7,6 +7,16 @@ import {
   PlayCircle,
   StopCircle,
 } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface ProjectsTableViewProps {
   projects: Project[];
@@ -15,31 +25,31 @@ interface ProjectsTableViewProps {
 export function ProjectsTableView({ projects }: ProjectsTableViewProps) {
   return (
     <div className="w-full overflow-x-auto">
-      <table className="min-w-full text-sm text-left">
-        <thead>
-          <tr>
-            <th className="px-4 py-2">Name</th>
-            <th className="px-4 py-2">Created</th>
-            <th className="px-4 py-2">Due Date</th>
-            <th className="px-4 py-2">Status</th>
-            <th className="px-4 py-2">Created</th>
-          </tr>
-        </thead>
+      <Table>
+        <TableCaption>A list of your projects.</TableCaption>
+        <TableHeader className="bg-gray-200 p-4 rounded-full">
+          <TableRow>
+            <TableHead className="w-[200px]">Name</TableHead>
+            <TableHead>Created</TableHead>
+            <TableHead>Due Date</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
         {projects ? (
-          <tbody>
+          <TableBody>
             {projects.map((project) => (
-              <tr key={project.id}>
-                <td className="px-4 py-2">{project.title}</td>
-                <td className="px-4 py-2">
-                  {" "}
+              <TableRow key={project.id}>
+                <TableCell className="font-medium">{project.title}</TableCell>
+                <TableCell>
                   {new Date(project.createdAt).toLocaleDateString()}
-                </td>
-                <td className="px-4 py-2">
+                </TableCell>
+                <TableCell>
                   {project.deadline
                     ? new Date(project.deadline).toLocaleDateString()
                     : "None"}
-                </td>
-                <td className="px-4 py-2">
+                </TableCell>
+                <TableCell>
                   <Badge
                     className={`text-xs rounded-full ${
                       project.status === "IN_PROGRESS"
@@ -54,37 +64,37 @@ export function ProjectsTableView({ projects }: ProjectsTableViewProps) {
                     }`}
                   >
                     {/* Icon based on status */}
-                    {project.status === "IN_PROGRESS" && (
-                      <PlayCircle />
-                    )}
-                    {project.status === "DONE" && (
-                      <CheckCircle />
-                    )}
-                    {project.status === "REJECTED" && (
-                      <XCircle />
-                    )}
+                    {project.status === "IN_PROGRESS" && <PlayCircle />}
+                    {project.status === "DONE" && <CheckCircle />}
+                    {project.status === "REJECTED" && <XCircle />}
                     {project.status === "TODO" && <Clock />}
                     {project.status !== "IN_PROGRESS" &&
                       project.status !== "DONE" &&
                       project.status !== "REJECTED" &&
-                      project.status !== "TODO" && (
-                        <StopCircle />
-                      )}
+                      project.status !== "TODO" && <StopCircle />}
 
                     {project.status}
                   </Badge>
-                </td>
-
-                <td className="px-4 py-2">{project.title}</td>
-              </tr>
+                </TableCell>
+                <TableCell className="text-right">
+                  {/* Add actions here if needed */}
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
+          </TableBody>
         ) : (
-          <h2 className="text-xl font-semibold text-slate-500">
-            No projects yet
-          </h2>
+          <TableBody>
+            <TableRow>
+              <TableCell colSpan={5} className="text-center">
+                No projects yet
+              </TableCell>
+            </TableRow>
+          </TableBody>
         )}
-      </table>
+        <TableFooter>
+          {/* Add a footer if needed, like a summary or pagination */}
+        </TableFooter>
+      </Table>
     </div>
   );
 }
