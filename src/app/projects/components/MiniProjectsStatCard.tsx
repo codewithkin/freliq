@@ -6,7 +6,7 @@ import { Loader2 } from "lucide-react";
 
 type Project = {
   id: string;
-  status: "ACTIVE" | "COMPLETED" | "ARCHIVED" | string;
+  status: "ACTIVE" | "DONE" | "REJECTED" | string;
 };
 
 async function fetchProjects(): Promise<Project[]> {
@@ -25,7 +25,7 @@ export function MiniProjectStatsCard() {
   const active = projects?.filter((p) => p.status === "ACTIVE").length || 0;
   const completed =
     projects?.filter((p) => p.status === "COMPLETED").length || 0;
-  const archived = projects?.filter((p) => p.status === "ARCHIVED").length || 0;
+  const rejected = projects?.filter((p) => p.status === "REJECTED").length || 0;
 
   return (
     <Card className="h-full">
@@ -43,7 +43,7 @@ export function MiniProjectStatsCard() {
             <Stat label="Total" value={total} color="text-foreground" />
             <Stat label="Active" value={active} color="text-green-500" />
             <Stat label="Completed" value={completed} color="text-blue-500" />
-            <Stat label="Archived" value={archived} color="text-gray-500" />
+            <Stat label="Rejected" value={rejected} color="text-red-500" />
           </>
         )}
       </CardContent>

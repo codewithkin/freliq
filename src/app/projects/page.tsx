@@ -22,7 +22,7 @@ function ProjectsPage() {
     <DashboardShell>
       <h2 className="font-semibold text-2xl">Your Projects</h2>
 
-      <article className="flex gap-4">
+      <article className="flex gap-4 mt-4">
         <div className="flex-[3]">
           <ProjectsLineChart projects={projects || []} />
         </div>
