@@ -45,7 +45,7 @@ import Link from "next/link";
 interface ProjectsTableViewProps {
   projects: Project[];
   deleteFn: any;
-  deletingProject: any;
+  deletingProject: boolean;
 }
 
 export function ProjectsTableView({

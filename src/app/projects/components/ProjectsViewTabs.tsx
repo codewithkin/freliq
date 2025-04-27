@@ -148,8 +148,8 @@ export function ProjectsViewTabs({ projects }: ProjectsViewTabsProps) {
 
       <TabsContent value="table">
         <ProjectsTableView
-          deleteFn={deletingProject}
-          deletingProject={deleteProject}
+          deleteFn={deleteProject}
+          deletingProject={deletingProject}
           projects={projects}
         />
       </TabsContent>
