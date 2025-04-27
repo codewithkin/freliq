@@ -11,22 +11,15 @@ interface Project {
   name: string;
   status: string;
   createdAt: string;
-  // Add any other fields you need
 }
 
 interface ProjectsViewTabsProps {
-  value: string;
-  onChange: (value: string) => void;
   projects: Project[];
 }
 
-export function ProjectsViewTabs({
-  value,
-  onChange,
-  projects,
-}: ProjectsViewTabsProps) {
+export function ProjectsViewTabs({ projects }: ProjectsViewTabsProps) {
   return (
-    <Tabs value={value} onValueChange={onChange} className="w-full mb-6">
+    <Tabs defaultValue="table" className="w-full mb-6 mt-8">
       <TabsList className="grid w-full grid-cols-3">
         <TabsTrigger value="table" className="flex items-center gap-2">
           <Table className="w-4 h-4" />

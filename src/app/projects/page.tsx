@@ -33,7 +33,7 @@ function ProjectsPage() {
         </div>
       </article>
 
-      <ProjectsViewTabs projects={projects} />
+      <ProjectsViewTabs projects={projects} value="table" />
     </DashboardShell>
   );
 }
