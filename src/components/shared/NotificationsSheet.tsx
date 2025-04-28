@@ -17,6 +17,8 @@ import axios from "axios";
 import { Badge } from "../ui/badge";
 import { formatDistanceToNow } from "date-fns";
 import Notification from "./Notification";
+import { queryClient } from "@/providers/QueryClientProvider";
+import { toast } from "sonner";
 
 function NotificationsSheet() {
   const { data: notifications = [] } = useQuery({
@@ -36,6 +38,16 @@ function NotificationsSheet() {
       const res = await axios.patch(`/api/notifications`, notifications);
 
       return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["notifications"],
+      });
+
+      toast.error("All notifications have been read");
+    },
+    onError: () => {
+      toast.error("Failed to mark notifications as read");
     },
   });
 
