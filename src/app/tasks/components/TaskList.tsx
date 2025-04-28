@@ -2,17 +2,9 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Task } from "@/generated/prisma";
 import { format } from "date-fns";
-
-interface Task {
-  id: string;
-  title: string;
-  status: string;
-  createdAt: string;
-  dueDate?: string;
-  projectTitle?: string;
-  proofUploaded?: boolean;
-}
+import { Check } from "lucide-react";
 
 interface TaskListProps {
   tasks: Task[];
@@ -43,11 +35,17 @@ export function TaskList({ tasks }: TaskListProps) {
               {task.status}
             </Badge>
           </div>
-          <div>{task.projectTitle ?? "-"}</div>
+          <div>{task.project.title ?? "-"}</div>
           <div>
-            {task.dueDate ? format(new Date(task.dueDate), "PPP") : "-"}
+            {task.dueDate ? (
+              format(new Date(task.dueDate), "PPP")
+            ) : (
+              <p>Not Specified</p>
+            )}
           </div>
-          <div>{task.proofUploaded ? "✅" : "—"}</div>
+          <div>
+            {task.proof ? <Check className="text-primary" /> : <p>None</p>}
+          </div>
         </div>
       ))}
     </div>
