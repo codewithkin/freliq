@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell } from "lucide-react";
+import { Bell, Loader2 } from "lucide-react";
 import { Button } from "../ui/button";
 import {
   Sheet,
@@ -151,6 +151,7 @@ function NotificationsSheet() {
             variant="default"
             className="w-full mt-4"
           >
+            {markingAllAsRead && <Loader2 className="animate-spin" />}
             {markingAllAsRead ? "Marking all as read" : "Mark all as read"}
           </Button>
         </SheetFooter>
