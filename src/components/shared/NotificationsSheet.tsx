@@ -7,6 +7,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
+import { Tabs, TabsList } from "../ui/tabs";
+import { TabsTrigger } from "@radix-ui/react-tabs";
 
 function NotificationsSheet() {
   return (
@@ -23,9 +25,23 @@ function NotificationsSheet() {
           <SheetTitle className="text-2xl font-semibold tracking-tight mb-4">
             Notifications
           </SheetTitle>
-          <p className="text-muted-foreground">
-            You have no new notifications.
-          </p>
+
+          <Tabs>
+            <TabsList>
+              <TabsTrigger value="all" className="w-full">
+                All
+              </TabsTrigger>
+              <TabsTrigger value="tasks" className="w-full">
+                Tasks
+              </TabsTrigger>
+              <TabsTrigger value="projects" className="w-full">
+                Projects
+              </TabsTrigger>
+              <TabsTrigger value="system" className="w-full">
+                System
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
         </SheetHeader>
       </SheetContent>
     </Sheet>
