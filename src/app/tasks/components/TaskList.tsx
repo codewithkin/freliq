@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { Task } from "@/generated/prisma";
 import { format } from "date-fns";
 import { Check } from "lucide-react";
+import { TaskStatusBadge } from "./TaskStatusBadge";
 
 interface TaskListProps {
   tasks: Task[];
@@ -31,9 +32,7 @@ export function TaskList({ tasks }: TaskListProps) {
         >
           <div>{task.title}</div>
           <div>
-            <Badge variant={task.status === "done" ? "default" : "outline"}>
-              {task.status}
-            </Badge>
+            <TaskStatusBadge status={task.status} />
           </div>
           <div>{task.project.title ?? "-"}</div>
           <div>
