@@ -214,6 +214,7 @@ model Notification {
   type     String // system, project, message
   priority String // low, medium, high
   message  String
+  read      Boolean @default(false)
 
   userId String
   user   User   @relation(fields: [userId], references: [id], map: "poll_user_fkey")
