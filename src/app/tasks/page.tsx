@@ -8,6 +8,7 @@ import { TaskSearch } from "./components/TaskSearch";
 import { TaskList } from "./components/TaskList";
 import { TaskEmptyState } from "./components/TaskEmptyState";
 import { CreateTaskButton } from "./components/CreateTaskButton";
+import DashboardShell from "../dashboard/components/DashboardShell";
 
 export default function TasksPage() {
   const [search, setSearch] = useState("");
@@ -16,8 +17,8 @@ export default function TasksPage() {
   const { data: tasks = [], isLoading } = useQuery({
     queryKey: ["tasks"],
     queryFn: async () => {
-      const res = await axios.get("/api/tasks/list");
-      return res.data.tasks;
+      const res = await axios.get("/api/tasks");
+      return res.data;
     },
   });
 
@@ -43,7 +44,7 @@ export default function TasksPage() {
   };
 
   return (
-    <div className="container py-8">
+    <DashboardShell>
       <TaskSummaryCards {...stats} />
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
         <TaskFilters status={status} onStatusChange={setStatus} />
@@ -55,6 +56,6 @@ export default function TasksPage() {
         <TaskEmptyState onCreateTask={() => {}} />
       )}
       <CreateTaskButton />
-    </div>
+    </DashboardShell>
   );
 }
