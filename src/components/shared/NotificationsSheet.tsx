@@ -56,11 +56,13 @@ function NotificationsSheet() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
+        <Button variant="outline" className="relative">
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
             <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full" />
           )}
+
+          <span className="font-medium">{unreadCount} unread</span>
         </Button>
       </SheetTrigger>
       <SheetContent side="right" className="w-full max-w-sm p-4">
