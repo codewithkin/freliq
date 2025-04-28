@@ -4,13 +4,15 @@ import { Bell } from "lucide-react";
 import { Button } from "../ui/button";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Badge } from "../ui/badge";
 import { formatDistanceToNow } from "date-fns";
@@ -26,6 +28,16 @@ function NotificationsSheet() {
   });
 
   console.log("Notifications: ", notifications);
+
+  const { mutate: markAllAsRead, isPending: markingAllAsRead } = useMutation({
+    mutationKey: ["markAllAsRead"],
+    mutationFn: async () => {
+      // Make a request to the endpoint
+      const res = await axios.patch(`/api/notifications`, notifications);
+
+      return res.data;
+    },
+  });
 
   const unreadCount = notifications.filter((n: any) => !n.read).length;
 
@@ -129,6 +141,19 @@ function NotificationsSheet() {
           </TabsContent>
         </Tabs>
 
+        <SheetFooter>
+          <SheetClose>Close</SheetClose>
+          <Button
+            onClick={() => {
+              markAllAsRead();
+            }}
+            disabled={markingAllAsRead}
+            variant="default"
+            className="w-full mt-4"
+          >
+            {markingAllAsRead ? "Marking all as read" : "Mark all as read"}
+          </Button>
+        </SheetFooter>
       </SheetContent>
     </Sheet>
   );

@@ -1,7 +1,33 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/prisma";
 import { headers } from "next/headers";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+
+export async function PATCH(req: NextRequest) {
+  try {
+    // Get the notifications from the request body
+    const { notifications } = await req.json();
+
+    // Update each of the notifications one-by-one
+    await prisma.notification.updateMany({
+      where: {
+        id: {
+          in: notifications.map((n: any) => n.id),
+        },
+      },
+      data: {
+        read: true,
+      },
+    });
+  } catch (error) {
+    console.log("An error occured while updating notifications: ", error);
+
+    return NextResponse.json({
+      message: "An error occured while updating notifications",
+      error,
+    });
+  }
+}
 
 export async function GET() {
   try {
