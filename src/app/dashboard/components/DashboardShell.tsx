@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/sidebar";
 import { FaTasks } from "react-icons/fa";
 import { Greeting } from "./Greeting";
+import { authClient } from "@/lib/auth-client";
 
 // Sidebar items
 const sidebarItems = [
@@ -71,6 +72,11 @@ const sidebarItems = [
 ];
 
 function DashboardShell({ children }: { children: ReactNode }) {
+  // Get the user's data
+  const { data: session, isPending } = authClient.useSession();
+
+  console.log("User data: ", session);
+
   return (
     <section className="min-h-screen flex bg-muted/40">
       {/* Sidebar for large screens */}
@@ -142,9 +148,12 @@ function DashboardShell({ children }: { children: ReactNode }) {
             </Button>
 
             <Avatar className="h-8 w-8">
-              <AvatarImage src="/avatar.png" />
-              <AvatarFallback>
-                <User className="h-4 w-4" />
+              <AvatarImage
+                className="bg-slate-300"
+                src={session?.user?.image || ""}
+              />
+              <AvatarFallback className="bg-slate-300">
+                <p>{session?.user?.email.charAt(0).toUpperCase()}</p>
               </AvatarFallback>
             </Avatar>
 
