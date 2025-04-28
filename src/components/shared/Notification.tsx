@@ -26,4 +26,4 @@ function Notification({ notif }: { notif: any }) {
   );
 }
 
-export default Notificiation;
+export default Notification;
