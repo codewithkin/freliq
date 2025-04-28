@@ -62,14 +62,73 @@ function NotificationsSheet() {
                 ))}
               </div>
             ) : (
-              <div className="text-center text-sm text-muted-foreground">
+              <div className="text-center text-muted-foreground font-semibold text-lg">
                 No notifications yet.
               </div>
             )}
           </TabsContent>
 
-          {/* You can later filter for tasks, projects, system based on notif.type */}
+          <TabsContent value="tasks">
+            {notifications.filter((notif: any) => {
+              return notif.type === "task";
+            }).length > 0 ? (
+              <div className="flex flex-col gap-2">
+                {notifications
+                  .filter((notif: any) => {
+                    return notif.type === "task";
+                  })
+                  .map((notif: any) => (
+                    <Notification key={notif.id} notif={notif} />
+                  ))}
+              </div>
+            ) : (
+              <div className="text-center text-muted-foreground font-semibold text-lg">
+                No task notifications...yet
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="projects">
+            {notifications.filter((notif: any) => {
+              return notif.type === "project";
+            }).length > 0 ? (
+              <div className="flex flex-col gap-2">
+                {notifications
+                  .filter((notif: any) => {
+                    return notif.type === "project";
+                  })
+                  .map((notif: any) => (
+                    <Notification key={notif.id} notif={notif} />
+                  ))}
+              </div>
+            ) : (
+              <div className="text-center text-muted-foreground font-semibold text-lg">
+                Sorry, no project notifications here
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="system">
+            {notifications.filter((notif: any) => {
+              return notif.type === "system";
+            }).length > 0 ? (
+              <div className="flex flex-col gap-2">
+                {notifications
+                  .filter((notif: any) => {
+                    return notif.type === "system";
+                  })
+                  .length((notif: any) => (
+                    <Notification key={notif.id} notif={notif} />
+                  ))}
+              </div>
+            ) : (
+              <div className="text-center text-muted-foreground font-semibold text-lg">
+                No system notifications
+              </div>
+            )}
+          </TabsContent>
         </Tabs>
+
       </SheetContent>
     </Sheet>
   );
