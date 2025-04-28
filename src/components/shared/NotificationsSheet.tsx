@@ -65,10 +65,10 @@ function NotificationsSheet() {
           <span className="font-medium">{unreadCount} unread</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-full max-w-sm p-4">
+      <SheetContent side="right" className="w-full max-w-sm p-4 md:m-8 md:rounded-xl md:h-fit">
         <SheetHeader>
           <SheetTitle className="text-2xl font-semibold tracking-tight mb-4">
-            Notifications
+            Your Notifications
           </SheetTitle>
         </SheetHeader>
 
