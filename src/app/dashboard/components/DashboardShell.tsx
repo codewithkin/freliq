@@ -105,7 +105,7 @@ function DashboardShell({ children }: { children: ReactNode }) {
       {/* Main */}
       <main className="flex-1 flex flex-col">
         {/* Topbar */}
-        <header className="flex items-center justify-between bg-white px-4 py-3">
+        <header className="flex items-center justify-between bg-white md:py-4 md:px-8 p-4">
           {/* Mobile menu */}
           <div className="flex items-center gap-3 lg:hidden">
             <Sheet>
