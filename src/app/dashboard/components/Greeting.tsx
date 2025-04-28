@@ -13,7 +13,7 @@ export const Greeting: React.FC = () => {
 
   return (
     <p className="text-xl font-medium flex justify-center items-center">
-      <span className="text-gray-500">Hey there,</span> {greeting}
+      <span className="text-gray-500 hidden md:inline-block">Hey there,</span> {greeting}
     </p>
   );
 };
