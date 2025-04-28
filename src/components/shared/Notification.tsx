@@ -4,7 +4,6 @@ import { Badge } from "../ui/badge";
 function Notification({ notif }: { notif: any }) {
   return (
     <div
-      key={notif.id}
       className={`border p-3 rounded-md text-muted-foreground ${notif.read ? "bg-white" : "bg-slate-100"}`}
     >
       <h2 className="font-semibold text-lg capitalize">{notif.title}</h2>

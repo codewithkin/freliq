@@ -58,7 +58,7 @@ function NotificationsSheet() {
             {notifications.length > 0 ? (
               <div className="flex flex-col gap-2">
                 {notifications.map((notif: any) => (
-                  <Notification notif={notif} />
+                  <Notification key={notif.id} notif={notif} />
                 ))}
               </div>
             ) : (
