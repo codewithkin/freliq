@@ -214,6 +214,7 @@ model Notification {
   type     String // system, project, message
   priority String // low, medium, high
   message  String
+  title   String @default("title here") //TODO: REMOVE THIS
   read      Boolean @default(false)
 
   userId String
