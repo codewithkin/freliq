@@ -37,6 +37,7 @@ import { FaTasks } from "react-icons/fa";
 import { Greeting } from "./Greeting";
 import { authClient } from "@/lib/auth-client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useRouter } from "next/navigation";
 
 // Sidebar items
 const sidebarItems = [
@@ -77,6 +78,18 @@ function DashboardShell({ children }: { children: ReactNode }) {
   const { data: session, isPending } = authClient.useSession();
 
   console.log("User data: ", session);
+
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/auth"); // redirect to login page
+        },
+      },
+    });
+  };
 
   return (
     <section className="min-h-screen flex bg-muted/40">
@@ -162,7 +175,12 @@ function DashboardShell({ children }: { children: ReactNode }) {
               </Avatar>
             )}
 
-            <Button variant="ghost" size="icon" title="Logout">
+            <Button
+              onClick={handleSignOut}
+              variant="ghost"
+              size="icon"
+              title="Logout"
+            >
               <LogOut className="h-5 w-5" />
             </Button>
           </div>
