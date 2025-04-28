@@ -13,7 +13,7 @@ export async function PATCH(req: NextRequest) {
     console.log("Notification IDSs: ", notificationIds);
 
     // Update each of the notifications one-by-one
-    await prisma.notification.updateMany({
+    const updatedNotifications = await prisma.notification.updateMany({
       where: {
         id: {
           in: notificationIds,
@@ -24,13 +24,17 @@ export async function PATCH(req: NextRequest) {
       },
     });
 
+    return NextResponse.json(updatedNotifications);
   } catch (error) {
     console.log("An error occured while updating notifications: ", error);
 
-    return NextResponse.json({
-      message: "An error occured while updating notifications",
-      error,
-    });
+    return NextResponse.json(
+      {
+        message: "An error occured while updating notifications",
+        error,
+      },
+      { status: 400 },
+    );
   }
 }
 
