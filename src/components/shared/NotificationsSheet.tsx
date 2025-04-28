@@ -65,7 +65,10 @@ function NotificationsSheet() {
           <span className="font-medium">{unreadCount} unread</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-full max-w-sm p-4 md:m-8 md:rounded-xl md:h-fit">
+      <SheetContent
+        side="right"
+        className="w-full max-w-sm p-4 md:m-8 md:rounded-xl md:h-fit"
+      >
         <SheetHeader>
           <SheetTitle className="text-2xl font-semibold tracking-tight mb-4">
             Your Notifications
@@ -82,7 +85,7 @@ function NotificationsSheet() {
 
           <TabsContent value="all">
             {notifications.length > 0 ? (
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2 max-h-[600px] overflow-y-auto">
                 {notifications.map((notif: any) => (
                   <Notification key={notif.id} notif={notif} />
                 ))}
@@ -98,7 +101,7 @@ function NotificationsSheet() {
             {notifications.filter((notif: any) => {
               return notif.type === "task";
             }).length > 0 ? (
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2 max-h-[600px] overflow-y-auto">
                 {notifications
                   .filter((notif: any) => {
                     return notif.type === "task";
@@ -118,7 +121,7 @@ function NotificationsSheet() {
             {notifications.filter((notif: any) => {
               return notif.type === "project";
             }).length > 0 ? (
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2 max-h-[600px] overflow-y-auto">
                 {notifications
                   .filter((notif: any) => {
                     return notif.type === "project";
@@ -138,7 +141,7 @@ function NotificationsSheet() {
             {notifications.filter((notif: any) => {
               return notif.type === "system";
             }).length > 0 ? (
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2 max-h-[600px] overflow-y-auto">
                 {notifications
                   .filter((notif: any) => {
                     return notif.type === "system";
