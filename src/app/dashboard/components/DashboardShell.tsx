@@ -36,6 +36,7 @@ import {
 import { FaTasks } from "react-icons/fa";
 import { Greeting } from "./Greeting";
 import { authClient } from "@/lib/auth-client";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Sidebar items
 const sidebarItems = [
@@ -147,15 +148,19 @@ function DashboardShell({ children }: { children: ReactNode }) {
               <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full" />
             </Button>
 
-            <Avatar className="h-8 w-8">
-              <AvatarImage
-                className="bg-slate-300"
-                src={session?.user?.image || ""}
-              />
-              <AvatarFallback className="bg-slate-300">
-                <p>{session?.user?.email.charAt(0).toUpperCase()}</p>
-              </AvatarFallback>
-            </Avatar>
+            {isPending ? (
+              <Skeleton className="bg-slate-300 h-8 w-8 rounded-full" />
+            ) : (
+              <Avatar className="h-8 w-8">
+                <AvatarImage
+                  className="bg-slate-300"
+                  src={session?.user?.image || ""}
+                />
+                <AvatarFallback className="bg-slate-300">
+                  <p>{session?.user?.email.charAt(0).toUpperCase()}</p>
+                </AvatarFallback>
+              </Avatar>
+            )}
 
             <Button variant="ghost" size="icon" title="Logout">
               <LogOut className="h-5 w-5" />
