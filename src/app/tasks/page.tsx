@@ -39,7 +39,7 @@ export default function TasksPage() {
     completed: tasks.filter((t: any) => t.status === "DONE").length,
     inProgress: tasks.filter((t: any) => t.status === "IN_PROGRESS").length,
     overdue: tasks.filter(
-      (t: any) => t.dueDate && new Date(t.dueDate) < new Date(),
+      (t: any) => t.deadline && new Date(t.deadline) < new Date(),
     ).length,
   };
 

@@ -15,17 +15,25 @@ export function TaskSummaryCards({
   inProgress,
   overdue,
 }: TaskSummaryCardsProps) {
-  const stats = [
-    { label: "Total Tasks", value: total },
-    { label: "Completed", value: completed },
-    { label: "In Progress", value: inProgress },
-    { label: "Overdue", value: overdue },
+  const stats: { label: string; value: any; className?: string }[] = [
+    {
+      label: "Total Tasks",
+      value: total,
+      className: "bg-gradient-to-tr from-blue-500 to-purple-600 text-white",
+    },
+    { label: "Completed", value: completed, className: "bg-primary" },
+    {
+      label: "In Progress",
+      value: inProgress,
+      className: "bg-orange-500 text-white",
+    },
+    { label: "Overdue", value: overdue, className: "bg-red-500 text-white" },
   ];
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
       {stats.map((stat) => (
-        <Card key={stat.label}>
+        <Card className={stat.className} key={stat.label}>
           <CardHeader>
             <CardTitle className="text-sm">{stat.label}</CardTitle>
           </CardHeader>
