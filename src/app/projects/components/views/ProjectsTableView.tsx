@@ -89,8 +89,8 @@ export function ProjectsTableView({
                   Status
                 </div>
               </TableHead>
-              <TableHead>
-                <div className="flex items-center text-slate-800 font-semibold">
+              <TableHead className="justify-self-end">
+                <div className="flex items-center text-slate-800 font-semibold justify-self-end">
                   <File size={18} className="mr-2" />
                   Actions
                 </div>
@@ -139,7 +139,7 @@ export function ProjectsTableView({
                       {project.status}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right flex gap-2">
+                  <TableCell className="text-right flex gap-2 justify-self-end">
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
