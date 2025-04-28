@@ -189,7 +189,6 @@ export async function DELETE(
       },
     });
 
-    // Send notification email here
     // ✅ Send notification email
     await sendNotificationEmail({
       to: project.owner.email, // <-- assuming 'email' is part of owner
