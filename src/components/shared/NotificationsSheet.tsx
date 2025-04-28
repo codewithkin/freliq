@@ -12,6 +12,8 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { Badge } from "../ui/badge";
+import { formatDistanceToNow } from "date-fns";
 
 function NotificationsSheet() {
   const { data: notifications = [] } = useQuery({
@@ -57,10 +59,26 @@ function NotificationsSheet() {
                 {notifications.map((notif: any) => (
                   <div
                     key={notif.id}
-                    className="border p-3 rounded-md bg-muted text-muted-foreground"
+                    className={`border p-3 rounded-md text-muted-foreground ${notif.read ? "bg-white" : "bg-slate-100"}`}
                   >
-                    <div className="font-medium">{notif.title}</div>
-                    <div className="text-xs">{notif.body}</div>
+                    <h2 className="font-semibold text-lg capitalize">
+                      {notif.title}
+                    </h2>
+                    <article className="flex items-center gap-2">
+                      <Badge
+                        variant="secondary"
+                        className="text-xs text-muted-foreground bg-slate-300 rounded-full"
+                      >
+                        {formatDistanceToNow(new Date(notif.createdAt))} ago
+                      </Badge>
+                      <Badge
+                        variant={notif.read ? "outline" : "default"}
+                        className="mb-2 text-xs rounded-full"
+                      >
+                        {notif.read ? <p>Read</p> : <p>Unread</p>}
+                      </Badge>
+                    </article>
+                    <p className="text-sm">{notif.message}</p>
                   </div>
                 ))}
               </div>
