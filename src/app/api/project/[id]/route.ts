@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { sendNotificationEmail } from "@/lib/email/sendNotificationEmail";
 import { prisma } from "@/prisma";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
@@ -172,6 +173,37 @@ export async function DELETE(
     // Finally, delete the project itself
     await prisma.project.delete({
       where: { id: projectId },
+    });
+
+    // Create a notification
+    await prisma.notification.create({
+      data: {
+        type: "project",
+        priority: "high",
+        message: `Project "${project.title}" has been deleted.`,
+        user: {
+          connect: {
+            id: project.owner.id,
+          },
+        },
+      },
+    });
+
+    // Send notification email here
+    // ✅ Send notification email
+    await sendNotificationEmail({
+      to: project.owner.email, // <-- assuming 'email' is part of owner
+      subject: `Your project "${project.title}" has been deleted`,
+      content: `
+            <div style="font-family: Arial, sans-serif; padding: 20px;">
+              <h2 style="color: #c0392b;">Project Deleted</h2>
+              <p>Hi ${project.owner.name || "there"},</p>
+              <p>Your project titled <strong>${project.title}</strong> has been deleted successfully by <strong>${session.user.email}</strong>.</p>
+              <p>If this wasn't you or you have questions, please contact support immediately.</p>
+              <hr style="margin-top: 30px;">
+              <p style="font-size: 0.9em; color: #777;">This is an automated notification from Freliq.</p>
+            </div>
+          `,
     });
 
     return new NextResponse(
