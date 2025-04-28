@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Create a new notification
+    // Create a new notification for the project owner
     const newNotification = await prisma.notification.create({
       data: {
         type: "task",
@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
         message: `The task "${title} has been created"`,
         user: {
           connect: {
-            id: session?.user?.id || "",
+            id: newTask.creatorId,
           },
         },
       },
