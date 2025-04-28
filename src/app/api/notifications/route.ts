@@ -8,17 +8,22 @@ export async function PATCH(req: NextRequest) {
     // Get the notifications from the request body
     const { notifications } = await req.json();
 
+    const notificationIds = notifications.map((n: any) => n.id);
+
+    console.log("Notification IDSs: ", notificationIds);
+
     // Update each of the notifications one-by-one
     await prisma.notification.updateMany({
       where: {
         id: {
-          in: notifications.map((n: any) => n.id),
+          in: notificationIds,
         },
       },
       data: {
         read: true,
       },
     });
+
   } catch (error) {
     console.log("An error occured while updating notifications: ", error);
 

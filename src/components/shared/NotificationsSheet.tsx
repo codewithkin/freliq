@@ -35,7 +35,7 @@ function NotificationsSheet() {
     mutationKey: ["markAllAsRead"],
     mutationFn: async () => {
       // Make a request to the endpoint
-      const res = await axios.patch(`/api/notifications`, notifications);
+      const res = await axios.patch(`/api/notifications`, { notifications });
 
       return res.data;
     },
@@ -44,7 +44,7 @@ function NotificationsSheet() {
         queryKey: ["notifications"],
       });
 
-      toast.error("All notifications have been read");
+      toast.success("All notifications have been read");
     },
     onError: () => {
       toast.error("Failed to mark notifications as read");
