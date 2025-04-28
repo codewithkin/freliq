@@ -25,7 +25,10 @@ model User {
   sessions Session[]
   accounts Account[]
 
-  projects      Project[]
+  projects      Project[]           @relation("ProjectOwner")
+  clientProjects Project[]          @relation("ProjectClient")
+  freelancerProjects Project[]      @relation("ProjectFreelancer")
+  
   polls         Poll[]
   messages      Message[]
   files         File[]
@@ -35,7 +38,6 @@ model User {
   notifications Notification[]
   projectMember ProjectMembers[]
 
-  // Self relation via join table
   clientLinks     UserRelation[] @relation("ClientLinks")
   freelancerLinks UserRelation[] @relation("FreelancerLinks")
 
@@ -144,8 +146,16 @@ model Project {
   deadline    DateTime?
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
+
   ownerId     String
-  owner       User               @relation(fields: [ownerId], references: [id], map: "project_owner_fkey")
+  owner       User               @relation("ProjectOwner", fields: [ownerId], references: [id], map: "project_owner_fkey")
+
+  clientId    String?             // NEW
+  client      User?               @relation("ProjectClient", fields: [clientId], references: [id])
+
+  freelancerId String?            // NEW
+  freelancer   User?              @relation("ProjectFreelancer", fields: [freelancerId], references: [id])
+
   files       File[]
   checklists  KickoffChecklist[]
   chatRoom    ChatRoom?
@@ -155,6 +165,7 @@ model Project {
   @@index([status])
   @@index([deadline])
 }
+
 
 // ────────────────
 // 🤝 Project Memberships
