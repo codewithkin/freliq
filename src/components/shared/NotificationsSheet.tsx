@@ -1,3 +1,5 @@
+"use client";
+
 import { Bell } from "lucide-react";
 import { Button } from "../ui/button";
 import {
@@ -7,42 +9,70 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
-import { Tabs, TabsList } from "../ui/tabs";
-import { TabsTrigger } from "@radix-ui/react-tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 function NotificationsSheet() {
+  const { data: notifications = [] } = useQuery({
+    queryKey: ["notifications"],
+    queryFn: async () => {
+      const res = await axios.get("/api/notifications");
+      return res.data;
+    },
+  });
+
+  console.log("Notifications: ", notifications);
+
+  const unreadCount = notifications.filter((n: any) => !n.read).length;
+
   return (
     <Sheet>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
-          {/* Only show if there are unread notifications */}
-          <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full" />
+          {unreadCount > 0 && (
+            <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full" />
+          )}
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-full p-4">
+      <SheetContent side="right" className="w-full max-w-sm p-4">
         <SheetHeader>
           <SheetTitle className="text-2xl font-semibold tracking-tight mb-4">
             Notifications
           </SheetTitle>
-
-          <Tabs>
-            <TabsList>
-              <TabsTrigger value="all" className="w-full">
-                All
-              </TabsTrigger>
-              <TabsTrigger value="tasks" className="w-full">
-                Tasks
-              </TabsTrigger>
-              <TabsTrigger value="projects" className="w-full">
-                Projects
-              </TabsTrigger>
-              <TabsTrigger value="system" className="w-full">
-                System
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
         </SheetHeader>
+
+        <Tabs defaultValue="all" className="w-full">
+          <TabsList className="grid w-full grid-cols-4 mb-4">
+            <TabsTrigger value="all">All</TabsTrigger>
+            <TabsTrigger value="tasks">Tasks</TabsTrigger>
+            <TabsTrigger value="projects">Projects</TabsTrigger>
+            <TabsTrigger value="system">System</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="all">
+            {notifications.length > 0 ? (
+              <div className="flex flex-col gap-2">
+                {notifications.map((notif: any) => (
+                  <div
+                    key={notif.id}
+                    className="border p-3 rounded-md bg-muted text-muted-foreground"
+                  >
+                    <div className="font-medium">{notif.title}</div>
+                    <div className="text-xs">{notif.body}</div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center text-sm text-muted-foreground">
+                No notifications yet.
+              </div>
+            )}
+          </TabsContent>
+
+          {/* You can later filter for tasks, projects, system based on notif.type */}
+        </Tabs>
       </SheetContent>
     </Sheet>
   );
