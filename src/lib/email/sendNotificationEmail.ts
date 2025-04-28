@@ -1,13 +1,13 @@
-import nodemailer from 'nodemailer';
+import nodemailer from "nodemailer";
 
 export async function sendNotificationEmail({
   subject,
   content,
-  to
+  to,
 }: {
   subject: string;
   content: string;
-  to: string
+  to: string;
 }) {
   try {
     const transporter = nodemailer.createTransport({
@@ -26,10 +26,9 @@ export async function sendNotificationEmail({
       html: content,
     });
 
-    console.log('Message sent: %s', info.messageId);
+    console.log("Message sent: %s", info.messageId);
   } catch (error) {
-    console.error('Failed to send email:', error);
-    throw new Error('Email sending failed');
+    console.error("Failed to send email:", error);
+    throw new Error("Email sending failed");
   }
 }
-
