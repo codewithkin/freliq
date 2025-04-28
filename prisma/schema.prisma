@@ -216,6 +216,7 @@ model Notification {
   message  String
   title   String @default("title here") //TODO: REMOVE THIS
   read      Boolean @default(false)
+  createdAt DateTime @default(now())
 
   userId String
   user   User   @relation(fields: [userId], references: [id], map: "poll_user_fkey")
