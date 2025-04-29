@@ -19,10 +19,12 @@ function FlowContainer({
   children,
   title,
   description,
+  disabled,
 }: {
   children: ReactNode;
   title: string;
   description: string;
+  disabled?: boolean;
 }) {
   // Get the current path
   const path = usePathname();
@@ -105,7 +107,7 @@ function FlowContainer({
             Back
           </Button>
           <Button
-            disabled={highestCompletedStep >= 4}
+            disabled={highestCompletedStep >= 4 || disabled}
             onClick={() => {
               if (highestCompletedStep === 1) {
                 incrementStep();
