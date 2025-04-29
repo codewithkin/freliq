@@ -62,7 +62,7 @@ function FlowContainer({
                 value={
                   highestCompletedStep > 0
                     ? highestCompletedStep * 25
-                    : (highestCompletedStep + 1) & 25
+                    : (highestCompletedStep + 1) * 25
                 }
               />
             </article>
@@ -95,7 +95,7 @@ function FlowContainer({
             Back
           </Button>
           <Button
-            disabled={path == third}
+            disabled={highestCompletedStep >= 4}
             onClick={() => {
               // Check if the path is first
               if (first) {
