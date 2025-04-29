@@ -47,14 +47,14 @@ export default function NewProjectPage() {
 
   return (
     <FlowContainer
-      title="New Project"
-      description={`Create a new project and invite the ${isFreelancer ? "client" : "freelancer"}`}
+      title="Upload Project Image"
+      description="Upload a memorable image of the project (maybe a banner, or an icon)"
     >
       <article className="space-y-6 w-full">
         <article className="p-4 border-2 border-dashed border-gray-300 rounded-lg">
           <article {...getRootProps()} className="flex flex-col">
             <input {...getInputProps()} />
-            <h2 className="text-xl font-semibold">
+            <h2 className="text-md font-medium">
               Drag 'n' drop the Project Image here, or click to select files
             </h2>
           </article>

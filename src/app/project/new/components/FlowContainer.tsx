@@ -13,7 +13,7 @@ import { useNewProjectData } from "@/stores/useNewProjectData";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 
 function FlowContainer({
   children,
@@ -42,6 +42,10 @@ function FlowContainer({
   // Get increment / decrement functions
   const incrementStep = useNewProjectData((state) => state.incrementStep);
   const decrementStep = useNewProjectData((state) => state.decrementStep);
+
+  useEffect(() => {
+    console.log("Highest completed step: ", highestCompletedStep);
+  }, [highestCompletedStep]);
 
   return (
     <section className="w-screen h-screen flex flex-col justify-center items-center bg-gradient-to-tr from-purple-600 to-sky-400 p-4">
