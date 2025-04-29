@@ -36,4 +36,6 @@ export const useNewProjectData = create<State & Actions>((set) => ({
     set((state) => ({ data: { ...state.data, ownerId } })),
   setTasks: (tasks: any) =>
     set((state) => ({ data: { ...state.data, tasks } })),
+  incrementStep: () =>
+    set((state) => ({ highestCompletedStep: state.highestCompletedStep + 1 })),
 }));
