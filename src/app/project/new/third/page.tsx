@@ -58,7 +58,7 @@ export default function NewProjectPage() {
             <Input name="email" id="email" placeholder="kin@freliq.com" />
           </article>
           <Button
-            disabled={email.length < 1 || sendingInvite || !inviteSent}
+            disabled={email.length < 1 || sendingInvite || inviteSent}
             type="button"
             onClick={() => {
               sendInvite;
