@@ -24,7 +24,11 @@ type State = {
 };
 
 export const useNewProjectData = create<State & Actions>((set) => ({
-  data: {},
+  data: {
+    title: "",
+    description: "",
+    deadline: new Date(),
+  },
   highestCompletedStep: 0,
   setTitle: (title: string) =>
     set((state) => ({ data: { ...state.data, title } })),
