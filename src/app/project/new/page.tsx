@@ -16,10 +16,6 @@ export default function NewProjectPage() {
   const router = useRouter();
   const [deadline, setDeadline] = useState<Date | undefined>(undefined);
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-  }
-
   // Get the user's data
   const { data: user, isLoading } = useQuery({
     queryKey: ["session"],
@@ -37,7 +33,7 @@ export default function NewProjectPage() {
       title="New Project"
       description={`Create a new project and invite the ${isFreelancer ? "client" : "freelancer"}`}
     >
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <article className="space-y-6">
         <div className="flex flex-col gap-2">
           <Label htmlFor="title">Project Title</Label>
           <Input
@@ -71,9 +67,7 @@ export default function NewProjectPage() {
             </p>
           )}
         </div>
-
-        <Button type="submit">Create Project</Button>
-      </form>
+      </article>
     </FlowContainer>
   );
 }
