@@ -11,10 +11,10 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Calendar } from "@/components/ui/calendar";
 import FlowContainer from "./components/FlowContainer";
+import { useNewProjectData } from "@/stores/useNewProjectData";
 
 export default function NewProjectPage() {
   const router = useRouter();
-  const [deadline, setDeadline] = useState<Date | undefined>(undefined);
 
   // Get the user's data
   const { data: user, isLoading } = useQuery({
@@ -28,18 +28,30 @@ export default function NewProjectPage() {
 
   const isFreelancer = user?.type == "Freelancer";
 
+  // Get the necessary update functions
+  const setTitle = useNewProjectData((state) => state.setTitle);
+  const setDescription = useNewProjectData((state) => state.setDescription);
+  const setDeadline = useNewProjectData((state) => state.setDeadline);
+
+  // Get the necessary data
+  const title = useNewProjectData((state) => state.data.title);
+  const description = useNewProjectData((state) => state.data.description);
+  const deadline = useNewProjectData((state) => state.data.deadline);
+
   return (
     <FlowContainer
       title="New Project"
       description={`Create a new project and invite the ${isFreelancer ? "client" : "freelancer"}`}
     >
-      <article className="space-y-6">
+      <article className="space-y-6 w-full">
         <div className="flex flex-col gap-2">
           <Label htmlFor="title">Project Title</Label>
           <Input
             placeholder="e.g Freliq mobile app"
             name="title"
             id="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
             required
           />
         </div>
@@ -47,9 +59,12 @@ export default function NewProjectPage() {
         <div className="flex flex-col gap-2">
           <Label htmlFor="description">Description</Label>
           <Textarea
+            className="min-w-full"
             placeholder="This is the mobile app for Freliq, a project owned by me (Kin) and being undertaken by John Doe"
             name="description"
             id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
           />
         </div>
 
