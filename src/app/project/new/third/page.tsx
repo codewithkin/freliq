@@ -61,7 +61,13 @@ export default function NewProjectPage() {
       <article className="space-y-6 w-full">
         <article className="flex gap-2 items-center">
           <article className="flex flex-col gap-2">
-            <Input name="email" id="email" placeholder="kin@freliq.com" />
+            <Input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              name="email"
+              id="email"
+              placeholder="kin@freliq.com"
+            />
           </article>
           <Button
             disabled={sendingInvite || inviteSent}
