@@ -161,8 +161,8 @@ function DashboardShell({ children }: { children: ReactNode }) {
           <div className="flex items-center gap-4 ml-auto">
             <Button asChild>
               <Link href="/project/new">
-                New project
                 <Plus />
+                New project
               </Link>
             </Button>
 
