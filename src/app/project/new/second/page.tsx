@@ -28,21 +28,29 @@ export default function NewProjectPage() {
 
   const projectData = useNewProjectData((state) => state.data);
 
+  // Function to update the id
+  const setID = useNewProjectData((state) => state.setID);
+
   // Create project mutation
   const { mutate: createProject, isPending: creatingProject } = useMutation({
     mutationKey: ["createProject"],
     mutationFn: async () => {
       const res = await axios.post(`/api/project`, { data: projectData });
 
-      return res.data;
+      return res.data.newProject;
     },
-    onSuccess: () => {
+    onSuccess: (project: any) => {
       toast.success("Project created successfully");
 
       setCreated(true);
+
+      // Add the project to the data object
+      setID(project.id);
     },
-    onError: () => {
+    onError: (e) => {
       toast.error("Could not create project, try again later");
+
+      console.log("Error: ", e);
     },
   });
 
