@@ -3,7 +3,7 @@ import { create } from "zustand";
 type Actions = {
   setTitle: (title: string) => void;
   setDescription: (description: string) => void;
-  setDeadline: (deadline: Date | string) => void;
+  setDeadline: (deadline: Date | undefined) => void;
   setImage: (image: string) => void;
   setOwnerId: (ownerId: string) => void;
   setTasks: (tasks: any) => void;
@@ -13,7 +13,7 @@ type State = {
   data: {
     title?: string;
     description?: string;
-    deadline?: Date | string;
+    deadline?: Date | undefined;
     image?: string;
     ownerId?: string;
     tasks?: any;
@@ -28,7 +28,7 @@ export const useNewProjectData = create<State & Actions>((set) => ({
     set((state) => ({ data: { ...state.data, title } })),
   setDescription: (description: string) =>
     set((state) => ({ data: { ...state.data, description } })),
-  setDeadline: (deadline: Date | string) =>
+  setDeadline: (deadline: Date | undefined) =>
     set((state) => ({ data: { ...state.data, deadline } })),
   setImage: (image: string) =>
     set((state) => ({ data: { ...state.data, image } })),
