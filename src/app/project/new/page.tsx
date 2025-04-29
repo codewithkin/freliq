@@ -58,7 +58,7 @@ export default function NewProjectPage() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <Label>Deadline (optional)</Label>
+          <Label>Deadline</Label>
           <Calendar
             mode="single"
             selected={deadline}
