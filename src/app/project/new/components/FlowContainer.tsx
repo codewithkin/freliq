@@ -52,7 +52,7 @@ function FlowContainer({
 
   return (
     <section className="w-screen h-screen flex flex-col justify-center items-center bg-gradient-to-tr from-purple-600 to-sky-400 p-4">
-      <Card>
+      <Card className="md:min-w-[600px]">
         <CardContent>
           <CardHeader className="px-0 pb-8 w-full">
             <article className="my-4 flex flex-col gap-2">
