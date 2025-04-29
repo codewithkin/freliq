@@ -3,9 +3,12 @@ import { useState } from "react";
 import FlowContainer from "../components/FlowContainer";
 import Task from "./components/Task";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { useNewProjectData } from "@/stores/useNewProjectData";
 import { authClient } from "@/lib/auth-client";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { toast } from "sonner";
 
 export default function NewProjectPage() {
   // Get the project's id
@@ -43,11 +46,31 @@ export default function NewProjectPage() {
 
   console.log("Tasks: ", tasks);
 
+  // Create task mutation
+  const { mutate: createTasks, isPending: creatingTasks } = useMutation({
+    mutationKey: ["createTask"],
+    mutationFn: async () => {
+      const res = await axios.post("/api/tasks", { tasks });
+
+      return res.data.newTask;
+    },
+    onSuccess: () => {
+      toast.success(
+        `${tasks.length > 0 ? "Tasks" : "Task"} created successfully`,
+      );
+    },
+    onError: () => {
+      toast.error(
+        "An error occured while creating task...please try again later",
+      );
+    },
+  });
+
   return (
     <FlowContainer
       title="Add your first task to the project"
       description="Add a task to kickstart this project..."
-      disabled={!created}
+      disabled={!created || creatingTask}
     >
       <form
         onSubmit={(e) => {
@@ -87,8 +110,16 @@ export default function NewProjectPage() {
           >
             New Task <Plus />
           </Button>
-          <Button type="submit" variant="secondary">
-            Create Tasks
+          <Button
+            disabled={creatingTasks}
+            onClick={() => {
+              createTasks();
+            }}
+            type="button"
+            variant="secondary"
+          >
+            {creatingTasks && <Loader2 className="animate-spin" />}
+            {creatingTasks ? "Creating Tasks..." : "Create Tasks"}
           </Button>
         </div>
       </form>
