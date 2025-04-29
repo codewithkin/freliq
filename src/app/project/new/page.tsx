@@ -17,7 +17,6 @@ export default function NewProjectPage() {
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    
   }
 
   // Get the user's data
@@ -45,12 +44,21 @@ export default function NewProjectPage() {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="flex flex-col gap-2">
           <Label htmlFor="title">Project Title</Label>
-          <Input placeholder="e.g Freliq mobile app" name="title" id="title" required />
+          <Input
+            placeholder="e.g Freliq mobile app"
+            name="title"
+            id="title"
+            required
+          />
         </div>
 
         <div className="flex flex-col gap-2">
           <Label htmlFor="description">Description</Label>
-          <Textarea placeholder="This is the mobile app for Freliq, a project owned by me (Kin) and being undertaken by John Doe" name="description" id="description" />
+          <Textarea
+            placeholder="This is the mobile app for Freliq, a project owned by me (Kin) and being undertaken by John Doe"
+            name="description"
+            id="description"
+          />
         </div>
 
         <div className="flex flex-col gap-2">
