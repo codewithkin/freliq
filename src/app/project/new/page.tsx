@@ -6,12 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Calendar } from "@/components/ui/calendar"; // optional if you want date picker
 import { format } from "date-fns";
-import { createProject } from "@/lib/actions/create-project";
 import { useQuery } from "@tanstack/react-query";
-import { authClient } from "@/lib/auth-client";
 import axios from "axios";
+import { Calendar } from "@/components/ui/calendar";
 
 export default function NewProjectPage() {
   const router = useRouter();
@@ -19,16 +17,7 @@ export default function NewProjectPage() {
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    if (deadline) {
-      formData.set("deadline", deadline.toISOString());
-    }
-    try {
-      await createProject(formData);
-      router.push("/projects");
-    } catch (err) {
-      console.error(err);
-    }
+    
   }
 
   // Get the user's data
@@ -54,33 +43,23 @@ export default function NewProjectPage() {
       </article>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <Label htmlFor="title">Title</Label>
-          <Input name="title" id="title" required />
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="title">Project Title</Label>
+          <Input placeholder="e.g Freliq mobile app" name="title" id="title" required />
         </div>
 
-        <div>
+        <div className="flex flex-col gap-2">
           <Label htmlFor="description">Description</Label>
-          <Textarea name="description" id="description" />
+          <Textarea placeholder="This is the mobile app for Freliq, a project owned by me (Kin) and being undertaken by John Doe" name="description" id="description" />
         </div>
 
-        <div>
-          <Label htmlFor="clientId">Client ID</Label>
-          <Input name="clientId" id="clientId" required />
-        </div>
-
-        <div>
-          <Label htmlFor="freelancerId">Freelancer ID (optional)</Label>
-          <Input name="freelancerId" id="freelancerId" />
-        </div>
-
-        <div>
+        <div className="flex flex-col gap-2">
           <Label>Deadline (optional)</Label>
           <Calendar
             mode="single"
             selected={deadline}
             onSelect={setDeadline}
-            className="rounded-md border"
+            className="rounded-md border w-full"
           />
           {deadline && (
             <p className="text-sm text-muted-foreground mt-2">
