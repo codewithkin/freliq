@@ -13,6 +13,7 @@ import {
   User,
   LayoutDashboard,
   FolderKanban,
+  Plus,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -158,6 +159,13 @@ function DashboardShell({ children }: { children: ReactNode }) {
 
           {/* Topbar right */}
           <div className="flex items-center gap-4 ml-auto">
+            <Button asChild>
+              <Link href="/project/new">
+                New project
+                <Plus />
+              </Link>
+            </Button>
+
             <NotificationsSheet />
 
             {isPending ? (

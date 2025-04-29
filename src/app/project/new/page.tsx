@@ -14,7 +14,6 @@ export default function NewProjectPage() {
   const router = useRouter();
   const [deadline, setDeadline] = useState<Date | undefined>(undefined);
 
-
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
