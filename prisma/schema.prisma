@@ -151,10 +151,10 @@ model Project {
   ownerId     String
   owner       User               @relation("ProjectOwner", fields: [ownerId], references: [id], map: "project_owner_fkey")
 
-  clientId    String?             // NEW
+  clientId    String?             
   client      User?               @relation("ProjectClient", fields: [clientId], references: [id])
 
-  freelancerId String?            // NEW
+  freelancerId String?            
   freelancer   User?              @relation("ProjectFreelancer", fields: [freelancerId], references: [id])
 
   files       File[]
