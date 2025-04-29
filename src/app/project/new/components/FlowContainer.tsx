@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
 
 function FlowContainer({
@@ -23,6 +24,9 @@ function FlowContainer({
 }) {
   // Get the current path
   const path = usePathname();
+
+  // router for redirects
+  const router = useRouter();
 
   const first = "/project/new";
   const second = "/project/new/second";
@@ -39,11 +43,32 @@ function FlowContainer({
           {children}
         </CardContent>
         <CardFooter className="flex w-full justify-between items-center">
-          <Button size="lg" variant="outline">
+          <Button
+            disabled={path == first}
+            onClick={() => {
+              // Check if the path is first
+              if (second) {
+                return router.push(first);
+              }
+
+              return router.push(second);
+            }}
+            size="lg"
+            variant="outline"
+          >
             <ArrowLeft />
             Back
           </Button>
           <Button
+            disabled={path == third}
+            onClick={() => {
+              // Check if the path is first
+              if (first) {
+                return router.push(second);
+              }
+
+              return router.push(third);
+            }}
             size="lg"
             variant="default"
             className="bg-gradient-to-r from-purple-600 to-sky-400 text-white"
