@@ -76,7 +76,7 @@ function FlowContainer({
         </CardContent>
         <CardFooter className="flex w-full justify-between items-center">
           <Button
-            disabled={path == first}
+            disabled={highestCompletedStep == 1}
             onClick={() => {
               // Check if the path is first
               if (second) {
