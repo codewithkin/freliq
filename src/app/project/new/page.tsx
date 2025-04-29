@@ -9,6 +9,9 @@ import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar"; // optional if you want date picker
 import { format } from "date-fns";
 import { createProject } from "@/lib/actions/create-project";
+import { useQuery } from "@tanstack/react-query";
+import { authClient } from "@/lib/auth-client";
+import axios from "axios";
 
 export default function NewProjectPage() {
   const router = useRouter();
@@ -28,9 +31,27 @@ export default function NewProjectPage() {
     }
   }
 
+  // Get the user's data
+  const { data: user, isLoading } = useQuery({
+    queryKey: ["session"],
+    queryFn: async () => {
+      const res = await axios.get("/api/user");
+
+      return res.data.fullUser;
+    },
+  });
+
+  const isFreelancer = user?.type == "Freelancer";
+
   return (
     <div className="max-w-2xl mx-auto py-12">
-      <h1 className="text-2xl font-bold mb-8">Create New Project</h1>
+      <article className="flex flex-col mb-8">
+        <h1 className="text-2xl font-bold">Create New Project</h1>
+        <p className="text-muted-foreground">
+          Create a new project and invite the{" "}
+          {isFreelancer ? "client" : "freelancer"}
+        </p>
+      </article>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
