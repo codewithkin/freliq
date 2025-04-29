@@ -10,6 +10,7 @@ import { format } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Calendar } from "@/components/ui/calendar";
+import FlowContainer from "./components/FlowContainer";
 
 export default function NewProjectPage() {
   const router = useRouter();
@@ -32,15 +33,10 @@ export default function NewProjectPage() {
   const isFreelancer = user?.type == "Freelancer";
 
   return (
-    <div className="max-w-2xl mx-auto py-12">
-      <article className="flex flex-col mb-8">
-        <h1 className="text-2xl font-bold">Create New Project</h1>
-        <p className="text-muted-foreground">
-          Create a new project and invite the{" "}
-          {isFreelancer ? "client" : "freelancer"}
-        </p>
-      </article>
-
+    <FlowContainer
+      title="New Project"
+      description={`Create a new project and invite the ${isFreelancer ? "client" : "freelancer"}`}
+    >
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="flex flex-col gap-2">
           <Label htmlFor="title">Project Title</Label>
@@ -70,7 +66,7 @@ export default function NewProjectPage() {
             className="rounded-md border w-full"
           />
           {deadline && (
-            <p className="text-sm text-muted-foreground mt-2">
+            <p className="text-sm text-muted-foreground">
               Selected: {format(deadline, "PPP")}
             </p>
           )}
@@ -78,6 +74,6 @@ export default function NewProjectPage() {
 
         <Button type="submit">Create Project</Button>
       </form>
-    </div>
+    </FlowContainer>
   );
 }
