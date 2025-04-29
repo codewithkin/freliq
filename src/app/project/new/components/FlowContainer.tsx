@@ -33,6 +33,7 @@ function FlowContainer({
   const first = "/project/new";
   const second = "/project/new/second";
   const third = "/project/new/third";
+  const fourth = "/project/new/fourth";
 
   // Get the steps data
   const highestCompletedStep = useNewProjectData(
@@ -80,17 +81,22 @@ function FlowContainer({
         </CardContent>
         <CardFooter className="flex w-full justify-between items-center">
           <Button
-            disabled={highestCompletedStep == 1}
+            disabled={highestCompletedStep === 1}
             onClick={() => {
-              // Check if the path is first
-              if (second) {
-                // decrease the step
+              if (highestCompletedStep === 2) {
                 decrementStep();
                 return router.push(first);
               }
 
-              decrementStep();
-              return router.push(second);
+              if (highestCompletedStep === 3) {
+                decrementStep();
+                return router.push(second);
+              }
+
+              if (highestCompletedStep === 4) {
+                decrementStep();
+                return router.push(third);
+              }
             }}
             size="lg"
             variant="outline"
@@ -101,14 +107,20 @@ function FlowContainer({
           <Button
             disabled={highestCompletedStep >= 4}
             onClick={() => {
-              // Check if the path is first
-              if (first) {
+              if (highestCompletedStep === 1) {
                 incrementStep();
                 return router.push(second);
               }
 
-              incrementStep();
-              return router.push(third);
+              if (highestCompletedStep === 2) {
+                incrementStep();
+                return router.push(third);
+              }
+
+              if (highestCompletedStep === 3) {
+                incrementStep();
+                return router.push(fourth);
+              }
             }}
             size="lg"
             variant="default"
