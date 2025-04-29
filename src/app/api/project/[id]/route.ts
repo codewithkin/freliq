@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { sendNotificationEmail } from "@/lib/email/sendNotificationEmail";
 import { prisma } from "@/prisma";
+import { Lectern } from "lucide-react";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
