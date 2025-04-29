@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useNewProjectData } from "@/stores/useNewProjectData";
+import { Loader2 } from "lucide-react";
 
 export default function NewProjectPage() {
   const router = useRouter();
@@ -25,12 +27,16 @@ export default function NewProjectPage() {
     },
   });
 
+  const projectId = useNewProjectData((state) => state.data.id);
+
   // Handle sending an invite
   const { mutate: sendInvite, isPending: sendingInvite } = useMutation({
     mutationKey: ["sendInvite"],
     mutationFn: async () => {
       // Make a request to the backend
-      const res = await axios.get(`/api/invite/${email}`);
+      const res = await axios.get(
+        `/api/invite/project/?email=${email}&project=${projectId}`,
+      );
 
       return res.data;
     },
@@ -58,13 +64,14 @@ export default function NewProjectPage() {
             <Input name="email" id="email" placeholder="kin@freliq.com" />
           </article>
           <Button
-            disabled={email.length < 1 || sendingInvite || inviteSent}
+            disabled={sendingInvite || inviteSent}
             type="button"
             onClick={() => {
-              sendInvite;
+              sendInvite();
             }}
           >
-            Send invite
+            {sendingInvite && <Loader2 className="animate-spin" />}
+            {sendingInvite ? "Sending invite..." : "Send invite"}
           </Button>
         </article>
       </article>
