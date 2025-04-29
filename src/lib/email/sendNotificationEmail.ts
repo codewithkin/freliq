@@ -15,7 +15,7 @@ export async function sendNotificationEmail({
       port: 465,
       auth: {
         user: "kinzinzombe07@gmail.com",
-        pass: "",
+        pass: "uajp jvia mryy tdqx",
       },
     });
 
