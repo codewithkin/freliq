@@ -11,16 +11,16 @@ export async function sendNotificationEmail({
 }) {
   try {
     const transporter = nodemailer.createTransport({
-      host: "smtp.spacemail.com",
+      host: "smtp.gmail.com",
       port: 465,
       auth: {
-        user: "alert@freliq.com",
-        pass: "ALERTSFORFRELIQ",
+        user: "kinzinzombe07@gmail.com",
+        pass: "",
       },
     });
 
     const info = await transporter.sendMail({
-      from: `"Freliq" <alert@freliq.com>`,
+      from: `"Freliq" <kinzinzombe@gmail.com>`,
       to,
       subject,
       html: content,
