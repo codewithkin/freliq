@@ -29,7 +29,7 @@ export const useNewProjectData = create<State & Actions>((set) => ({
     description: "",
     deadline: new Date(),
   },
-  highestCompletedStep: 0,
+  highestCompletedStep: 1,
   setTitle: (title: string) =>
     set((state) => ({ data: { ...state.data, title } })),
   setDescription: (description: string) =>
