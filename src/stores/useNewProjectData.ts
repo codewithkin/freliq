@@ -6,6 +6,7 @@ type Actions = {
   setDeadline: (deadline: Date | undefined) => void;
   setImage: (image: string) => void;
   setOwnerId: (ownerId: string) => void;
+  setID: (id: string) => void;
   setTasks: (tasks: any) => void;
   incrementStep: () => void;
   decrementStep: () => void;
@@ -19,6 +20,7 @@ type State = {
     image?: string;
     ownerId?: string;
     tasks?: any;
+    id?: string | null;
   };
   highestCompletedStep: number;
 };
@@ -28,6 +30,7 @@ export const useNewProjectData = create<State & Actions>((set) => ({
     title: "",
     description: "",
     deadline: new Date(),
+    id: null,
   },
   highestCompletedStep: 1,
   setTitle: (title: string) =>
@@ -42,6 +45,10 @@ export const useNewProjectData = create<State & Actions>((set) => ({
     set((state) => ({ data: { ...state.data, ownerId } })),
   setTasks: (tasks: any) =>
     set((state) => ({ data: { ...state.data, tasks } })),
+  setID: (id: string) =>
+    set((state) => ({
+      data: { ...state.data, id },
+    })),
   incrementStep: () =>
     set((state) => ({ highestCompletedStep: state.highestCompletedStep + 1 })),
   decrementStep: () =>

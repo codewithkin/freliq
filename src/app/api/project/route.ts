@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { sendNotificationEmail } from "@/lib/email/sendNotificationEmail";
 import { prisma } from "@/prisma";
+import { connect } from "http2";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -35,17 +36,34 @@ export async function POST(req: NextRequest) {
 
     const userId = user?.id;
 
-    data.ownerId = userId;
+    if (!data.id) {
+      data.id = undefined;
+    }
 
     if (isFreelancer) {
-      data.freelancerId = userId;
+      data.freelancer = {
+        connect: {
+          id: userId,
+        },
+      };
     } else {
-      data.clientId = userId;
+      data.client = {
+        connect: {
+          id: userId,
+        },
+      };
     }
 
     // Create a new project
     const newProject = await prisma.project.create({
-      data,
+      data: {
+        ...data,
+        owner: {
+          connect: {
+            id: userId,
+          },
+        },
+      },
     });
 
     // Create a notification
@@ -99,7 +117,7 @@ export async function POST(req: NextRequest) {
   `,
     });
 
-    return NextResponse.json(newProject);
+    return NextResponse.json({ newProject });
   } catch (e) {
     console.log("Could not create project: ", e);
 
