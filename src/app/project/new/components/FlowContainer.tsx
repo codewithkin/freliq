@@ -39,6 +39,10 @@ function FlowContainer({
     (state) => state.highestCompletedStep,
   );
 
+  // Get increment / decrement functions
+  const incrementStep = useNewProjectData((state) => state.incrementStep);
+  const decrementStep = useNewProjectData((state) => state.decrementStep);
+
   return (
     <section className="w-screen h-screen flex flex-col justify-center items-center bg-gradient-to-tr from-purple-600 to-sky-400 p-4">
       <Card>
@@ -76,9 +80,12 @@ function FlowContainer({
             onClick={() => {
               // Check if the path is first
               if (second) {
+                // decrease the step
+                decrementStep();
                 return router.push(first);
               }
 
+              decrementStep();
               return router.push(second);
             }}
             size="lg"
@@ -92,9 +99,11 @@ function FlowContainer({
             onClick={() => {
               // Check if the path is first
               if (first) {
+                incrementStep();
                 return router.push(second);
               }
 
+              incrementStep();
               return router.push(third);
             }}
             size="lg"

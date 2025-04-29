@@ -59,7 +59,7 @@ export default function NewProjectPage() {
         <div className="flex flex-col gap-2">
           <Label htmlFor="description">Description</Label>
           <Textarea
-            className="min-w-full"
+            className="min-w-1/3"
             placeholder="This is the mobile app for Freliq, a project owned by me (Kin) and being undertaken by John Doe"
             name="description"
             id="description"
