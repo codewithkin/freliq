@@ -17,7 +17,7 @@ function FlowContainer({
   description: string;
 }) {
   return (
-    <section className="w-screen h-screen flex flex-col justify-center items-center bg-gradient-to-tr from-purple-600 to-sky-400">
+    <section className="w-screen h-screen flex flex-col justify-center items-center bg-gradient-to-tr from-purple-600 to-sky-400 p-4">
       <Card>
         <CardContent>
           <CardHeader className="px-0 pb-8">
