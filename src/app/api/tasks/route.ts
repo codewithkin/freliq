@@ -1,8 +1,9 @@
+import { Task } from "@/generated/prisma";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/prisma";
 import { seedData } from "@/seed";
 import { headers } from "next/headers";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
   const session = await auth.api.getSession({
@@ -36,4 +37,39 @@ export async function GET() {
   });
 
   return NextResponse.json(tasks);
+}
+
+// Create multiple tasks
+export async function POST(req: NextRequest) {
+  try {
+    // Get the tasks from the request body
+    const { tasks } = await req.json();
+
+    if (!tasks) {
+      console.log("Tasks not found");
+      return NextResponse.json(
+        {
+          message: "Tasks not found",
+        },
+        { status: 404 },
+      );
+    }
+
+    // Create the tasks
+    const newTasks = await prisma.task.createMany({
+      data: tasks,
+    });
+
+    console.log("Newly created tasks: ", tasks);
+
+    return NextResponse.json({ newTasks });
+  } catch (e) {
+    console.log("An error occured while creating tasks: ", e);
+    return NextResponse.json(
+      {
+        message: "An error occured while creating tasks",
+      },
+      { status: 400 },
+    );
+  }
 }
