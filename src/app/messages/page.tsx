@@ -3,6 +3,7 @@ import ChatList from "./components/ChatList";
 import Chat from "./components/Chat";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { useState } from "react";
 
 function Messages() {
   // Fetch the user's chats
@@ -14,10 +15,13 @@ function Messages() {
     },
   });
 
+  // Track the selected chat
+  const [chat, setChat] = useState<null | any>(null);
+
   return (
-    <article className="w-full h-full">
-      <ChatList isLoading={isLoading} chats={chats} />
-      <Chat />
+    <article className="w-full h-full flex md:flex-row flex-col">
+      <ChatList setChat={setChat} isLoading={isLoading} chats={chats} />
+      <Chat chat={chat} />
     </article>
   );
 }

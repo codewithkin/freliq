@@ -3,7 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Plus } from "lucide-react";
 import { Inbox } from "lucide-react";
 
-function ChatList({ isLoading, chats }: { isLoading: boolean; chats: any }) {
+function ChatList({
+  isLoading,
+  chats,
+  setChat,
+}: {
+  isLoading: boolean;
+  setChat: any;
+  chats: any;
+}) {
   return (
     <article className="md:w-1/4 h-full border-r border-slate-300 pr-4 flex justify-center">
       {isLoading ? (
