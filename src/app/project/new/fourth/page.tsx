@@ -51,8 +51,6 @@ export default function NewProjectPage() {
   const description = useNewProjectData((state) => state.data.description);
   const deadline = useNewProjectData((state) => state.data.deadline);
 
-  console.log("Task: ", Task);
-
   // Create task mutation
   const { mutate: createTask, isPending: creatingTask } = useMutation({
     mutationKey: ["createTask"],
@@ -67,9 +65,7 @@ export default function NewProjectPage() {
       return res.data.newTask;
     },
     onSuccess: () => {
-      toast.success(
-        `${Task.length > 0 ? "Task" : "Task"} created successfully`,
-      );
+      toast.success(`Task created successfully`);
     },
     onError: () => {
       toast.error(
@@ -87,7 +83,6 @@ export default function NewProjectPage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          console.log(Task);
         }}
         className="space-y-6 w-full max-h-[400px] overflow-y-auto"
       >
