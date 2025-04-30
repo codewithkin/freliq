@@ -1,20 +1,9 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { Loader2, Plus } from "lucide-react";
 import { Inbox } from "lucide-react";
 
-function ChatList() {
-  // Fetch the user's chats
-  const { data: chats, isLoading } = useQuery({
-    queryKey: ["chats"],
-    queryFn: async () => {
-      const res = await axios.get("/api/chats");
-      return res.data.chats;
-    },
-  });
-
+function ChatList({ isLoading, chats }: { isLoading: boolean; chats: any }) {
   return (
     <article className="md:w-1/4 h-full border-r border-slate-300 pr-4 flex justify-center">
       {isLoading ? (

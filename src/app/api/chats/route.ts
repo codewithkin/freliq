@@ -35,6 +35,7 @@ export async function GET(req: NextRequest) {
       },
       include: {
         users: true,
+        messages: true
       },
     });
 
