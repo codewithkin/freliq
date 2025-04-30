@@ -25,6 +25,7 @@ export default function NewProjectPage() {
       title: "",
       description: "",
       dueDate: new Date().toISOString().split("T")[0],
+      projectId,
       project: {
         connect: {
           id: projectId,
@@ -70,7 +71,7 @@ export default function NewProjectPage() {
     <FlowContainer
       title="Add your first task to the project"
       description="Add a task to kickstart this project..."
-      disabled={!created || creatingTask}
+      disabled={!created || creatingTasks}
     >
       <form
         onSubmit={(e) => {
@@ -93,6 +94,7 @@ export default function NewProjectPage() {
                   title: "",
                   description: "",
                   dueDate: new Date().toISOString().split("T")[0],
+      projectId,
                   project: {
                     connect: {
                       id: projectId,
