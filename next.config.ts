@@ -4,6 +4,9 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  experimental: {
+    useLightningcss: true,
+  },
 };
 
 export default nextConfig;
