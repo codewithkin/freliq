@@ -10,6 +10,7 @@ type Actions = {
   setTasks: (tasks: any) => void;
   incrementStep: () => void;
   decrementStep: () => void;
+  clear: () => void; // ← add this
 };
 
 type State = {
@@ -53,4 +54,17 @@ export const useNewProjectData = create<State & Actions>((set) => ({
     set((state) => ({ highestCompletedStep: state.highestCompletedStep + 1 })),
   decrementStep: () =>
     set((state) => ({ highestCompletedStep: state.highestCompletedStep - 1 })),
+  clear: () =>
+    set(() => ({
+      data: {
+        title: "",
+        description: "",
+        deadline: new Date(),
+        image: "",
+        ownerId: "",
+        tasks: [],
+        id: null,
+      },
+      highestCompletedStep: 1,
+    })),
 }));
