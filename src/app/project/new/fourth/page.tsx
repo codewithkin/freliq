@@ -90,7 +90,7 @@ export default function NewProjectPage() {
     <FlowContainer
       title="Add your first task to the project"
       description="Add a task to kickstart this project..."
-      disabled={!created || creatingTask}
+      disabled={true} // Keep the "Next" button perpetually disabled as this is the last step
     >
       {created ? (
         <article className="flex flex-col gap-2 items-center justify-center">
