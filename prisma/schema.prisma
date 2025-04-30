@@ -28,6 +28,7 @@ model User {
   projects      Project[]           @relation("ProjectOwner")
   clientProjects Project[]          @relation("ProjectClient")
   freelancerProjects Project[]      @relation("ProjectFreelancer")
+  chatRooms    ChatRoom[]          @relation("ChatRoomUsers")
   
   polls         Poll[]
   messages      Message[]
@@ -260,6 +261,7 @@ model ChatRoom {
   projectId String?   @unique
   project   Project?  @relation(fields: [projectId], references: [id], map: "chatroom_project_fkey")
   messages  Message[]
+  users     User[]    @relation("ChatRoomUsers")
 }
 
 model Message {
