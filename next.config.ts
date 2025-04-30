@@ -4,8 +4,9 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  experimental: {
-    useLightningcss: true,
+  webpack(config) {
+    config.optimization.minimize = false;
+    return config;
   },
 };
 
