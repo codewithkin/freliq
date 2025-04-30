@@ -33,6 +33,9 @@ export async function GET(req: NextRequest) {
           },
         },
       },
+      include: {
+        users: true,
+      },
     });
 
     return NextResponse.json({ chats });
