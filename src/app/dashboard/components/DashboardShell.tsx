@@ -48,31 +48,49 @@ const sidebarItems = [
     title: "Dashboard",
     url: "/dashboard",
     icon: LayoutDashboard,
+    type: "primary" as "primary" | "secondary" | "tertiary",
   },
   {
     title: "Projects",
     url: "/projects",
     icon: FolderKanban,
+    type: "primary",
   },
   {
     title: "Tasks",
     url: "/tasks",
     icon: FaTasks,
-  },
-  {
-    title: "Files",
-    url: "/files",
-    icon: Files,
+    type: "primary",
   },
   {
     title: "Messages",
     url: "/messages",
     icon: MessageSquare,
+    type: "primary",
   },
   {
     title: "Settings",
     url: "/settings",
     icon: Settings,
+    type: "tertiary",
+  },
+  {
+    title: "Profile",
+    url: "/profile",
+    icon: User,
+    type: "tertiary",
+  },
+  {
+    title: "Billing",
+    url: "/billing",
+    icon: Files,
+    type: "tertiary",
+  },
+  {
+    title: "Upgrade",
+    url: "/upgrade",
+    icon: Calendar,
+    type: "secondary",
   },
 ];
 
@@ -107,16 +125,66 @@ function DashboardShell({ children }: { children: ReactNode }) {
                 </SidebarGroupLabel>
                 <SidebarGroupContent>
                   <SidebarMenu>
-                    {sidebarItems.map((item) => (
-                      <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton asChild>
-                          <Link href={item.url}>
-                            <item.icon className="h-4 w-4" />
-                            <span>{item.title}</span>
-                          </Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
+                    <SidebarGroup>
+                      <SidebarGroupContent>
+                        <SidebarGroupLabel>Primary</SidebarGroupLabel>
+                        {sidebarItems.map(
+                          (item) =>
+                            item.type === "primary" && (
+                              <SidebarMenuItem key={item.title}>
+                                <SidebarMenuButton asChild>
+                                  <Link href={item.url}>
+                                    <item.icon className="h-4 w-4" />
+                                    <span>{item.title}</span>
+                                  </Link>
+                                </SidebarMenuButton>
+                              </SidebarMenuItem>
+                            ),
+                        )}
+                      </SidebarGroupContent>
+                    </SidebarGroup>
+                  </SidebarMenu>
+
+                  <SidebarMenu className="mt-4">
+                    <SidebarGroup>
+                      <SidebarGroupContent>
+                        <SidebarGroupLabel>Secondary</SidebarGroupLabel>
+                        {sidebarItems.map(
+                          (item) =>
+                            item.type === "secondary" && (
+                              <SidebarMenuItem key={item.title}>
+                                <SidebarMenuButton asChild>
+                                  <Link href={item.url}>
+                                    <item.icon className="h-4 w-4" />
+                                    <span>{item.title}</span>
+                                  </Link>
+                                </SidebarMenuButton>
+                              </SidebarMenuItem>
+                            ),
+                        )}
+                      </SidebarGroupContent>
+                    </SidebarGroup>
+                  </SidebarMenu>
+
+                  <SidebarMenu className="mt-4">
+                    <SidebarGroup>
+                      <SidebarGroupContent>
+                        <SidebarGroupLabel>Tertiary</SidebarGroupLabel>
+                        {sidebarItems.map(
+                          (item) =>
+                            item.type === "tertiary" && (
+                              <SidebarMenuItem key={item.title}>
+                                <SidebarMenuButton asChild>
+                                  <Link href={item.url}>
+                                    <item.icon className="h-4 w-4" />
+                                    <span>{item.title}</span>
+                                  </Link>
+                                </SidebarMenuButton>
+                              </SidebarMenuItem>
+                            ),
+                        )}
+                      </SidebarGroupContent>
+                    </SidebarGroup>
                   </SidebarMenu>
                 </SidebarGroupContent>
               </SidebarGroup>
@@ -142,14 +210,50 @@ function DashboardShell({ children }: { children: ReactNode }) {
                   Freliq
                 </SheetTitle>
                 <div className="flex flex-col gap-2">
-                  {sidebarItems.map((item) => (
-                    <Button key={item.title} variant="outline" asChild>
-                      <Link href={item.url} className="flex items-center gap-2">
-                        <item.icon className="h-4 w-4" />
-                        <span>{item.title}</span>
-                      </Link>
-                    </Button>
-                  ))}
+                  {sidebarItems.map(
+                    (item) =>
+                      item.type === "primary" && (
+                        <Button key={item.title} variant="outline" asChild>
+                          <Link
+                            href={item.url}
+                            className="flex items-center gap-2"
+                          >
+                            <item.icon className="h-4 w-4" />
+                            <span>{item.title}</span>
+                          </Link>
+                        </Button>
+                      ),
+                  )}
+                  <div className="my-4 border-t" />
+                  {sidebarItems.map(
+                    (item) =>
+                      item.type === "secondary" && (
+                        <Button key={item.title} variant="outline" asChild>
+                          <Link
+                            href={item.url}
+                            className="flex items-center gap-2"
+                          >
+                            <item.icon className="h-4 w-4" />
+                            <span>{item.title}</span>
+                          </Link>
+                        </Button>
+                      ),
+                  )}
+                  <div className="my-4 border-t" />
+                  {sidebarItems.map(
+                    (item) =>
+                      item.type === "tertiary" && (
+                        <Button key={item.title} variant="outline" asChild>
+                          <Link
+                            href={item.url}
+                            className="flex items-center gap-2"
+                          >
+                            <item.icon className="h-4 w-4" />
+                            <span>{item.title}</span>
+                          </Link>
+                        </Button>
+                      ),
+                  )}
                 </div>
               </SheetContent>
             </Sheet>
