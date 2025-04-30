@@ -1,5 +1,11 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Loader2, Plus } from "lucide-react";
 import { Inbox } from "lucide-react";
 
@@ -13,7 +19,27 @@ function ChatList({
   chats: any;
 }) {
   return (
-    <article className="md:w-1/4 h-full border-r border-slate-300 pr-4 flex justify-center">
+    <article className="md:w-1/4 h-full border-r border-slate-300 pr-4 flex flex-col">
+      {/* Sticky header */}
+      <article className="w-full flex items-center justify-between">
+        <h3 className="text-xl font-semibold">Your messages</h3>
+
+        {/* Actions */}
+        <article className="flex gap-2 items-center">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button size="icon" variant="outline">
+                  <Plus />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>Create new chat</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </article>
+      </article>
       {isLoading ? (
         <article className="w-full h-full flex flex-col justify-center items-center">
           <Loader2 size={40} className="animate-spin text-primary" />
@@ -21,7 +47,7 @@ function ChatList({
       ) : chats && chats.length > 0 ? (
         <h3>Chats here</h3>
       ) : (
-        <article className="flex flex-col justify-center items-center gap-2 text-center self-center justify-self-center">
+        <article className="flex-1 flex flex-col justify-center items-center gap-2 text-center">
           <Inbox
             size={64}
             strokeWidth={1.4}

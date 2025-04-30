@@ -7,7 +7,11 @@ function Chat({ chat }: Readonly<{ chat: any | null }>) {
         <h2>Chat data here</h2>
       ) : (
         <article className="flex flex-col gap-2 items-center justify-center h-full">
-          <Ghost className="text-muted-foreground" size={58} strokeWidth={1.5} />
+          <Ghost
+            className="text-muted-foreground"
+            size={58}
+            strokeWidth={1.5}
+          />
 
           <article className="flex flex-col justify-center text-center items-center">
             <h2 className="text-xl font-semibold">It's a bit lonely here</h2>
