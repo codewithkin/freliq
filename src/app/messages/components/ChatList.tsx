@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Loader2, Plus } from "lucide-react";
 import { Inbox } from "lucide-react";
+import NewChatDialog from "./create/NewChatDialog";
 
 function ChatList({
   isLoading,
@@ -58,9 +59,7 @@ function ChatList({
             <p className="text-muted-foreground mb-1 text-sm">
               Create your first chat using the button below
             </p>
-            <Button>
-              Create chat <Plus />
-            </Button>
+            <NewChatDialog />
           </article>
         </article>
       )}
