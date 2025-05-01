@@ -1,5 +1,12 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Ghost } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Ghost, MoreHorizontal, PlusCircle } from "lucide-react";
+import Link from "next/link";
 
 function Chat({ chat }: Readonly<{ chat: any | null }>) {
   return (
@@ -35,6 +42,21 @@ function Chat({ chat }: Readonly<{ chat: any | null }>) {
             </article>
 
             {/* Actions */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button size="icon" variant="secondary">
+                  <MoreHorizontal />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent>
+                <Button asChild>
+                  <Link href={`/project/invite/${chat?.project?.id}`}>
+                    Invite
+                    <PlusCircle />
+                  </Link>
+                </Button>
+              </PopoverContent>
+            </Popover>
           </article>
         </article>
       ) : (
