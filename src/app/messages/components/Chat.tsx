@@ -85,7 +85,7 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
                   className="w-full"
                   variant="destructive"
                 >
-                  Delete Chat
+                  {deletingChat ? "Deleting chat" : "Delete Chat"}
                   {deletingChat ? (
                     <Loader className="animate-spin" />
                   ) : (
