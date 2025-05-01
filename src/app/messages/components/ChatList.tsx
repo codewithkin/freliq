@@ -55,7 +55,7 @@ function ChatList({
                     {chat?.project?.title}
                   </h3>
                   <p className="text-muted-foreground text-sm">
-                    Created {formatDistanceToNow(chat?.project?.createdAt)} ago
+                    Created {formatDistanceToNow(chat?.createdAt)} ago
                   </p>
                 </article>
               </article>
