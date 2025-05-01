@@ -20,7 +20,12 @@ function Messages() {
 
   return (
     <article className="w-full h-full flex md:flex-row flex-col">
-      <ChatList setChat={setChat} isLoading={isLoading} chats={chats} />
+      <ChatList
+        selectedChat={chat}
+        setChat={setChat}
+        isLoading={isLoading}
+        chats={chats}
+      />
       <Chat chat={chat} />
     </article>
   );

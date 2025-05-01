@@ -11,10 +11,12 @@ function ChatList({
   isLoading,
   chats,
   setChat,
+  selectedChat,
 }: {
   isLoading: boolean;
   setChat: any;
   chats: any;
+  selectedChat?: any | null;
 }) {
   return (
     <article className="md:w-1/4 h-full border-r border-slate-300 pr-4 flex flex-col">
@@ -36,8 +38,9 @@ function ChatList({
           <Label className="text-muted-foreground">Chats</Label>
           {chats.map((chat: ChatRoom, index: number) => (
             <article
+              onClick={() => setChat(chat)}
               key={index}
-              className="flex items-center justify-between hover:bg-slate-200 hover:cursor-pointer transition duration-300 py-4"
+              className={` ${chat && chat == selectedChat && "bg-slate-300"} flex items-center justify-between hover:bg-slate-200 hover:cursor-pointer transition duration-300 py-4`}
             >
               <article className="flex gap-2 items-center">
                 <Avatar className="w-12 h-12 bg-slate-200 border border-primary">
