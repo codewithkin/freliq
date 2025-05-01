@@ -1,10 +1,42 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Ghost } from "lucide-react";
 
 function Chat({ chat }: Readonly<{ chat: any | null }>) {
   return (
-    <article className="p-4 md:w-3/4">
+    <article className="md:w-3/4">
       {chat ? (
-        <h2>Chat data here</h2>
+        <article>
+          {/* Chat page */}
+
+          {/* Header */}
+          <article className="flex justify-between items-center border-b border-slate-300 p-4">
+            <article className="flex gap-2 items-center">
+              {/* Avatar */}
+              <Avatar className="bg-primary text-white h-12 w-12">
+                <AvatarImage src={chat?.project?.image} />
+                <AvatarFallback className="bg-primary text-white h-12 w-12">
+                  P
+                </AvatarFallback>
+              </Avatar>
+
+              {/* Project and chat details */}
+              <article className="flex flex-col">
+                <h3 className="text-xl font-medium">
+                  Chat for{" "}
+                  <span className="font-semibold">{chat?.project?.title}</span>
+                </h3>
+                <article className="flex gap-8 items-center text-sm text-muted-foreground">
+                  {/* Members */}
+                  <span>
+                    {chat?.users?.length} member{chat?.users?.length > 1 && "s"}
+                  </span>
+                </article>
+              </article>
+            </article>
+
+            {/* Actions */}
+          </article>
+        </article>
       ) : (
         <article className="flex flex-col gap-2 items-center justify-center h-full">
           <Ghost
