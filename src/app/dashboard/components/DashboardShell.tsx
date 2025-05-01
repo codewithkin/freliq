@@ -94,7 +94,13 @@ const sidebarItems = [
   },
 ];
 
-function DashboardShell({ children }: { children: ReactNode }) {
+function DashboardShell({
+  children,
+  hideHeader = false,
+}: {
+  children: ReactNode;
+  hideHeader?: boolean;
+}) {
   // Get the user's data
   const { data: session, isPending } = authClient.useSession();
 
@@ -196,106 +202,108 @@ function DashboardShell({ children }: { children: ReactNode }) {
       {/* Main */}
       <main className="flex-1 flex flex-col">
         {/* Topbar */}
-        <header className="flex items-center justify-between bg-white md:py-4 md:px-8 p-4">
-          {/* Mobile menu */}
-          <div className="flex items-center gap-3 lg:hidden">
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-full p-4">
-                <SheetTitle className="text-2xl font-semibold tracking-tight mb-4 text-primary">
-                  Freliq
-                </SheetTitle>
-                <div className="flex flex-col gap-2">
-                  {sidebarItems.map(
-                    (item) =>
-                      item.type === "primary" && (
-                        <Button key={item.title} variant="outline" asChild>
-                          <Link
-                            href={item.url}
-                            className="flex items-center gap-2"
-                          >
-                            <item.icon className="h-4 w-4" />
-                            <span>{item.title}</span>
-                          </Link>
-                        </Button>
-                      ),
-                  )}
-                  <div className="my-4 border-t" />
-                  {sidebarItems.map(
-                    (item) =>
-                      item.type === "secondary" && (
-                        <Button key={item.title} variant="outline" asChild>
-                          <Link
-                            href={item.url}
-                            className="flex items-center gap-2"
-                          >
-                            <item.icon className="h-4 w-4" />
-                            <span>{item.title}</span>
-                          </Link>
-                        </Button>
-                      ),
-                  )}
-                  <div className="my-4 border-t" />
-                  {sidebarItems.map(
-                    (item) =>
-                      item.type === "tertiary" && (
-                        <Button key={item.title} variant="outline" asChild>
-                          <Link
-                            href={item.url}
-                            className="flex items-center gap-2"
-                          >
-                            <item.icon className="h-4 w-4" />
-                            <span>{item.title}</span>
-                          </Link>
-                        </Button>
-                      ),
-                  )}
-                </div>
-              </SheetContent>
-            </Sheet>
-          </div>
+        {!hideHeader && (
+          <header className="flex items-center justify-between bg-white md:py-4 md:px-8 p-4">
+            {/* Mobile menu */}
+            <div className="flex items-center gap-3 lg:hidden">
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Menu className="h-5 w-5" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-full p-4">
+                  <SheetTitle className="text-2xl font-semibold tracking-tight mb-4 text-primary">
+                    Freliq
+                  </SheetTitle>
+                  <div className="flex flex-col gap-2">
+                    {sidebarItems.map(
+                      (item) =>
+                        item.type === "primary" && (
+                          <Button key={item.title} variant="outline" asChild>
+                            <Link
+                              href={item.url}
+                              className="flex items-center gap-2"
+                            >
+                              <item.icon className="h-4 w-4" />
+                              <span>{item.title}</span>
+                            </Link>
+                          </Button>
+                        ),
+                    )}
+                    <div className="my-4 border-t" />
+                    {sidebarItems.map(
+                      (item) =>
+                        item.type === "secondary" && (
+                          <Button key={item.title} variant="outline" asChild>
+                            <Link
+                              href={item.url}
+                              className="flex items-center gap-2"
+                            >
+                              <item.icon className="h-4 w-4" />
+                              <span>{item.title}</span>
+                            </Link>
+                          </Button>
+                        ),
+                    )}
+                    <div className="my-4 border-t" />
+                    {sidebarItems.map(
+                      (item) =>
+                        item.type === "tertiary" && (
+                          <Button key={item.title} variant="outline" asChild>
+                            <Link
+                              href={item.url}
+                              className="flex items-center gap-2"
+                            >
+                              <item.icon className="h-4 w-4" />
+                              <span>{item.title}</span>
+                            </Link>
+                          </Button>
+                        ),
+                    )}
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
 
-          <Greeting />
+            <Greeting />
 
-          {/* Topbar right */}
-          <div className="flex items-center gap-4 ml-auto">
-            <Button asChild>
-              <Link href="/project/new">
-                <Plus />
-                New project
-              </Link>
-            </Button>
+            {/* Topbar right */}
+            <div className="flex items-center gap-4 ml-auto">
+              <Button asChild>
+                <Link href="/project/new">
+                  <Plus />
+                  New project
+                </Link>
+              </Button>
 
-            <NotificationsSheet />
+              <NotificationsSheet />
 
-            {isPending ? (
-              <Skeleton className="bg-slate-300 h-8 w-8 rounded-full" />
-            ) : (
-              <Avatar className="h-8 w-8">
-                <AvatarImage
-                  className="bg-slate-300"
-                  src={session?.user?.image || ""}
-                />
-                <AvatarFallback className="bg-slate-300">
-                  <p>{session?.user?.email.charAt(0).toUpperCase()}</p>
-                </AvatarFallback>
-              </Avatar>
-            )}
+              {isPending ? (
+                <Skeleton className="bg-slate-300 h-8 w-8 rounded-full" />
+              ) : (
+                <Avatar className="h-8 w-8">
+                  <AvatarImage
+                    className="bg-slate-300"
+                    src={session?.user?.image || ""}
+                  />
+                  <AvatarFallback className="bg-slate-300">
+                    <p>{session?.user?.email.charAt(0).toUpperCase()}</p>
+                  </AvatarFallback>
+                </Avatar>
+              )}
 
-            <Button
-              onClick={handleSignOut}
-              variant="ghost"
-              size="icon"
-              title="Logout"
-            >
-              <LogOut className="h-5 w-5" />
-            </Button>
-          </div>
-        </header>
+              <Button
+                onClick={handleSignOut}
+                variant="ghost"
+                size="icon"
+                title="Logout"
+              >
+                <LogOut className="h-5 w-5" />
+              </Button>
+            </div>
+          </header>
+        )}
 
         {/* Page content */}
         <section className="flex-1 p-2 sm:p-3 md:p-6">{children}</section>
