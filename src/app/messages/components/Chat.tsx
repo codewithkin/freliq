@@ -32,9 +32,9 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
   });
 
   return (
-    <article className="md:w-3/4">
+    <article className="md:w-3/4 h-full">
       {chat ? (
-        <article>
+        <article className="w-full h-full">
           {/* Chat page */}
 
           {/* Header */}
@@ -94,6 +94,30 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
                 </Button>
               </PopoverContent>
             </Popover>
+          </article>
+
+          {/* Messages */}
+          <article className="flex flex-col w-full h-full">
+            {chat?.messages?.length > 0 ? (
+              <h2>Show messages here</h2>
+            ) : (
+              <article className="flex flex-col gap-2 items-center justify-center h-full">
+                <Ghost
+                  className="text-muted-foreground"
+                  size={58}
+                  strokeWidth={1.5}
+                />
+
+                <article className="flex flex-col justify-center text-center items-center">
+                  <h2 className="text-xl font-semibold">
+                    It's a bit lonely here
+                  </h2>
+                  <p className="text-muted-foreground">
+                    Select a chat to begin, it's as easy as that !
+                  </p>
+                </article>
+              </article>
+            )}
           </article>
         </article>
       ) : (
