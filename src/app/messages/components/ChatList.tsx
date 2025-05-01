@@ -2,6 +2,9 @@
 import { Loader2, Plus } from "lucide-react";
 import { Inbox } from "lucide-react";
 import NewChatDialog from "./create/NewChatDialog";
+import { ChatRoom } from "@/generated/prisma";
+import { Label } from "@/components/ui/label";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 function ChatList({
   isLoading,
@@ -28,7 +31,21 @@ function ChatList({
           <Loader2 size={40} className="animate-spin text-primary" />
         </article>
       ) : chats && chats.length > 0 ? (
-        <h3>Chats here</h3>
+        <article className="flex flex-col gap-4 items-center">
+            <Label>Chats</Label>
+            {
+                chats.map((chat: ChatRoom, index: number) => (
+                    <article key={index} className="flex items-center justify-between">
+                        <article className="flex gap-2 items-center">
+                            <Avatar>
+                                <AvatarImage src={chat?.project?.image} />
+                                <AvatarFallback>{chat?.project?.title.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                        </article>
+                    </article>
+                ))
+            }
+        </article>
       ) : (
         <article className="flex-1 flex flex-col justify-center items-center gap-2 text-center">
           <Inbox
