@@ -1,11 +1,4 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { Loader2, Plus } from "lucide-react";
 import { Inbox } from "lucide-react";
 import NewChatDialog from "./create/NewChatDialog";
@@ -27,18 +20,7 @@ function ChatList({
 
         {/* Actions */}
         <article className="flex gap-2 items-center">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button size="icon" variant="outline">
-                  <Plus />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                <p>Create new chat</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <NewChatDialog setChat={setChat} sm={true} />
         </article>
       </article>
       {isLoading ? (

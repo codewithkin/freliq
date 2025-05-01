@@ -15,10 +15,16 @@ import { ChatRoom, Project } from "@/generated/prisma";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { formatDistanceToNow } from "date-fns";
-import { Loader, Loader2, Plus, PlusCircle } from "lucide-react";
+import { Loader, Plus, PlusCircle } from "lucide-react";
 import { toast } from "sonner";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
-function NewChatDialog({ setChat }: { setChat: any }) {
+function NewChatDialog({ setChat, sm }: { setChat: any; sm?: boolean | null }) {
   // Fetch all of the user's projects
   const { data: projects, isLoading: loading } = useQuery({
     queryKey: ["projects"],
@@ -55,9 +61,24 @@ function NewChatDialog({ setChat }: { setChat: any }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>
-          Create chat <Plus />
-        </Button>
+        {sm ? (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button size="icon" variant="outline">
+                  <Plus />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>Create new chat</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ) : (
+          <Button>
+            Create chat <Plus />
+          </Button>
+        )}
       </DialogTrigger>
 
       <DialogContent>
