@@ -19,9 +19,9 @@ function ChatList({
   selectedChat?: any | null;
 }) {
   return (
-    <article className="md:w-1/4 h-full border-r border-slate-300 pr-4 flex flex-col">
+    <article className="md:w-1/4 h-full border-r border-slate-300 flex flex-col">
       {/* Sticky header */}
-      <article className="w-full flex items-center justify-between">
+      <article className="w-full flex items-center justify-between p-4">
         <h3 className="text-xl font-semibold">Your messages</h3>
 
         {/* Actions */}
@@ -35,7 +35,7 @@ function ChatList({
         </article>
       ) : chats && chats.length > 0 ? (
         <article className="flex flex-col gap-4 justify-center mt-4">
-          <Label className="text-muted-foreground">Chats</Label>
+          <Label className="text-muted-foreground px-4">Chats</Label>
           {chats.map((chat: ChatRoom, index: number) => (
             <article
               onClick={() => setChat(chat)}

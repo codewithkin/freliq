@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
@@ -17,6 +18,7 @@ import {
   Trash,
 } from "lucide-react";
 import Link from "next/link";
+import { FaPaperPlane } from "react-icons/fa";
 import { toast } from "sonner";
 
 function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
@@ -123,6 +125,20 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
                 </article>
               </article>
             )}
+          </article>
+
+          {/* Controls */}
+          <article className="flex items-center gap-2 w-full">
+            {/* Message input */}
+            <Input
+              className="p-6"
+              placeholder="Say something about the project"
+              name="message"
+              id="message"
+            />
+            <Button className="text-white h-full p-4">
+              <FaPaperPlane />
+            </Button>
           </article>
         </article>
       ) : (
