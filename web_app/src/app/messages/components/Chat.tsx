@@ -7,6 +7,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
+import socket from "@/lib/socket";
 import { queryClient } from "@/providers/QueryClientProvider";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
@@ -20,13 +21,16 @@ import {
   Trash,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { toast } from "sonner";
 
 function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
   // Track the value of the message'
   const [message, setMessage] = useState("");
+
+  // Track the messages
+  const [messages, setMessages] = useState<[] | any[]>([]);
 
   // Delete chat mutation
   const { mutate: deleteChat, isPending: deletingChat } = useMutation({
@@ -47,6 +51,26 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
   });
 
   const sendingMessage = false;
+
+  useEffect(() => {
+    // Listen for incoming messages
+    socket.on("chat message", (data: string) => {
+      setMessages((prev) => [...prev, data]);
+    });
+
+    // Cleanup on unmount
+    return () => {
+      socket.off("chat message");
+    };
+  }, []);
+
+  const sendMessage = () => {
+    if (message.trim()) {
+      socket.emit("chat message", message);
+      setMessages((prev) => [...prev, message]);
+      setMessage("");
+    }
+  };
 
   return (
     <article className="md:w-3/4 h-full bg-muted">
