@@ -17,7 +17,7 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
   const { mutate: deleteChat, isPending: deletingChat } = useMutation({
     mutationKey: ["deleteChat"],
     mutationFn: async (chatId: string) => {
-      const response = await axios.delete(`/api/chats/${chat?.id}`);
+      const response = await axios.delete(`/api/chats/?id=${chat?.id}`);
 
       return response.data;
     },

@@ -102,8 +102,51 @@ export async function POST(req: NextRequest) {
   } catch (e) {
     console.log("Could not create project: ", e);
 
-    return NextResponse.json({
-      message: "Could not create project",
+    return NextResponse.json(
+      {
+        message: "Could not create project",
+      },
+      { status: 400 },
+    );
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    // Get the chat's id
+    const searchParams = req.nextUrl.searchParams;
+
+    const id = searchParams.get("id");
+
+    if (!id) {
+      console.log("ERROR: ID not found");
+
+      return NextResponse.json(
+        {
+          message: "ERROR: ID not found",
+        },
+        { status: 404 },
+      );
+    }
+
+    // Delete the chatRoom
+    await prisma.chatRoom.delete({
+      where: {
+        id,
+      },
     });
+
+    return NextResponse.json({
+      message: "Chat deleted successfully",
+    });
+  } catch (e) {
+    console.log("Failed to delete chat: ", e);
+
+    return NextResponse.json(
+      {
+        message: "Failed to delete chat",
+      },
+      { status: 400 },
+    );
   }
 }
