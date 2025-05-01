@@ -62,18 +62,9 @@ function NewChatDialog({ setChat, sm }: { setChat: any; sm?: boolean | null }) {
     <Dialog>
       <DialogTrigger asChild>
         {sm ? (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button size="icon" variant="outline">
-                  <Plus />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                <p>Create new chat</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Button size="icon" variant="outline">
+            <Plus />
+          </Button>
         ) : (
           <Button>
             Create chat <Plus />
