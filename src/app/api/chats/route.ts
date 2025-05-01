@@ -51,3 +51,56 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
+export async function POST(req: NextRequest) {
+  try {
+    // Get the project id from the request body
+    const data = await req.json();
+
+    const projectId = data.projectId;
+
+    if (!projectId) {
+      console.log("Missing params: ", data);
+
+      return NextResponse.json(
+        {
+          message: "Could not find projectId",
+        },
+        { status: 404 },
+      );
+    }
+
+    // Get the user's session
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    // Destructure the user object
+    const user = session?.user;
+
+    if (!user?.id) throw new Error("User ID is required");
+
+    // Create a new chatRoom
+
+    const chatRoom = await prisma.chatRoom.create({
+      data: {
+        project: {
+          connect: {
+            id: projectId,
+          },
+        },
+        users: {
+          connect: {
+            id: user.id,
+          },
+        },
+      },
+    });
+  } catch (e) {
+    console.log("Could not create project: ", e);
+
+    return NextResponse.json({
+      message: "Could not create project",
+    });
+  }
+}
