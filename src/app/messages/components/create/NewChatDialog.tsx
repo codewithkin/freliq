@@ -108,13 +108,11 @@ function NewChatDialog({ setChat }: { setChat: any }) {
                     disabled={creatingChat}
                     variant="default"
                   >
-                    {
-                      creatingChat ? (
-                        <Loader className="animate-spin" />
-                      ) : (
-                        <PlusCircle />
-                      )
-                    }
+                    {creatingChat ? (
+                      <Loader className="animate-spin" />
+                    ) : (
+                      <PlusCircle />
+                    )}
                   </Button>
                 </article>
               ))}
