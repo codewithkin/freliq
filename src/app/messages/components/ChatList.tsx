@@ -40,7 +40,7 @@ function ChatList({
             <article
               onClick={() => setChat(chat)}
               key={index}
-              className={` ${chat && chat == selectedChat && "bg-slate-300"} flex items-center justify-between hover:bg-slate-200 hover:cursor-pointer transition duration-300 py-4`}
+              className={` ${chat && chat == selectedChat && "bg-slate-300"} flex items-center justify-between hover:bg-slate-200 hover:cursor-pointer transition duration-300 p-4`}
             >
               <article className="flex gap-2 items-center">
                 <Avatar className="w-12 h-12 bg-slate-200 border border-primary">
