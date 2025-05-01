@@ -96,6 +96,8 @@ export async function POST(req: NextRequest) {
         },
       },
     });
+
+    return NextResponse.json({ chatRoom });
   } catch (e) {
     console.log("Could not create project: ", e);
 
