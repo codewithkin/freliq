@@ -8,7 +8,14 @@ import {
 import { queryClient } from "@/providers/QueryClientProvider";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { Ghost, Loader, MoreHorizontal, PlusCircle, Trash } from "lucide-react";
+import {
+  Ghost,
+  Loader,
+  MessageCircleDashed,
+  MoreHorizontal,
+  PlusCircle,
+  Trash,
+} from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
@@ -102,18 +109,16 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
               <h2>Show messages here</h2>
             ) : (
               <article className="flex flex-col gap-2 items-center justify-center h-full">
-                <Ghost
+                <MessageCircleDashed
                   className="text-muted-foreground"
                   size={58}
                   strokeWidth={1.5}
                 />
 
                 <article className="flex flex-col justify-center text-center items-center">
-                  <h2 className="text-xl font-semibold">
-                    It's a bit lonely here
-                  </h2>
+                  <h2 className="text-xl font-semibold">A barren wasteland</h2>
                   <p className="text-muted-foreground">
-                    Select a chat to begin, it's as easy as that !
+                    No messages yet, write one to get the conversation rolling
                   </p>
                 </article>
               </article>
