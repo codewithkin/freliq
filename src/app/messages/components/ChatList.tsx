@@ -5,6 +5,7 @@ import NewChatDialog from "./create/NewChatDialog";
 import { ChatRoom } from "@/generated/prisma";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { formatDistanceToNow } from "date-fns";
 
 function ChatList({
   isLoading,
@@ -31,20 +32,32 @@ function ChatList({
           <Loader2 size={40} className="animate-spin text-primary" />
         </article>
       ) : chats && chats.length > 0 ? (
-        <article className="flex flex-col gap-4 items-center">
-            <Label>Chats</Label>
-            {
-                chats.map((chat: ChatRoom, index: number) => (
-                    <article key={index} className="flex items-center justify-between">
-                        <article className="flex gap-2 items-center">
-                            <Avatar>
-                                <AvatarImage src={chat?.project?.image} />
-                                <AvatarFallback>{chat?.project?.title.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                        </article>
-                    </article>
-                ))
-            }
+        <article className="flex flex-col gap-4 justify-center mt-4">
+          <Label className="text-muted-foreground">Chats</Label>
+          {chats.map((chat: ChatRoom, index: number) => (
+            <article
+              key={index}
+              className="flex items-center justify-between hover:bg-slate-200 hover:cursor-pointer transition duration-300 py-4"
+            >
+              <article className="flex gap-2 items-center">
+                <Avatar className="w-12 h-12 bg-slate-200 border border-primary">
+                  <AvatarImage src={chat?.project?.image} />
+                  <AvatarFallback className="w-12 h-12 bg-slate-200 border border-primary">
+                    P
+                  </AvatarFallback>
+                </Avatar>
+
+                <article className="flex flex-col">
+                  <h3 className="text-lg font-medium">
+                    {chat?.project?.title}
+                  </h3>
+                  <p className="text-muted-foreground text-sm">
+                    Created {formatDistanceToNow(chat?.project?.createdAt)} ago
+                  </p>
+                </article>
+              </article>
+            </article>
+          ))}
         </article>
       ) : (
         <article className="flex-1 flex flex-col justify-center items-center gap-2 text-center">
