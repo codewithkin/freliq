@@ -5,10 +5,32 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Ghost, MoreHorizontal, PlusCircle } from "lucide-react";
+import { queryClient } from "@/providers/QueryClientProvider";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { Ghost, Loader, MoreHorizontal, PlusCircle, Trash } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
 
-function Chat({ chat }: Readonly<{ chat: any | null }>) {
+function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
+  // Delete chat mutation
+  const { mutate: deleteChat, isPending: deletingChat } = useMutation({
+    mutationKey: ["deleteChat"],
+    mutationFn: async (chatId: string) => {
+      const response = await axios.delete(`/api/chats/${chat?.id}`);
+
+      return response.data;
+    },
+    onSuccess: () => {
+      // Invalidate the query to refetch the chats
+      queryClient.invalidateQueries({ queryKey: ["chats"] });
+
+      toast.success("Chat deleted successfully");
+
+      setChat(null);
+    },
+  });
+
   return (
     <article className="md:w-3/4">
       {chat ? (
@@ -49,11 +71,26 @@ function Chat({ chat }: Readonly<{ chat: any | null }>) {
                 </Button>
               </PopoverTrigger>
               <PopoverContent>
-                <Button asChild>
-                  <Link href={`/project/invite/${chat?.project?.id}`}>
+                <Button className="w-full" variant="ghost" asChild>
+                  <Link href={`/project/${chat?.project?.id}/invite`}>
                     Invite
                     <PlusCircle />
                   </Link>
+                </Button>
+                <Button
+                  onClick={() => {
+                    deleteChat(chat?.id);
+                  }}
+                  disabled={deletingChat}
+                  className="w-full"
+                  variant="destructive"
+                >
+                  Delete Chat
+                  {deletingChat ? (
+                    <Loader className="animate-spin" />
+                  ) : (
+                    <Trash />
+                  )}
                 </Button>
               </PopoverContent>
             </Popover>

@@ -26,7 +26,7 @@ function Messages() {
         isLoading={isLoading}
         chats={chats}
       />
-      <Chat chat={chat} />
+      <Chat setChat={setChat} chat={chat} />
     </article>
   );
 }
