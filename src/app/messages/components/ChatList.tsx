@@ -59,7 +59,7 @@ function ChatList({
             <p className="text-muted-foreground mb-1 text-sm">
               Create your first chat using the button below
             </p>
-            <NewChatDialog />
+            <NewChatDialog setChat={setChat} />
           </article>
         </article>
       )}
