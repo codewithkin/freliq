@@ -6,12 +6,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Textarea } from "@/components/ui/textarea";
 import { queryClient } from "@/providers/QueryClientProvider";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import {
   Ghost,
   Loader,
+  LoaderCircle,
   MessageCircleDashed,
   MoreHorizontal,
   PlusCircle,
@@ -44,8 +46,10 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
     },
   });
 
+  const sendingMessage = false;
+
   return (
-    <article className="md:w-3/4 h-full">
+    <article className="md:w-3/4 h-full bg-muted">
       {chat ? (
         <article className="w-full h-full">
           {/* Chat page */}
@@ -135,15 +139,23 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
           <article className="flex items-end justify-center gap-2 w-full h-1/10 p-4">
             {/* Message input */}
             <Input
-              className="p-6"
+              className="p-6 bg-white"
+              multiple
               placeholder="Say something about the project"
               name="message"
               id="message"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
-            <Button className="text-white p-6">
-              <FaPaperPlane />
+            <Button
+              disabled={sendingMessage || message.length < 1}
+              className="text-white p-6"
+            >
+              {sendingMessage ? (
+                <LoaderCircle className="animate-spin" />
+              ) : (
+                <FaPaperPlane />
+              )}
             </Button>
           </article>
         </article>
