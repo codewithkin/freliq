@@ -23,6 +23,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { queryClient } from "@/providers/QueryClientProvider";
 
 function NewChatDialog({ setChat, sm }: { setChat: any; sm?: boolean | null }) {
   // Fetch all of the user's projects
@@ -45,8 +46,14 @@ function NewChatDialog({ setChat, sm }: { setChat: any; sm?: boolean | null }) {
       return res.data.chatRoom;
     },
     onSuccess: (chatRoom: ChatRoom) => {
+      console.log("ChatRoom received after creation: ", chatRoom);
+
+      queryClient.invalidateQueries({
+        queryKey: ["chats"],
+      });
+
       // Update the local state to the chatRoom
-      setChat(chatRoom.id);
+      setChat(chatRoom);
 
       toast.success("Chat created successfully");
 

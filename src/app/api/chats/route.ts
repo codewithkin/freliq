@@ -96,6 +96,11 @@ export async function POST(req: NextRequest) {
           },
         },
       },
+      include: {
+        users: true,
+        messages: true,
+        project: true,
+      },
     });
 
     return NextResponse.json({ chatRoom });
