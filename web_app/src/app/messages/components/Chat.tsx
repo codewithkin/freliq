@@ -173,6 +173,9 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
             />
             <Button
               disabled={sendingMessage || message.length < 1}
+              onClick={() => {
+                sendMessage();
+              }}
               className="text-white p-6"
             >
               {sendingMessage ? (

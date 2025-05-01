@@ -26,7 +26,7 @@ io.on("connection", (socket) => {
   socket.on("chat message", (data) => {
     console.log("Message received:", data);
     // Broadcast to all clients (except sender)
-    socket.broadcast.emit("chat message", data);
+    socket.emit("chat message", data);
   });
 
   // Handle disconnect
