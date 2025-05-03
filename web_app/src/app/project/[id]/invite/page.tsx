@@ -17,23 +17,22 @@ import {
   ProjectorIcon,
   XCircle,
 } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
-export default function ProjectInvitePage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default function ProjectInvitePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const inviteType = searchParams.get("type") || "project";
+  const params = useParams();
+
+  const projectId = params.id;
 
   // Fetch project details
   const { data: project, isLoading } = useQuery({
-    queryKey: ["project", params.id],
+    queryKey: ["project", projectId],
     queryFn: async () => {
-      const res = await axios.get(`/api/project/${params.id}`);
+      const res = await axios.get(`/api/project/${projectId}`);
       return res.data.project;
     },
   });
@@ -42,7 +41,7 @@ export default function ProjectInvitePage({
   const { mutate: acceptInvite, isPending: accepting } = useMutation({
     mutationKey: ["acceptProjectInvite"],
     mutationFn: async () => {
-      const res = await axios.post(`/api/project/${params.id}/join`, {
+      const res = await axios.post(`/api/project/${projectId}/join`, {
         type: inviteType,
       });
       return res.data;
@@ -55,8 +54,8 @@ export default function ProjectInvitePage({
       );
       router.push(
         inviteType === "chat"
-          ? `/messages?projectId=${params.id}`
-          : `/project/${params.id}`,
+          ? `/messages?projectId=${projectId}`
+          : `/project/${projectId}`,
       );
     },
     onError: () => {
