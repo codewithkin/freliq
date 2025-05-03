@@ -148,14 +148,14 @@ export default function ProjectInvitePage() {
             variant="outline"
             disabled={accepting}
           >
-            <XCircle className="w-4 h-4 mr-2" />
+            <XCircle className="w-4 h-4 " />
             Decline
           </Button>
           <Button onClick={() => acceptInvite()} disabled={accepting}>
             {accepting ? (
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              <Loader2 className="w-4 h-4  animate-spin" />
             ) : (
-              <CheckCircle className="w-4 h-4 mr-2" />
+              <CheckCircle className="w-4 h-4 " />
             )}
             {inviteType === "chat" ? "Join Chat" : "Join Project"}
           </Button>
