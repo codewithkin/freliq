@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { authClient } from "@/lib/auth-client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import {
@@ -17,7 +18,7 @@ import {
   ProjectorIcon,
   XCircle,
 } from "lucide-react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { redirect, useParams, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
 export default function ProjectInvitePage() {
@@ -25,8 +26,13 @@ export default function ProjectInvitePage() {
   const searchParams = useSearchParams();
   const inviteType = searchParams.get("type") || "project";
   const params = useParams();
-
   const projectId = params.id;
+  const { data: session } = authClient.useSession();
+
+  // If not logged in, redirect to login
+  if (!session?.user) {
+    return redirect("/auth");
+  }
 
   // Fetch project details
   const { data: project, isLoading } = useQuery({
@@ -58,16 +64,18 @@ export default function ProjectInvitePage() {
           : `/project/${projectId}`,
       );
     },
-    onError: () => {
+    onError: (error: any) => {
       toast.error(
-        inviteType === "chat"
-          ? "Failed to join chat"
-          : "Failed to join project",
+        error?.response.data.error
+          ? error?.response.data.error
+          : inviteType === "chat"
+            ? "Failed to join chat"
+            : "Failed to join project",
       );
     },
   });
 
-  if (isLoading) {
+  if (status === "loading" || isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="w-8 h-8 animate-spin" />
@@ -148,14 +156,14 @@ export default function ProjectInvitePage() {
             variant="outline"
             disabled={accepting}
           >
-            <XCircle className="w-4 h-4 " />
+            <XCircle className="w-4 h-4" />
             Decline
           </Button>
           <Button onClick={() => acceptInvite()} disabled={accepting}>
             {accepting ? (
-              <Loader2 className="w-4 h-4  animate-spin" />
+              <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
-              <CheckCircle className="w-4 h-4 " />
+              <CheckCircle className="w-4 h-4" />
             )}
             {inviteType === "chat" ? "Join Chat" : "Join Project"}
           </Button>

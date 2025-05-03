@@ -17,7 +17,9 @@ export async function POST(
     }
 
     const { type = "project" } = await request.json();
-    const projectId = params.id;
+    const { id } = await params;
+
+    const projectId = id;
 
     // Find the project
     const project = await prisma.project.findUnique({
