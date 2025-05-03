@@ -38,7 +38,12 @@ io.on("connection", (socket) => {
     const messageData = {
       id: Date.now().toString(),
       content: data.message,
-      sender: data.user,
+      sender: {
+        id: data.user.id,
+        name: data.user.name || data.user.email,
+        image: data.user.image || null,
+        email: data.user.email
+      },
       timestamp: new Date().toISOString(),
       chatId: data.chat.id
     };

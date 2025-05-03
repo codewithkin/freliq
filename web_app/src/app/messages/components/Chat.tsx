@@ -180,23 +180,41 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
                       } rounded-lg p-3`}
                     >
                       {msg.sender.id !== user?.id && (
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={msg.sender.image} />
-                          <AvatarFallback>
-                            {msg.sender.name[0].toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
+                        <div className="flex flex-col items-center gap-1">
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage src={msg.sender.image} />
+                            <AvatarFallback className="bg-primary text-white">
+                              {msg.sender.name?.[0]?.toUpperCase() || msg.sender.email?.[0]?.toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+                            {new Date(msg.timestamp).toLocaleTimeString([], { 
+                              hour: '2-digit', 
+                              minute: '2-digit' 
+                            })}
+                          </span>
+                        </div>
                       )}
                       <article className="flex flex-col">
                         {msg.sender.id !== user?.id && (
-                          <span className="text-xs font-medium">
-                            {msg.sender.name}
-                          </span>
+                          <div className="flex flex-col mb-1">
+                            <span className="text-sm font-medium">
+                              {msg.sender.name || "Unknown"}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {msg.sender.email}
+                            </span>
+                          </div>
                         )}
                         <p className="break-words">{msg.content}</p>
-                        <span className="text-xs opacity-70">
-                          {new Date(msg.timestamp).toLocaleTimeString()}
-                        </span>
+                        {msg.sender.id === user?.id && (
+                          <span className="text-xs opacity-70 text-right mt-1">
+                            {new Date(msg.timestamp).toLocaleTimeString([], { 
+                              hour: '2-digit', 
+                              minute: '2-digit' 
+                            })}
+                          </span>
+                        )}
                       </article>
                     </article>
                   </article>
