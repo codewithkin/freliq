@@ -45,10 +45,78 @@ io.on("connection", (socket) => {
         email: data.user.email
       },
       timestamp: new Date().toISOString(),
-      chatId: data.chat.id
+      chatId: data.chat.id,
+      attachment: data.attachment || null
     };
     // Broadcast to everyone in the chat room including sender
     io.to(data.chat.id).emit("received message", messageData);
+  });
+
+  // Handle attachment preview request
+  socket.on("request attachment", async (data) => {
+    const { type, id, chatId } = data;
+    let attachmentData = null;
+
+    try {
+      switch (type) {
+        case 'project':
+          // Send project preview data
+          attachmentData = {
+            type: 'project',
+            data: {
+              id,
+              title: data.project.title,
+              description: data.project.description,
+              status: data.project.status,
+              deadline: data.project.deadline,
+              image: data.project.image
+            }
+          };
+          break;
+        case 'task':
+          // Send task preview data
+          attachmentData = {
+            type: 'task',
+            data: {
+              id,
+              title: data.task.title,
+              description: data.task.description,
+              status: data.task.status,
+              dueDate: data.task.dueDate
+            }
+          };
+          break;
+        case 'poll':
+          // Send poll preview data
+          attachmentData = {
+            type: 'poll',
+            data: {
+              id,
+              question: data.poll.question,
+              options: data.poll.options
+            }
+          };
+          break;
+        case 'checklist':
+          // Send checklist preview data
+          attachmentData = {
+            type: 'checklist',
+            data: {
+              id,
+              title: data.checklist.title,
+              completed: data.checklist.completed
+            }
+          };
+          break;
+      }
+
+      if (attachmentData) {
+        io.to(chatId).emit("attachment preview", attachmentData);
+      }
+    } catch (error) {
+      console.error("Error handling attachment:", error);
+      socket.emit("attachment error", { error: "Failed to load attachment" });
+    }
   });
 
   // Handle disconnect

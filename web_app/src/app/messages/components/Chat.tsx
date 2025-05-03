@@ -30,6 +30,29 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
   const [message, setMessage] = useState("");
   const [sendingMessage, setSendingMessage] = useState(false);
 
+  const [inviteEmail, setInviteEmail] = useState("");
+
+  const { mutate: inviteUser, isPending: inviting } = useMutation({
+    mutationKey: ["inviteUser"],
+    mutationFn: async (email: string) => {
+      const response = await axios.post(
+        `/api/project/${chat?.project?.id}/invite`,
+        {
+          email,
+          type: "chat",
+        },
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Invitation sent successfully");
+      queryClient.invalidateQueries({ queryKey: ["chats"] });
+    },
+    onError: () => {
+      toast.error("Failed to send invitation");
+    },
+  });
+
   // Track the messages
   const [messages, setMessages] = useState<any[]>([]);
 
@@ -59,7 +82,7 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
     if (chat) {
       // Join the chat room when chat is selected
       socket.emit("join chat", { chat });
-      
+
       // Reset messages when changing chats
       setMessages([]);
     }
@@ -91,7 +114,7 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
 
   const sendMessage = () => {
     if (!message.trim()) return;
-    
+
     setSendingMessage(true);
     socket.emit("sent message", { chat, user, message });
     setMessage("");
@@ -136,27 +159,50 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
                 </Button>
               </PopoverTrigger>
               <PopoverContent>
-                <Button className="w-full" variant="ghost" asChild>
-                  <Link href={`/project/${chat?.project?.id}/invite`}>
-                    Invite
-                    <PlusCircle />
-                  </Link>
-                </Button>
-                <Button
-                  onClick={() => {
-                    deleteChat(chat?.id);
-                  }}
-                  disabled={deletingChat}
-                  className="w-full"
-                  variant="destructive"
-                >
-                  {deletingChat ? "Deleting chat" : "Delete Chat"}
-                  {deletingChat ? (
-                    <Loader className="animate-spin" />
-                  ) : (
-                    <Trash />
-                  )}
-                </Button>
+                <div className="flex flex-col gap-2 p-2">
+                  <div className="flex flex-col gap-1">
+                    <Input
+                      placeholder="Enter email to invite"
+                      value={inviteEmail}
+                      onChange={(e) => setInviteEmail(e.target.value)}
+                    />
+                    <Button
+                      className="w-full"
+                      disabled={inviting || !inviteEmail}
+                      onClick={() => {
+                        inviteUser(inviteEmail);
+                        setInviteEmail("");
+                      }}
+                    >
+                      {inviting ? (
+                        <>
+                          <Loader className="mr-2 h-4 w-4 animate-spin" />
+                          Sending invite...
+                        </>
+                      ) : (
+                        <>
+                          <PlusCircle className="mr-2 h-4 w-4" />
+                          Invite to Chat
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                  <Button
+                    onClick={() => {
+                      deleteChat(chat?.id);
+                    }}
+                    disabled={deletingChat}
+                    className="w-full"
+                    variant="destructive"
+                  >
+                    {deletingChat ? "Deleting chat" : "Delete Chat"}
+                    {deletingChat ? (
+                      <Loader className="animate-spin" />
+                    ) : (
+                      <Trash />
+                    )}
+                  </Button>
+                </div>
               </PopoverContent>
             </Popover>
           </article>
@@ -169,7 +215,9 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
                   <article
                     key={msg.id}
                     className={`flex ${
-                      msg.sender.id === user?.id ? "justify-end" : "justify-start"
+                      msg.sender.id === user?.id
+                        ? "justify-end"
+                        : "justify-start"
                     }`}
                   >
                     <article
@@ -184,13 +232,14 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
                           <Avatar className="h-8 w-8">
                             <AvatarImage src={msg.sender.image} />
                             <AvatarFallback className="bg-primary text-white">
-                              {msg.sender.name?.[0]?.toUpperCase() || msg.sender.email?.[0]?.toUpperCase()}
+                              {msg.sender.name?.[0]?.toUpperCase() ||
+                                msg.sender.email?.[0]?.toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
                           <span className="text-[10px] text-muted-foreground whitespace-nowrap">
-                            {new Date(msg.timestamp).toLocaleTimeString([], { 
-                              hour: '2-digit', 
-                              minute: '2-digit' 
+                            {new Date(msg.timestamp).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
                             })}
                           </span>
                         </div>
@@ -209,9 +258,9 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
                         <p className="break-words">{msg.content}</p>
                         {msg.sender.id === user?.id && (
                           <span className="text-xs opacity-70 text-right mt-1">
-                            {new Date(msg.timestamp).toLocaleTimeString([], { 
-                              hour: '2-digit', 
-                              minute: '2-digit' 
+                            {new Date(msg.timestamp).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
                             })}
                           </span>
                         )}
@@ -268,7 +317,11 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
         </article>
       ) : (
         <article className="flex flex-col gap-2 items-center justify-center h-full">
-          <Ghost className="text-muted-foreground" size={58} strokeWidth={1.5} />
+          <Ghost
+            className="text-muted-foreground"
+            size={58}
+            strokeWidth={1.5}
+          />
           <article className="flex flex-col justify-center text-center items-center">
             <h2 className="text-xl font-semibold">No chat selected</h2>
             <p className="text-muted-foreground">

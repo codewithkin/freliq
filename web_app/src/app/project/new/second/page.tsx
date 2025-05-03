@@ -54,6 +54,27 @@ export default function NewProjectPage() {
     },
   });
 
+  // Add this mutation to handle invites during project creation
+  const { mutate: inviteToProject, isPending: inviting } = useMutation({
+    mutationKey: ["inviteToProject"],
+    mutationFn: async (email: string) => {
+      const response = await axios.post(
+        `/api/project/${projectData.id}/invite`,
+        {
+          email,
+          type: "project",
+        },
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Project member invited successfully");
+    },
+    onError: () => {
+      toast.error("Failed to invite project member");
+    },
+  });
+
   const isFreelancer = user?.type == "Freelancer";
 
   const onDrop = (acceptedFiles: File[]) => {
