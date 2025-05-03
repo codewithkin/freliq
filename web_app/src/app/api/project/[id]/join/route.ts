@@ -107,7 +107,7 @@ export async function POST(
       });
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ project });
   } catch (error) {
     console.error("Join project error:", error);
     return NextResponse.json(
