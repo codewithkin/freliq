@@ -48,8 +48,8 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
       toast.success("Invitation sent successfully");
       queryClient.invalidateQueries({ queryKey: ["chats"] });
     },
-    onError: () => {
-      toast.error("Failed to send invitation");
+    onError: (error: any) => {
+      toast.error(error.response.data.error || "Could not invite user");
     },
   });
 

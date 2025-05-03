@@ -17,6 +17,7 @@ export async function POST(
     });
 
     if (!project) {
+      console.log("Project not found: ", project);
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
 
@@ -26,7 +27,10 @@ export async function POST(
     });
 
     if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "User not found, please invite them to Freliq first" },
+        { status: 404 },
+      );
     }
 
     // Send an invite via email

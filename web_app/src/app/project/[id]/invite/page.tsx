@@ -18,7 +18,12 @@ import {
   ProjectorIcon,
   XCircle,
 } from "lucide-react";
-import { redirect, useParams, useRouter, useSearchParams } from "next/navigation";
+import {
+  redirect,
+  useParams,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import { toast } from "sonner";
 
 export default function ProjectInvitePage() {
