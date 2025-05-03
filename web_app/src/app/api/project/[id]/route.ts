@@ -57,7 +57,7 @@ export async function GET(
       });
     }
 
-    return NextResponse.json(project);
+    return NextResponse.json({project});
   } catch (error) {
     console.error("[PROJECT_GET_ERROR]", error);
     return new NextResponse(JSON.stringify({ error: "Something went wrong" }), {
