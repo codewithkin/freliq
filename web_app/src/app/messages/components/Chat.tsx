@@ -13,11 +13,14 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import axios from "axios";
 import {
+  GalleryThumbnails,
   Ghost,
   Loader,
   LoaderCircle,
   MessageCircleDashed,
   MoreHorizontal,
+  MoreVertical,
+  Paperclip,
   PlusCircle,
   Trash,
 } from "lucide-react";
@@ -164,10 +167,13 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
             {/* Actions */}
             <Popover>
               <PopoverTrigger asChild>
-                <Button size="icon" variant="secondary">
-                  <MoreHorizontal />
+                <Button size="icon" variant="outline">
+                  <MoreVertical />
                 </Button>
               </PopoverTrigger>
+              <PopoverContent>
+                
+              </PopoverContent>
               <PopoverContent>
                 <div className="flex flex-col gap-2 p-2">
                   <div className="flex flex-col gap-1">
@@ -321,6 +327,13 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
 
           {/* Message input */}
           <article className="flex items-end justify-center gap-2 w-full h-1/10 max-h-1/10 p-4">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button className="p-6" variant="outline">
+                  <Paperclip />
+                </Button>
+              </PopoverTrigger>
+            </Popover>
             <Input
               className="p-6 bg-white"
               placeholder="Say something about the project"
