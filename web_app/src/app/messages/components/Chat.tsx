@@ -164,15 +164,15 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
     };
   }, []);
 
-  const sendAttachment = (type: 'project' | 'task', data: any) => {
+  const sendAttachment = (type: "project" | "task", data: any) => {
     setSendingMessage(true);
-    
+
     const attachment = { type, data };
-    socket.emit("sent message", { 
-      chat, 
-      user, 
-      message: `Shared a ${type}`, 
-      attachment 
+    socket.emit("sent message", {
+      chat,
+      user,
+      message: `Shared a ${type}`,
+      attachment,
     });
 
     setSelectedProject(null);
@@ -344,7 +344,55 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
                               </span>
                             </div>
                           )}
-                          <p className="break-words">{msg.content}</p>
+                          {msg.attachment ? (
+                            <article className="bg-white rounded-lg border shadow-sm">
+                              <div className="flex items-start space-x-4 p-4">
+                                {msg.attachment.type === "project" ? (
+                                  <FolderKanban className="h-8 w-8 text-primary shrink-0" />
+                                ) : (
+                                  <SquareCheckBig className="h-8 w-8 text-primary shrink-0" />
+                                )}
+                                <div className="flex-1 space-y-1">
+                                  <h4 className="font-semibold text-foreground">
+                                    {msg.attachment.data.title}
+                                  </h4>
+                                  <p className="text-sm text-muted-foreground line-clamp-2">
+                                    {msg.attachment.data.description ||
+                                      "No description"}
+                                  </p>
+                                  <div className="flex items-center pt-2">
+                                    <Button
+                                      asChild
+                                      variant="outline"
+                                      size="sm"
+                                      className=" text-slate-900"
+                                    >
+                                      <Link
+                                        href={
+                                          msg.attachment.type === "project"
+                                            ? `/projects/${msg.attachment.data.id}`
+                                            : `/projects/${msg.attachment.data.projectId}/tasks/${msg.attachment.data.id}`
+                                        }
+                                      >
+                                        View{" "}
+                                        {msg.attachment.type === "project"
+                                          ? "Project"
+                                          : "Task"}
+                                      </Link>
+                                    </Button>
+                                    <span className="text-xs text-muted-foreground ml-2">
+                                      Created{" "}
+                                      {new Date(
+                                        msg.attachment.data.createdAt,
+                                      ).toLocaleDateString()}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </article>
+                          ) : (
+                            <p className="break-words">{msg.content}</p>
+                          )}
                           {msg.sender.id === user?.id && (
                             <span className="text-xs opacity-70 text-right mt-1">
                               {new Date(msg.timestamp).toLocaleTimeString([], {
@@ -423,7 +471,7 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
                             <CommandItem
                               key={project.id}
                               onSelect={() => {
-                                sendAttachment('project', project);
+                                sendAttachment("project", project);
                                 setShowProjectSelect(false);
                               }}
                             >
@@ -446,7 +494,7 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
                             <CommandItem
                               key={task.id}
                               onSelect={() => {
-                                sendAttachment('task', task);
+                                sendAttachment("task", task);
                                 setShowTaskSelect(false);
                               }}
                             >
