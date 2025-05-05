@@ -2,6 +2,7 @@
 
 import { ReactNode, useState } from "react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 import {
   Bell,
   Calendar,
