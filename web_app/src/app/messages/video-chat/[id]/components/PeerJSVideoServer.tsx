@@ -2,6 +2,8 @@
 
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import {Peer} from "peerjs";
+import { useEffect } from "react";
 
 export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   // Get the chat's data (for reference)
@@ -14,7 +16,24 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
     },
   });
 
-  console.log("Chat data: ", chat);
+  useEffect(() => {
+    // Check if navigator is available
+    if (typeof navigator !== 'undefined' && navigator.mediaDevices) {
+      // Call all members of this chat
+      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        .then((stream) => {
+          chat?.users.map((user: any) => {
+            // Your logic for handling the stream, e.g., calling the user
+            const call = 
+          });
+        })
+        .catch((error) => {
+          console.error('Error accessing media devices.', error);
+        });
+    } else {
+      console.error('Media devices not available.');
+    }
+  }, [chat]);
 
   return (
     <article>
