@@ -164,28 +164,27 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
     };
   }, []);
 
-  const sendMessage = () => {
-    if (!message.trim() && !selectedProject && !selectedTask) return;
-
+  const sendAttachment = (type: 'project' | 'task', data: any) => {
     setSendingMessage(true);
     
-    let attachment = null;
-    if (selectedProject) {
-      attachment = { type: "project", data: selectedProject };
-    } else if (selectedTask) {
-      attachment = { type: "task", data: selectedTask };
-    }
-
+    const attachment = { type, data };
     socket.emit("sent message", { 
       chat, 
       user, 
-      message: message.trim() || (attachment ? `Shared a ${attachment.type}` : ""), 
+      message: `Shared a ${type}`, 
       attachment 
     });
 
-    setMessage("");
     setSelectedProject(null);
     setSelectedTask(null);
+    setSendingMessage(false);
+  };
+
+  const sendMessage = () => {
+    if (!message.trim()) return;
+    setSendingMessage(true);
+    socket.emit("sent message", { chat, user, message });
+    setMessage("");
     setSendingMessage(false);
   };
 
@@ -424,7 +423,7 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
                             <CommandItem
                               key={project.id}
                               onSelect={() => {
-                                setSelectedProject(project);
+                                sendAttachment('project', project);
                                 setShowProjectSelect(false);
                               }}
                             >
@@ -447,7 +446,7 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
                             <CommandItem
                               key={task.id}
                               onSelect={() => {
-                                setSelectedTask(task);
+                                sendAttachment('task', task);
                                 setShowTaskSelect(false);
                               }}
                             >
