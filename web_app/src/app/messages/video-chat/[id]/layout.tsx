@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { ReactNode } from "react";
 
-export const metadat: Metadata = {
+export const metadata: Metadata = {
   title: "Video meeting",
 };
 
