@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import socket from "@/lib/socket";
 import { queryClient } from "@/providers/QueryClientProvider";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import axios from "axios";
 import {
   Ghost,
@@ -21,7 +22,7 @@ import {
   Trash,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { toast } from "sonner";
 
@@ -31,6 +32,18 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
   const [sendingMessage, setSendingMessage] = useState(false);
 
   const [inviteEmail, setInviteEmail] = useState("");
+
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  // Track the messages
+  const [messages, setMessages] = useState<any[]>([]);
+
+  const virtualizer = useVirtualizer({
+    count: messages.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 100,
+    overscan: 5,
+  });
 
   const { mutate: inviteUser, isPending: inviting } = useMutation({
     mutationKey: ["inviteUser"],
@@ -52,9 +65,6 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
       toast.error(error.response.data.error || "Could not invite user");
     },
   });
-
-  // Track the messages
-  const [messages, setMessages] = useState<any[]>([]);
 
   // Delete chat mutation
   const { mutate: deleteChat, isPending: deletingChat } = useMutation({
@@ -208,66 +218,89 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
           </article>
 
           {/* Messages */}
-          <article className="flex flex-col w-full h-8/10 overflow-y-auto p-4">
+          <article
+            className="flex flex-col w-full h-8/10 overflow-y-auto p-4"
+            ref={parentRef}
+          >
             {messages.length > 0 ? (
-              <article className="flex flex-col gap-4">
-                {messages.map((msg) => (
-                  <article
-                    key={msg.id}
-                    className={`flex ${
-                      msg.sender.id === user?.id
-                        ? "justify-end"
-                        : "justify-start"
-                    }`}
-                  >
+              <article
+                className="flex flex-col gap-4"
+                style={{
+                  height: `${virtualizer.getTotalSize()}px`,
+                  width: "100%",
+                  position: "relative",
+                }}
+              >
+                {virtualizer.getVirtualItems().map((virtualRow) => {
+                  const msg = messages[virtualRow.index];
+                  return (
                     <article
-                      className={`flex gap-2 max-w-[80%] ${
+                      key={msg.id}
+                      ref={(el) =>
+                        virtualizer.measureElement(el, virtualRow.index)
+                      }
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        transform: `translateY(${virtualRow.start}px)`,
+                      }}
+                      className={`flex ${
                         msg.sender.id === user?.id
-                          ? "bg-primary text-white"
-                          : "bg-white"
-                      } rounded-lg p-3`}
+                          ? "justify-end"
+                          : "justify-start"
+                      }`}
                     >
-                      {msg.sender.id !== user?.id && (
-                        <div className="flex flex-col items-center gap-1">
-                          <Avatar className="h-8 w-8">
-                            <AvatarImage src={msg.sender.image} />
-                            <AvatarFallback className="bg-primary text-white">
-                              {msg.sender.name?.[0]?.toUpperCase() ||
-                                msg.sender.email?.[0]?.toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <span className="text-[10px] text-muted-foreground whitespace-nowrap">
-                            {new Date(msg.timestamp).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </span>
-                        </div>
-                      )}
-                      <article className="flex flex-col">
+                      <article
+                        className={`flex gap-2 max-w-[80%] ${
+                          msg.sender.id === user?.id
+                            ? "bg-primary text-white"
+                            : "bg-white"
+                        } rounded-lg p-3`}
+                      >
                         {msg.sender.id !== user?.id && (
-                          <div className="flex flex-col mb-1">
-                            <span className="text-sm font-medium">
-                              {msg.sender.name || "Unknown"}
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              {msg.sender.email}
+                          <div className="flex flex-col items-center gap-1">
+                            <Avatar className="h-8 w-8">
+                              <AvatarImage src={msg.sender.image} />
+                              <AvatarFallback className="bg-primary text-white">
+                                {msg.sender.name?.[0]?.toUpperCase() ||
+                                  msg.sender.email?.[0]?.toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+                              {new Date(msg.timestamp).toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
                             </span>
                           </div>
                         )}
-                        <p className="break-words">{msg.content}</p>
-                        {msg.sender.id === user?.id && (
-                          <span className="text-xs opacity-70 text-right mt-1">
-                            {new Date(msg.timestamp).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </span>
-                        )}
+                        <article className="flex flex-col">
+                          {msg.sender.id !== user?.id && (
+                            <div className="flex flex-col mb-1">
+                              <span className="text-sm font-medium">
+                                {msg.sender.name || "Unknown"}
+                              </span>
+                              <span className="text-xs text-muted-foreground">
+                                {msg.sender.email}
+                              </span>
+                            </div>
+                          )}
+                          <p className="break-words">{msg.content}</p>
+                          {msg.sender.id === user?.id && (
+                            <span className="text-xs opacity-70 text-right mt-1">
+                              {new Date(msg.timestamp).toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </span>
+                          )}
+                        </article>
                       </article>
                     </article>
-                  </article>
-                ))}
+                  );
+                })}
               </article>
             ) : (
               <article className="flex flex-col gap-2 items-center justify-center h-full">

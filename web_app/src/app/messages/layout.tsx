@@ -8,11 +8,7 @@ export const metadata: Metadata = {
 };
 
 function MessagesLayout({ children }: Readonly<{ children: ReactNode }>) {
-  return (
-    <DashboardShell hideHeader={true}>
-      {children}
-    </DashboardShell>
-  );
+  return <DashboardShell hideHeader={true}>{children}</DashboardShell>;
 }
 
 export default MessagesLayout;

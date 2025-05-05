@@ -202,7 +202,7 @@ function DashboardShell({
       </aside>
 
       {/* Main */}
-      <main className="flex-1 flex flex-col">
+      <main className="flex-1 flex overflow-hidden flex-col">
         {/* Topbar */}
         {!hideHeader && (
           <header className="flex items-center justify-between bg-white md:py-4 md:px-8 p-4">
