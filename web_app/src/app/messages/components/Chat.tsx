@@ -1,6 +1,15 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
@@ -13,6 +22,10 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import axios from "axios";
 import {
+  CheckCheck,
+  File,
+  FileIcon,
+  FolderKanban,
   GalleryThumbnails,
   Ghost,
   Loader,
@@ -22,6 +35,7 @@ import {
   MoreVertical,
   Paperclip,
   PlusCircle,
+  SquareCheckBig,
   Trash,
 } from "lucide-react";
 import Link from "next/link";
@@ -35,6 +49,11 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
   const [sendingMessage, setSendingMessage] = useState(false);
 
   const [inviteEmail, setInviteEmail] = useState("");
+
+  const [selectedProject, setSelectedProject] = useState<any>(null);
+  const [selectedTask, setSelectedTask] = useState<any>(null);
+  const [showProjectSelect, setShowProjectSelect] = useState(false);
+  const [showTaskSelect, setShowTaskSelect] = useState(false);
 
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -91,6 +110,26 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
     },
   });
 
+  // Fetch projects
+  const { data: projects } = useQuery({
+    queryKey: ["projects"],
+    queryFn: async () => {
+      const res = await axios.get("/api/projects");
+      return res.data.projects;
+    },
+  });
+
+  // Fetch tasks
+  const { data: tasks } = useQuery({
+    queryKey: ["tasks", selectedProject?.id],
+    queryFn: async () => {
+      if (!selectedProject?.id) return [];
+      const res = await axios.get(`/api/projects/${selectedProject.id}/tasks`);
+      return res.data.tasks;
+    },
+    enabled: !!selectedProject?.id,
+  });
+
   useEffect(() => {
     if (chat) {
       // Join the chat room when chat is selected
@@ -126,11 +165,27 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
   }, []);
 
   const sendMessage = () => {
-    if (!message.trim()) return;
+    if (!message.trim() && !selectedProject && !selectedTask) return;
 
     setSendingMessage(true);
-    socket.emit("sent message", { chat, user, message });
+    
+    let attachment = null;
+    if (selectedProject) {
+      attachment = { type: "project", data: selectedProject };
+    } else if (selectedTask) {
+      attachment = { type: "task", data: selectedTask };
+    }
+
+    socket.emit("sent message", { 
+      chat, 
+      user, 
+      message: message.trim() || (attachment ? `Shared a ${attachment.type}` : ""), 
+      attachment 
+    });
+
     setMessage("");
+    setSelectedProject(null);
+    setSelectedTask(null);
     setSendingMessage(false);
   };
 
@@ -171,9 +226,6 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
                   <MoreVertical />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent>
-                
-              </PopoverContent>
               <PopoverContent>
                 <div className="flex flex-col gap-2 p-2">
                   <div className="flex flex-col gap-1">
@@ -333,6 +385,82 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
                   <Paperclip />
                 </Button>
               </PopoverTrigger>
+              <PopoverContent className="w-80">
+                <Label>Send</Label>
+                <article className="flex mt-4 flex-col gap-2 justify-center">
+                  {/* Task */}
+                  <Button
+                    className="p-6 hover:cursor-pointer w-full"
+                    variant="outline"
+                    onClick={() => {
+                      setShowTaskSelect(true);
+                      setShowProjectSelect(false);
+                    }}
+                  >
+                    <SquareCheckBig className="text-blue-500 mr-2" />
+                    {selectedTask ? selectedTask.title : "Select Task"}
+                  </Button>
+
+                  {/* Project */}
+                  <Button
+                    className="p-6 hover:cursor-pointer w-full"
+                    variant="outline"
+                    onClick={() => {
+                      setShowProjectSelect(true);
+                      setShowTaskSelect(false);
+                    }}
+                  >
+                    <FolderKanban className="text-green-500 mr-2" />
+                    {selectedProject ? selectedProject.title : "Select Project"}
+                  </Button>
+
+                  {showProjectSelect && (
+                    <Command className="rounded-lg border shadow-md">
+                      <CommandInput placeholder="Search projects..." />
+                      <CommandList>
+                        <CommandEmpty>No projects found.</CommandEmpty>
+                        <CommandGroup heading="Projects">
+                          {projects?.map((project: any) => (
+                            <CommandItem
+                              key={project.id}
+                              onSelect={() => {
+                                setSelectedProject(project);
+                                setShowProjectSelect(false);
+                              }}
+                            >
+                              <FolderKanban className="mr-2 h-4 w-4" />
+                              {project.title}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  )}
+
+                  {showTaskSelect && (
+                    <Command className="rounded-lg border shadow-md">
+                      <CommandInput placeholder="Search tasks..." />
+                      <CommandList>
+                        <CommandEmpty>No tasks found.</CommandEmpty>
+                        <CommandGroup heading="Tasks">
+                          {tasks?.map((task: any) => (
+                            <CommandItem
+                              key={task.id}
+                              onSelect={() => {
+                                setSelectedTask(task);
+                                setShowTaskSelect(false);
+                              }}
+                            >
+                              <SquareCheckBig className="mr-2 h-4 w-4" />
+                              {task.title}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  )}
+                </article>
+              </PopoverContent>
             </Popover>
             <Input
               className="p-6 bg-white"
