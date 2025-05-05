@@ -234,8 +234,10 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
-                    <Button variant="secondary">
-                      <Video />
+                    <Button asChild variant="secondary">
+                      <Link href={`/messages/video-chat/${chat?.id}`}>
+                        <Video />
+                      </Link>
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
