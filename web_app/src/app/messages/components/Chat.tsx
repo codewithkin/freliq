@@ -37,11 +37,18 @@ import {
   PlusCircle,
   SquareCheckBig,
   Trash,
+  Video,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { toast } from "sonner";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
   // Track the value of the message
@@ -223,60 +230,74 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
               </article>
             </article>
 
-            {/* Actions */}
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button size="icon" variant="outline">
-                  <MoreVertical />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent>
-                <div className="flex flex-col gap-2 p-2">
-                  <div className="flex flex-col gap-1">
-                    <Input
-                      placeholder="Enter email to invite"
-                      value={inviteEmail}
-                      onChange={(e) => setInviteEmail(e.target.value)}
-                    />
+            <article className="flex items-center gap-2">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button variant="secondary">
+                      <Video />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Start a video meeting</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              {/* Actions */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button size="icon" variant="outline">
+                    <MoreVertical />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <div className="flex flex-col gap-2 p-2">
+                    <div className="flex flex-col gap-1">
+                      <Input
+                        placeholder="Enter email to invite"
+                        value={inviteEmail}
+                        onChange={(e) => setInviteEmail(e.target.value)}
+                      />
+                      <Button
+                        className="w-full"
+                        disabled={inviting || !inviteEmail}
+                        onClick={() => {
+                          inviteUser(inviteEmail);
+                          setInviteEmail("");
+                        }}
+                      >
+                        {inviting ? (
+                          <>
+                            <Loader className="mr-2 h-4 w-4 animate-spin" />
+                            Sending invite...
+                          </>
+                        ) : (
+                          <>
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            Invite to Chat
+                          </>
+                        )}
+                      </Button>
+                    </div>
                     <Button
-                      className="w-full"
-                      disabled={inviting || !inviteEmail}
                       onClick={() => {
-                        inviteUser(inviteEmail);
-                        setInviteEmail("");
+                        deleteChat(chat?.id);
                       }}
+                      disabled={deletingChat}
+                      className="w-full"
+                      variant="destructive"
                     >
-                      {inviting ? (
-                        <>
-                          <Loader className="mr-2 h-4 w-4 animate-spin" />
-                          Sending invite...
-                        </>
+                      {deletingChat ? "Deleting chat" : "Delete Chat"}
+                      {deletingChat ? (
+                        <Loader className="animate-spin" />
                       ) : (
-                        <>
-                          <PlusCircle className="mr-2 h-4 w-4" />
-                          Invite to Chat
-                        </>
+                        <Trash />
                       )}
                     </Button>
                   </div>
-                  <Button
-                    onClick={() => {
-                      deleteChat(chat?.id);
-                    }}
-                    disabled={deletingChat}
-                    className="w-full"
-                    variant="destructive"
-                  >
-                    {deletingChat ? "Deleting chat" : "Delete Chat"}
-                    {deletingChat ? (
-                      <Loader className="animate-spin" />
-                    ) : (
-                      <Trash />
-                    )}
-                  </Button>
-                </div>
-              </PopoverContent>
-            </Popover>
+                </PopoverContent>
+              </Popover>
+            </article>
           </article>
 
           {/* Messages */}
