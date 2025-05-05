@@ -7,7 +7,7 @@ export const queryClient = new QueryClient();
 import { registerLicense } from "@syncfusion/ej2-base";
 
 registerLicense(
-  "Ngo9BigBOggjHTQxAR8/V1NNaF5cXmBCe0x3WmFZfVtgd19HaVZSQmYuP1ZhSXxWdkFhXX9dcX1WQGhUVEB9XUs=",
+  "Ngo9BigBOggjHTQxAR8/V1NNaF5cWWNCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXpec3RcQmhZUkR1XUZWYUA=",
 );
 
 function QueryClientProviderWrapper({
