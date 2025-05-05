@@ -1,8 +1,7 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 import {
   Bell,
   Calendar,
@@ -122,7 +121,7 @@ function DashboardShell({
   };
 
   return (
-    <section className={cn("min-h-screen flex bg-muted/40", className)}>
+    <section className={`${className} min-h-screen flex bg-muted/40`}>
       {/* Sidebar for large screens */}
       <aside className="hidden lg:flex w-64 border-r bg-white shadow-sm">
         <SidebarProvider>
@@ -309,9 +308,7 @@ function DashboardShell({
         )}
 
         {/* Page content */}
-        <section
-          className={cn("flex-1 p-2 sm:p-3 md:p-6", !hideHeader && "md:mt-16")}
-        >
+        <section className={`flex-1 ${!hideHeader && "p-2 sm:p-3 md:p-6"}`}>
           {children}
         </section>
       </main>
