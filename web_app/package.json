@@ -47,6 +47,7 @@
     "next": "15.3.1",
     "next-themes": "^0.4.6",
     "nodemailer": "^6.10.1",
+    "peerjs": "^1.5.4",
     "react": "^19.0.0",
     "react-day-picker": "^8.10.1",
     "react-dom": "^19.0.0",
