@@ -132,11 +132,11 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
   };
 
   return (
-    <article className="md:w-3/4 h-full bg-muted">
+    <article className="md:w-3/4 h-full max-h-full bg-muted">
       {chat ? (
-        <article className="w-full h-full">
+        <article className="w-full h-full max-h-full">
           {/* Header */}
-          <article className="flex justify-between items-center border-b border-slate-300 p-4 h-1/10">
+          <article className="flex justify-between items-center border-b border-slate-300 p-4 h-1/10 max-h-1/10">
             <article className="flex gap-2 items-center">
               {/* Avatar */}
               <Avatar className="bg-primary text-white h-12 w-12">
@@ -219,12 +219,12 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
 
           {/* Messages */}
           <article
-            className="flex flex-col w-full h-8/10 overflow-y-auto p-4"
+            className="flex flex-col w-full h-8/10 max-h-8/10 overflow-y-auto p-4"
             ref={parentRef}
           >
             {messages.length > 0 ? (
               <article
-                className="flex flex-col gap-4"
+                className="flex flex-col h-full gap-4"
                 style={{
                   height: `${virtualizer.getTotalSize()}px`,
                   width: "100%",
@@ -320,7 +320,7 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
           </article>
 
           {/* Message input */}
-          <article className="flex items-end justify-center gap-2 w-full h-1/10 p-4">
+          <article className="flex items-end justify-center gap-2 w-full h-1/10 max-h-1/10 p-4">
             <Input
               className="p-6 bg-white"
               placeholder="Say something about the project"

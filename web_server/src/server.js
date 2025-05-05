@@ -28,7 +28,7 @@ io.on("connection", (socket) => {
     socket.join(data.chat.id);
     io.to(data.chat.id).emit("user joined", {
       userId: socket.id,
-      chat: data.chat
+      chat: data.chat,
     });
   });
 
@@ -42,11 +42,11 @@ io.on("connection", (socket) => {
         id: data.user.id,
         name: data.user.name || data.user.email,
         image: data.user.image || null,
-        email: data.user.email
+        email: data.user.email,
       },
       timestamp: new Date().toISOString(),
       chatId: data.chat.id,
-      attachment: data.attachment || null
+      attachment: data.attachment || null,
     };
     // Broadcast to everyone in the chat room including sender
     io.to(data.chat.id).emit("received message", messageData);
@@ -59,53 +59,53 @@ io.on("connection", (socket) => {
 
     try {
       switch (type) {
-        case 'project':
+        case "project":
           // Send project preview data
           attachmentData = {
-            type: 'project',
+            type: "project",
             data: {
               id,
               title: data.project.title,
               description: data.project.description,
               status: data.project.status,
               deadline: data.project.deadline,
-              image: data.project.image
-            }
+              image: data.project.image,
+            },
           };
           break;
-        case 'task':
+        case "task":
           // Send task preview data
           attachmentData = {
-            type: 'task',
+            type: "task",
             data: {
               id,
               title: data.task.title,
               description: data.task.description,
               status: data.task.status,
-              dueDate: data.task.dueDate
-            }
+              dueDate: data.task.dueDate,
+            },
           };
           break;
-        case 'poll':
+        case "poll":
           // Send poll preview data
           attachmentData = {
-            type: 'poll',
+            type: "poll",
             data: {
               id,
               question: data.poll.question,
-              options: data.poll.options
-            }
+              options: data.poll.options,
+            },
           };
           break;
-        case 'checklist':
+        case "checklist":
           // Send checklist preview data
           attachmentData = {
-            type: 'checklist',
+            type: "checklist",
             data: {
               id,
               title: data.checklist.title,
-              completed: data.checklist.completed
-            }
+              completed: data.checklist.completed,
+            },
           };
           break;
       }
