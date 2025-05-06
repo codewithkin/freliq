@@ -235,7 +235,7 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
                 <Tooltip>
                   <TooltipTrigger>
                     <Button asChild variant="secondary">
-                      <Link href={`/messages/video-chat/${chat?.id}`}>
+                      <Link href={`/video-chat/${chat?.id}`}>
                         <Video />
                       </Link>
                     </Button>
