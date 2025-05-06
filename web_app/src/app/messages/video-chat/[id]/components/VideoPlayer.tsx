@@ -4,10 +4,10 @@ import { useEffect, useRef } from "react";
 
 export default function VideoPlayer({
   stream,
-  muted,
+  muted = false,
 }: {
   stream: MediaStream;
-  muted: boolean;
+  muted?: boolean;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
