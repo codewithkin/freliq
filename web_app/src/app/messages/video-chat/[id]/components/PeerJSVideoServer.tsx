@@ -7,56 +7,39 @@ import { Peer } from "peerjs";
 import { useEffect, useState } from "react";
 import VideoPlayer from "./VideoPlayer";
 
-export const call = (peerId: string) => {
-  try {
-    navigator.mediaDevices.getUserMedia(
-      { video: true, audio: true },
-      (stream) => {
-        const call = peer.call("another-peers-id", stream);
-        call.on("stream", (remoteStream) => {
-          // Show stream in some <video> element.
-        });
-      },
-      (err) => {
-        console.error("Failed to get local stream", err);
-      },
-    );
-  } catch (error) {
-    console.log("Failed to call " + peerId + " , please try again later");
-  }
-}
-
-export default function PeerJSVideoServer({ chatId, userId }: { chatId: string, userId: string }) {
+export default function PeerJSVideoServer({
+  chatId,
+  userId,
+}: {
+  chatId: string;
+  userId: string;
+}) {
   // Track the stream
   const [stream, setStream] = useState<any>();
 
-      // Get the chat's data (for reference)
-      const { data: chat, isLoading: loading } = useQuery({
-        queryKey: ["chat"],
-        queryFn: async () => {
-          const res = await axios.get(`/api/chats/${chatId}`);
-  
-          return res.data.chat;
-        },
-      });
-  
-      // Get the user's full data
-      const { data: user } = useQuery({
-        queryKey: ["user"],
-        queryFn: async () => {
-          const res = await axios.get("/api/user");
-  
-          return res.data.user;
-        },
-      });
+  // Fetch the chat and user data
+  const { data, isLoading: loading } = useQuery({
+    queryKey: ["chat", "user"],
+    queryFn: async () => {
+      const [chatRes, userRes] = await Promise.all([
+        axios.get(`/api/chats/${chatId}`),
+        axios.get("/api/user"),
+      ]);
+
+      return {
+        chat: chatRes.data.chat,
+        user: userRes.data.user,
+      };
+    },
+  });
+
+  const { chat, user } = data ?? {};
 
   useEffect(() => {
-
     const peer = new Peer();
 
     peer.on("open", (id) => {
       // Call the user
-
     });
 
     // Access media
@@ -77,6 +60,7 @@ export default function PeerJSVideoServer({ chatId, userId }: { chatId: string, 
 
   return (
     <article>
-  <VideoPlayer stream={stream} />
-  </article>
-  )
+      <VideoPlayer stream={stream} />
+    </article>
+  );
+}
