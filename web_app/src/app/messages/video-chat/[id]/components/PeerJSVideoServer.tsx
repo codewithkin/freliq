@@ -31,7 +31,7 @@ export default function PeerJSVideoServer({
     queryKey: ["user"],
     queryFn: async () => {
       const res = await axios.get("/api/user");
-      return res.data.user;
+      return res.data.fullUser;
     },
   });
 
@@ -105,23 +105,10 @@ export default function PeerJSVideoServer({
     };
   }, [chat, userId]);
 
-  if (error) {
-    return (
-      <article className="flex flex-col gap-2 justify-center items-center w-full h-screen">
-        <FileWarning size={64} className="text-red-500" />
-
-        <article className="flex flex-col justify-center items-center text-center">
-          <h3 className="text-2xl font-semibold">An error occured</h3>
-          <p className="text-muted-foreground text-sm">{error}</p>
-        </article>
-      </article>
-    );
-  }
-
   return (
-    <article className="grid grid-cols-2 gap-4 p-4">
+    <article className="grid w-full gap-4 p-4">
       {/* Local video */}
-      {stream && !error && (
+      {stream && (
         <div>
           <h3 className="text-lg font-semibold mb-2">Your Video</h3>
           <video
@@ -135,6 +122,8 @@ export default function PeerJSVideoServer({
           />
         </div>
       )}
+
+      {error && <p className="text-red-500 w-full">Error: {error}</p>}
 
       {/* Remote video(s) will be added here */}
     </article>
