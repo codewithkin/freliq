@@ -9,20 +9,15 @@ export default function VideoPlayer({
   stream: MediaStream;
   muted?: boolean;
 }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.srcObject = stream;
-    }
-  }, [stream]);
-
   return (
     <video
-      className="w-full h-full rounded-lg bg-black"
       autoPlay
-      playsInline
       muted={muted}
+      playsInline
+      ref={(video) => {
+        if (video && stream) video.srcObject = stream;
+      }}
+      className="w-full rounded-lg border border-gray-200"
     />
   );
 }

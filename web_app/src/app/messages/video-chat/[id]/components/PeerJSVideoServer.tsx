@@ -5,6 +5,8 @@ import axios from "axios";
 import { FileWarning } from "lucide-react";
 import { Peer } from "peerjs";
 import { useEffect, useRef, useState } from "react";
+import VideoPlayer from "./VideoPlayer";
+import { toast } from "sonner";
 
 export default function PeerJSVideoServer({
   chatId,
@@ -81,6 +83,8 @@ export default function PeerJSVideoServer({
       // Handle peer errors
       peer.on("error", (err) => {
         setError("Connection error: " + err.message);
+
+        toast.error("Connection error: " + err.message);
         console.error("Peer error:", err);
       });
     } catch (err) {
@@ -110,16 +114,7 @@ export default function PeerJSVideoServer({
       {/* Local video */}
       {stream && (
         <div>
-          <h3 className="text-lg font-semibold mb-2">Your Video</h3>
-          <video
-            autoPlay
-            muted
-            playsInline
-            ref={(video) => {
-              if (video && stream) video.srcObject = stream;
-            }}
-            className="w-full rounded-lg border border-gray-200"
-          />
+          <VideoPlayer stream={stream} />
         </div>
       )}
 
