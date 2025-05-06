@@ -1,11 +1,10 @@
 "use client";
 
-import socket from "@/lib/socket";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { FileWarning } from "lucide-react";
 import { Peer } from "peerjs";
-import { useEffect, useState } from "react";
-import VideoPlayer from "./VideoPlayer";
+import { useEffect, useRef, useState } from "react";
 
 export default function PeerJSVideoServer({
   chatId,
@@ -14,53 +13,130 @@ export default function PeerJSVideoServer({
   chatId: string;
   userId: string;
 }) {
-  // Track the stream
-  const [stream, setStream] = useState<any>();
+  const [stream, setStream] = useState<MediaStream | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const peerRef = useRef<Peer | null>(null);
 
-  // Fetch the chat and user data
-  const { data, isLoading: loading } = useQuery({
-    queryKey: ["chat", "user"],
+  // Get the chat's data
+  const { data: chat } = useQuery({
+    queryKey: ["chat"],
     queryFn: async () => {
-      const [chatRes, userRes] = await Promise.all([
-        axios.get(`/api/chats/${chatId}`),
-        axios.get("/api/user"),
-      ]);
-
-      return {
-        chat: chatRes.data.chat,
-        user: userRes.data.user,
-      };
+      const res = await axios.get(`/api/chats/${chatId}`);
+      return res.data.chat;
     },
   });
 
-  const { chat, user } = data ?? {};
+  // Get the user's full data
+  const { data: user } = useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const res = await axios.get("/api/user");
+      return res.data.user;
+    },
+  });
 
-  useEffect(() => {
-    const peer = new Peer();
+  const initializePeer = async () => {
+    try {
+      // Initialize peer
+      const peer = new Peer(userId);
+      peerRef.current = peer;
 
-    peer.on("open", (id) => {
-      // Call the user
-    });
+      // Handle peer open
+      peer.on("open", async (id) => {
+        console.log("My peer ID is: " + id);
 
-    // Access media
-    navigator.mediaDevices
-      .getUserMedia({
-        video: true,
-        audio: true,
-      })
-      .then((stream) => {
-        setStream(stream);
+        try {
+          // Get media stream
+          const mediaStream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: true,
+          });
+          setStream(mediaStream);
+
+          // Handle incoming calls
+          peer.on("call", (call) => {
+            call.answer(mediaStream);
+            call.on("stream", (remoteStream) => {
+              // Handle remote stream (e.g., set it to a video element)
+              console.log("Received remote stream", remoteStream);
+            });
+          });
+
+          // Call other users in the chat
+          chat?.users.forEach((chatUser: any) => {
+            if (chatUser.id !== userId) {
+              const call = peer.call(chatUser.id, mediaStream);
+              call.on("stream", (remoteStream) => {
+                // Handle remote stream
+                console.log("Received remote stream from call", remoteStream);
+              });
+            }
+          });
+        } catch (err) {
+          setError("Failed to access camera/microphone");
+          console.error("Media error:", err);
+        }
       });
 
-    // To avoid memory leaks
+      // Handle peer errors
+      peer.on("error", (err) => {
+        setError("Connection error: " + err.message);
+        console.error("Peer error:", err);
+      });
+    } catch (err) {
+      setError("Failed to initialize peer connection");
+      console.error("Peer initialization error:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      initializePeer();
+    }
+
     return () => {
-      peer.destroy();
+      // Cleanup
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+      if (peerRef.current) {
+        peerRef.current.destroy();
+      }
     };
-  }, []);
+  }, [chat, userId]);
+
+  if (error) {
+    return (
+      <article className="flex flex-col gap-2 justify-center items-center w-full h-screen">
+        <FileWarning size={64} className="text-red-500" />
+
+        <article className="flex flex-col justify-center items-center text-center">
+          <h3 className="text-2xl font-semibold">An error occured</h3>
+          <p className="text-muted-foreground text-sm">{error}</p>
+        </article>
+      </article>
+    );
+  }
 
   return (
-    <article>
-      <VideoPlayer stream={stream} />
+    <article className="grid grid-cols-2 gap-4 p-4">
+      {/* Local video */}
+      {stream && !error && (
+        <div>
+          <h3 className="text-lg font-semibold mb-2">Your Video</h3>
+          <video
+            autoPlay
+            muted
+            playsInline
+            ref={(video) => {
+              if (video && stream) video.srcObject = stream;
+            }}
+            className="w-full rounded-lg border border-gray-200"
+          />
+        </div>
+      )}
+
+      {/* Remote video(s) will be added here */}
     </article>
   );
 }
