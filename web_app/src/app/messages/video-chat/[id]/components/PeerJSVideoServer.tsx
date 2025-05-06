@@ -10,13 +10,7 @@ import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-export default function PeerJSVideoServer({
-  chatId,
-  userId,
-}: {
-  chatId: string;
-  userId: string;
-}) {
+export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
   const peerRef = useRef<Peer | null>(null);
@@ -42,7 +36,7 @@ export default function PeerJSVideoServer({
   const initializePeer = async () => {
     try {
       // Initialize peer
-      const peer = new Peer(userId);
+      const peer = new Peer();
       peerRef.current = peer;
 
       // Handle peer open
@@ -68,7 +62,7 @@ export default function PeerJSVideoServer({
 
           // Call other users in the chat
           chat?.users.forEach((chatUser: any) => {
-            if (chatUser.id !== userId) {
+            if (chatUser.id !== user?.id) {
               const call = peer.call(chatUser.id, mediaStream);
               call.on("stream", (remoteStream) => {
                 // Handle remote stream
@@ -109,7 +103,7 @@ export default function PeerJSVideoServer({
         peerRef.current.destroy();
       }
     };
-  }, [chat, userId]);
+  }, [chat]);
 
   return (
     <article className="grid w-full gap-4 p-4">
