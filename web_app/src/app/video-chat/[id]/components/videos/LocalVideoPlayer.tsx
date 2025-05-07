@@ -93,7 +93,7 @@ export default function VideoPlayer({
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Disable Camera</p>
+                <p>{cameraOff ? "Turn on" : "Turn off"} Camera</p>
               </TooltipContent>
             </Tooltip>
             <Tooltip>
@@ -128,7 +128,7 @@ export default function VideoPlayer({
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Mute Microphone</p>
+                <p>{muted ? "Unmute" : "Mute"} Microphone</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
