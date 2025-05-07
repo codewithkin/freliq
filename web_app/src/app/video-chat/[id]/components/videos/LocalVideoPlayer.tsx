@@ -9,7 +9,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { PhoneCall } from "lucide-react";
+import { CameraOff, MicOff, PhoneCall } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 export default function VideoPlayer({
@@ -50,8 +50,18 @@ export default function VideoPlayer({
 
       {/* Controls */}
       <article className="absolute bottom-5 w-full justify-center items-center flex">
-        <article className="rounded-full bg-white w-fit p-4">
+        <article className="rounded-full bg-white w-fit p-4 gap-2 flex items-center justify-center shadow-lg">
           <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button size="lg" variant="secondary" className="rounded-full">
+                  <CameraOff />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Disable Camera</p>
+              </TooltipContent>
+            </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
                 {/* End call */}
@@ -65,6 +75,16 @@ export default function VideoPlayer({
               </TooltipTrigger>
               <TooltipContent>
                 <p>Hang up</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button size="lg" variant="secondary" className="rounded-full">
+                  <MicOff />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Mute Microphone</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
