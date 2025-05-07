@@ -9,6 +9,7 @@ import VideoPlayer from "./LocalVideoPlayer";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import RemoteVideoPlayer from "./RemoteVideoPlayer";
 
 export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   // My stream (my video data)
@@ -146,6 +147,7 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
       {error && <p className="text-red-500 w-full">Error: {error}</p>}
 
       {/* Remote video(s) will be added here */}
+      {remoteStream && <RemoteVideoPlayer stream={remoteStream} />}
     </article>
   );
 }
