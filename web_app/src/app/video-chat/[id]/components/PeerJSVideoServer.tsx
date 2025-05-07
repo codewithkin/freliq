@@ -91,10 +91,10 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
 
         console.log("Remote user: ", remoteUser);
 
-        const call = peer.call(remoteUser?.id, mediaStream);
-        call.on("stream", (remoteStream) => {
-          // Handle remote stream
-          console.log("Received remote stream from call", remoteStream);
+        call({
+          peer: peer,
+          peerId: remoteUser?.id,
+          myMediaStream: mediaStream,
         });
       } catch (err) {
         setError("Failed to access camera/microphone");
@@ -115,6 +115,33 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   };
 
   const router = useRouter();
+
+  const call = ({
+    peer,
+    peerId,
+    myMediaStream,
+  }: {
+    peer: Peer;
+    peerId?: string;
+    myMediaStream?: MediaStream | null;
+  }) => {
+    try {
+      toast.info("Calling " + peerId);
+      if (!peerId || !myMediaStream) return;
+
+      // Start a new call
+      const call = peer.call(peerId, myMediaStream);
+      call.on("stream", (remoteStream) => {
+        // Handle remote stream
+        console.log("Received remote stream from call", remoteStream);
+        setRemoteStream(remoteStream);
+      });
+    } catch (e) {
+      console.log("Failed to start call");
+
+      toast.error("Failed to start call");
+    }
+  };
 
   const hangUp = () => {
     if (stream) {
@@ -150,7 +177,7 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   }, [chat]);
 
   return (
-    <article className="grid w-full p-4 grid-cols-1 grid-rows-2 md:grid-rows-1 md:grid-cols-2 gap-12">
+    <article className="grid w-full p-4 grid-cols-1 h-full md:grid-cols-2 gap-12 md:p-12">
       {/* Local video */}
       {stream && user && (
         <VideoPlayer
