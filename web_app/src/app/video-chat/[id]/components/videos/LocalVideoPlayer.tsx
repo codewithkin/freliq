@@ -9,7 +9,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { set } from "date-fns";
 import { Camera, CameraOff, Mic, MicOff, PhoneCall } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -44,15 +43,37 @@ export default function VideoPlayer({
         </article>
       </Badge>
 
-      <video
-        autoPlay
-        muted={muted}
-        playsInline
-        ref={(video) => {
-          if (video && stream) video.srcObject = stream;
-        }}
-        className="w-full rounded-2xl border border-gray-200"
-      />
+      {!cameraOff ? (
+        <video
+          autoPlay
+          muted={muted}
+          playsInline
+          ref={(video) => {
+            if (video && stream) video.srcObject = stream;
+          }}
+          className="w-full rounded-2xl border border-gray-200"
+        />
+      ) : (
+        <article
+          style={{
+            backgroundImage: `url(${user?.image})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+          }}
+          className="w-full rounded-2xl border border-gray-200 h-full min-h-[400px] md:min-h-[800px] bg-slate-900 flex justify-center items-center"
+        >
+          {/* User avatar */}
+          {!user?.image && (
+            <Avatar className="w-48 h-48">
+              <AvatarFallback className="w-48 h-48">
+                {user?.email?.charAt(0)}
+              </AvatarFallback>
+              <AvatarImage className="w-48 h-48" src={user?.image} />
+            </Avatar>
+          )}
+        </article>
+      )}
 
       {/* Controls */}
       <article className="absolute bottom-5 w-full justify-center items-center flex">
