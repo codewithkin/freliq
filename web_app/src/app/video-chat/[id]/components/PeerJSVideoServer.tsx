@@ -13,6 +13,7 @@ import RemoteVideoPlayer from "./videos/RemoteVideoPlayer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { redirect } from "next/dist/server/api-utils";
 import { useRouter } from "next/navigation";
+import { User } from "@/generated/prisma";
 
 export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   // My stream (my video data)
@@ -48,7 +49,7 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   const initializePeer = async () => {
     try {
       // Initialize peer
-      const peer = new Peer();
+      const peer = new Peer(user?.id);
       peerRef.current = peer;
 
       // Handle peer open
@@ -65,6 +66,8 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
 
           // Handle incoming calls
           peer.on("call", (call) => {
+            toast.info("Incoming call");
+
             // Answer the call (and send my media stream to them)
             call.answer(mediaStream);
 
@@ -78,15 +81,17 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
             });
           });
 
-          // Call other users in the chat
-          chat?.users.forEach((chatUser: any) => {
-            if (chatUser.id !== user?.id) {
-              const call = peer.call(chatUser.id, mediaStream);
-              call.on("stream", (remoteStream) => {
-                // Handle remote stream
-                console.log("Received remote stream from call", remoteStream);
-              });
-            }
+          // Get the other member of the chat's id
+          const remoteUser = chat?.users?.filter(
+            (user: User) => user.id !== id,
+          )[0];
+
+          console.log("Remote user: ", remoteUser);
+
+          const call = peer.call(remoteUser?.id, mediaStream);
+          call.on("stream", (remoteStream) => {
+            // Handle remote stream
+            console.log("Received remote stream from call", remoteStream);
           });
         } catch (err) {
           setError("Failed to access camera/microphone");
