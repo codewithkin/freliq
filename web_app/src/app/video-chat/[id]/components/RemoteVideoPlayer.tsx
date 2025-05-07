@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-export default function VideoPlayer({
+export default function RemoteVideoPlayer({
   stream,
   muted = false,
 }: {

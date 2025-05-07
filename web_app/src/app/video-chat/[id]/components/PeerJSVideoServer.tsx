@@ -5,14 +5,22 @@ import axios from "axios";
 import { BadgeAlert, FileWarning } from "lucide-react";
 import { Peer } from "peerjs";
 import { useEffect, useRef, useState } from "react";
-import VideoPlayer from "./VideoPlayer";
+import VideoPlayer from "./LocalVideoPlayer";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
+  // My stream (my video data)
   const [stream, setStream] = useState<MediaStream | null>(null);
+
+  // Remote stream (stream coming from the other user)
+  const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
+
+  // Track errors (and show them if necessary)
   const [error, setError] = useState<string | null>(null);
+
+  // Manage the peer ref
   const peerRef = useRef<Peer | null>(null);
 
   // Get the chat's data
@@ -44,7 +52,7 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
         console.log("My peer ID is: " + id);
 
         try {
-          // Get media stream
+          // Get my media stream
           const mediaStream = await navigator.mediaDevices.getUserMedia({
             video: true,
             audio: true,
@@ -53,10 +61,16 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
 
           // Handle incoming calls
           peer.on("call", (call) => {
+            // Answer the call (and send my media stream to them)
             call.answer(mediaStream);
+
+            // Handle the remote stream
             call.on("stream", (remoteStream) => {
               // Handle remote stream (e.g., set it to a video element)
               console.log("Received remote stream", remoteStream);
+
+              // Update the remote stream
+              setRemoteStream(remoteStream);
             });
           });
 
