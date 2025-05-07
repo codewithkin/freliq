@@ -50,7 +50,7 @@ export default function VideoPlayer({
 
       {/* Controls */}
       <article className="absolute bottom-5 w-full justify-center items-center flex">
-        <article className="rounded-full bg-white w-fit p-4 gap-2 flex items-center justify-center shadow-lg">
+        <article className="rounded-full bg-transparent backdrop-blur-xl w-fit p-4 gap-2 flex items-center justify-center shadow-lg">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
