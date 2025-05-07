@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { BadgeAlert, FileWarning } from "lucide-react";
+import { BadgeAlert, FileWarning, MessageCircleWarning } from "lucide-react";
 import { Peer } from "peerjs";
 import { useEffect, useRef, useState } from "react";
 import VideoPlayer from "./videos/LocalVideoPlayer";
@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import RemoteVideoPlayer from "./videos/RemoteVideoPlayer";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   // My stream (my video data)
@@ -144,10 +145,25 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
         </div>
       )}
 
-      {error && <p className="text-red-500 w-full">Error: {error}</p>}
-
       {/* Remote video(s) will be added here */}
-      {remoteStream && <RemoteVideoPlayer stream={remoteStream} />}
+      {remoteStream ? (
+        <RemoteVideoPlayer stream={remoteStream} />
+      ) : error ? (
+        <article className="md:p-8 p-4 rounded-lg border border-2 border-slate-300 flex flex-col justify-center items-center gap-2">
+          <MessageCircleWarning
+            strokeWidth={1.2}
+            size={72}
+            className="text-red-500"
+          />
+          <article className="flex flex-col justify-center items-center">
+            <h2 className="text-xl font-medium">An error occured</h2>
+
+            <p className="text-muted-foreground text-sm text-center">{error}</p>
+          </article>
+        </article>
+      ) : (
+        <Skeleton className="w-full bg-slate-200 h-full rounded-lg min-h-[300px]" />
+      )}
     </article>
   );
 }
