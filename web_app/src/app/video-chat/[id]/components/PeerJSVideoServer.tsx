@@ -25,6 +25,9 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   // Track errors (and show them if necessary)
   const [error, setError] = useState<string | null>(null);
 
+  // Track whether or not the audio is muted
+  const [muted, setMuted] = useState(true);
+
   // Manage the peer ref
   const peerRef = useRef<Peer | null>(null);
 
@@ -61,6 +64,7 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
           video: true,
           audio: true,
         });
+
         setStream(mediaStream);
 
         // Handle incoming calls
@@ -149,7 +153,13 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
     <article className="grid w-full p-4 grid-cols-1 grid-rows-2 md:grid-rows-1 md:grid-cols-2 gap-12">
       {/* Local video */}
       {stream && user && (
-        <VideoPlayer hangUp={hangUp} user={user} stream={stream} />
+        <VideoPlayer
+          muted={muted}
+          setMuted={setMuted}
+          hangUp={hangUp}
+          user={user}
+          stream={stream}
+        />
       )}
 
       {/* Remote video(s) will be added here */}

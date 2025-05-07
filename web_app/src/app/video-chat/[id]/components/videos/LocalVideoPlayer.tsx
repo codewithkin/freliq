@@ -16,16 +16,17 @@ export default function VideoPlayer({
   stream,
   user,
   hangUp,
+  muted,
+  setMuted,
 }: {
   stream: MediaStream;
   user: any;
   hangUp: any;
+  muted: any;
+  setMuted: any;
 }) {
   // Track whether or not the camera is off
   const [cameraOff, setCameraOff] = useState(false);
-
-  // Track whether or not the audio is muted
-  const [muted, setMuted] = useState(true);
 
   return (
     <div className="w-full h-full relative">
@@ -63,6 +64,15 @@ export default function VideoPlayer({
           }}
           className="w-full rounded-2xl border border-gray-200 h-full min-h-[400px] md:min-h-[800px] bg-slate-900 flex justify-center items-center"
         >
+          <video
+            autoPlay
+            muted={muted}
+            playsInline
+            ref={(video) => {
+              if (video && stream) video.srcObject = stream;
+            }}
+            className="w-full rounded-2xl border border-gray-200 hidden"
+          />
           {/* User avatar */}
           {!user?.image && (
             <Avatar className="w-48 h-48">
