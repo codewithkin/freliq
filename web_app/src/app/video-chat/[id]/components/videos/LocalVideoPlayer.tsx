@@ -49,9 +49,9 @@ export default function VideoPlayer({
         muted={muted}
         playsInline
         ref={(video) => {
-          if (video && stream && !cameraOff) video.srcObject = stream;
+          if (video && stream) video.srcObject = stream;
         }}
-        className="w-full rounded-lg border border-gray-200"
+        className="w-full rounded-2xl border border-gray-200"
       />
 
       {/* Controls */}
