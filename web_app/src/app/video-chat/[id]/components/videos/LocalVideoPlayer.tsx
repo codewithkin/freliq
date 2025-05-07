@@ -113,6 +113,8 @@ export default function VideoPlayer({
           </TooltipProvider>
         </article>
       </article>
+
+      {/* Floating remote videos */}
     </div>
   );
 }
