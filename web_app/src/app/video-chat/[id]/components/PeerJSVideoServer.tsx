@@ -53,51 +53,49 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
       peerRef.current = peer;
 
       // Handle peer open
-      peer.on("open", async (id) => {
-        console.log("My peer ID is: " + id);
+      console.log("My peer ID is: " + peer.id);
 
-        try {
-          // Get my media stream
-          const mediaStream = await navigator.mediaDevices.getUserMedia({
-            video: true,
-            audio: true,
-          });
-          setStream(mediaStream);
+      try {
+        // Get my media stream
+        const mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+        setStream(mediaStream);
 
-          // Handle incoming calls
-          peer.on("call", (call) => {
-            toast.info("Incoming call");
+        // Handle incoming calls
+        peer.on("call", (call) => {
+          toast.info("Incoming call");
 
-            // Answer the call (and send my media stream to them)
-            call.answer(mediaStream);
+          // Answer the call (and send my media stream to them)
+          call.answer(mediaStream);
 
-            // Handle the remote stream
-            call.on("stream", (remoteStream) => {
-              // Handle remote stream (e.g., set it to a video element)
-              console.log("Received remote stream", remoteStream);
-
-              // Update the remote stream
-              setRemoteStream(remoteStream);
-            });
-          });
-
-          // Get the other member of the chat's id
-          const remoteUser = chat?.users?.filter(
-            (user: User) => user.id !== id,
-          )[0];
-
-          console.log("Remote user: ", remoteUser);
-
-          const call = peer.call(remoteUser?.id, mediaStream);
+          // Handle the remote stream
           call.on("stream", (remoteStream) => {
-            // Handle remote stream
-            console.log("Received remote stream from call", remoteStream);
+            // Handle remote stream (e.g., set it to a video element)
+            console.log("Received remote stream", remoteStream);
+
+            // Update the remote stream
+            setRemoteStream(remoteStream);
           });
-        } catch (err) {
-          setError("Failed to access camera/microphone");
-          console.error("Media error:", err);
-        }
-      });
+        });
+
+        // Get the other member of the chat's id
+        const remoteUser = chat?.users?.filter(
+          (user: User) => user.id !== peer.id,
+        )[0];
+
+        console.log("Remote user: ", remoteUser);
+
+        const call = peer.call(remoteUser?.id, mediaStream);
+        call.on("stream", (remoteStream) => {
+          // Handle remote stream
+          console.log("Received remote stream from call", remoteStream);
+        });
+      } catch (err) {
+        setError("Failed to access camera/microphone");
+        console.error("Media error:", err);
+      }
 
       // Handle peer errors
       peer.on("error", (err) => {
