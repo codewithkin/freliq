@@ -2,6 +2,14 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { PhoneCall } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 export default function VideoPlayer({
@@ -39,6 +47,29 @@ export default function VideoPlayer({
         }}
         className="w-full rounded-lg border border-gray-200"
       />
+
+      {/* Controls */}
+      <article className="absolute bottom-5 w-full justify-center items-center flex">
+        <article className="rounded-full bg-white w-fit p-4">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                {/* End call */}
+                <Button
+                  className="rounded-full"
+                  size="lg"
+                  variant="destructive"
+                >
+                  <PhoneCall />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Hang up</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </article>
+      </article>
     </div>
   );
 }
