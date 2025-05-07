@@ -11,6 +11,8 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import RemoteVideoPlayer from "./videos/RemoteVideoPlayer";
 import { Skeleton } from "@/components/ui/skeleton";
+import { redirect } from "next/dist/server/api-utils";
+import { useRouter } from "next/navigation";
 
 export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   // My stream (my video data)
@@ -105,6 +107,25 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
     }
   };
 
+  const router = useRouter();
+
+  const hangUp = () => {
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
+
+      toast.info("Call ended successfully, hope it was a great one !");
+
+      return router.push("/messages");
+    }
+    if (peerRef.current) {
+      peerRef.current.destroy();
+
+      toast.info("Call ended successfully, hope it was a great one !");
+
+      return router.push("/messages");
+    }
+  };
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       initializePeer();
@@ -124,7 +145,9 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   return (
     <article className="grid w-full gap-4 p-4">
       {/* Local video */}
-      {stream && user && <VideoPlayer user={user} stream={stream} />}
+      {stream && user && (
+        <VideoPlayer hangUp={hangUp} user={user} stream={stream} />
+      )}
 
       {/* Remote video(s) will be added here */}
       {remoteStream ? (

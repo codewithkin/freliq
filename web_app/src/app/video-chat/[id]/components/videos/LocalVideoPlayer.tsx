@@ -16,10 +16,12 @@ export default function VideoPlayer({
   stream,
   muted = true,
   user,
+  hangUp,
 }: {
   stream: MediaStream;
   muted?: boolean;
   user: any;
+  hangUp: any;
 }) {
   return (
     <div className="w-full h-full relative">
@@ -69,6 +71,9 @@ export default function VideoPlayer({
                   className="rounded-full"
                   size="lg"
                   variant="destructive"
+                  onClick={() => {
+                    hangUp();
+                  }}
                 >
                   <PhoneCall />
                 </Button>
