@@ -124,26 +124,7 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   return (
     <article className="grid w-full gap-4 p-4">
       {/* Local video */}
-      {stream && (
-        <div className="w-full h-full relative">
-          {/* User info floating badge */}
-          <Badge className="bg-white py-2 gap-2 flex items-center text-slate-600 absolute left-4 top-4">
-            {/* User avatar */}
-            <Avatar>
-              <AvatarFallback>{user?.email?.charAt(0)}</AvatarFallback>
-              <AvatarImage src={user?.image} />
-            </Avatar>
-
-            {/* User info */}
-            <article className="flex flex-col">
-              <h3 className="text-md font-semibold">{user?.email}</h3>
-              <p className="text-muted-foreground tsxt-sm">{user?.type}</p>
-            </article>
-          </Badge>
-
-          <VideoPlayer stream={stream} />
-        </div>
-      )}
+      {stream && user && <VideoPlayer user={user} stream={stream} />}
 
       {/* Remote video(s) will be added here */}
       {remoteStream ? (
