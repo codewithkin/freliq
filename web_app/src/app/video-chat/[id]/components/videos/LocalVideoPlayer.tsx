@@ -40,8 +40,7 @@ export default function VideoPlayer({
 
         {/* User info */}
         <article className="flex flex-col">
-          <h3 className="text-md font-semibold">{user?.email}</h3>
-          <p className="text-muted-foreground tsxt-sm">{user?.type}</p>
+          <h3 className="text-lg font-semibold">You</h3>
         </article>
       </Badge>
 
