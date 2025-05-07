@@ -9,17 +9,16 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { CameraOff, MicOff, PhoneCall } from "lucide-react";
+import { set } from "date-fns";
+import { Camera, CameraOff, Mic, MicOff, PhoneCall } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 export default function VideoPlayer({
   stream,
-  muted = true,
   user,
   hangUp,
 }: {
   stream: MediaStream;
-  muted?: boolean;
   user: any;
   hangUp: any;
 }) {
@@ -27,7 +26,7 @@ export default function VideoPlayer({
   const [cameraOff, setCameraOff] = useState(false);
 
   // Track whether or not the audio is muted
-  const [audioOff, setAudioOff] = useState(true);
+  const [muted, setMuted] = useState(true);
 
   return (
     <div className="w-full h-full relative">
@@ -48,7 +47,7 @@ export default function VideoPlayer({
 
       <video
         autoPlay
-        muted={muted || audioOff}
+        muted={muted}
         playsInline
         ref={(video) => {
           if (video && stream && !cameraOff) video.srcObject = stream;
@@ -62,8 +61,15 @@ export default function VideoPlayer({
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button size="lg" variant="secondary" className="rounded-full">
-                  <CameraOff />
+                <Button
+                  onClick={() => {
+                    setCameraOff(!cameraOff);
+                  }}
+                  size="lg"
+                  variant="secondary"
+                  className="rounded-full"
+                >
+                  {cameraOff ? <CameraOff /> : <Camera />}
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -90,8 +96,15 @@ export default function VideoPlayer({
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button size="lg" variant="secondary" className="rounded-full">
-                  <MicOff />
+                <Button
+                  onClick={() => {
+                    setMuted(!muted);
+                  }}
+                  size="lg"
+                  variant="secondary"
+                  className="rounded-full"
+                >
+                  {muted ? <MicOff /> : <Mic />}
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
