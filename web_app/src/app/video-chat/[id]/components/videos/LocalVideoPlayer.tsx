@@ -10,7 +10,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { CameraOff, MicOff, PhoneCall } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function VideoPlayer({
   stream,
@@ -23,6 +23,12 @@ export default function VideoPlayer({
   user: any;
   hangUp: any;
 }) {
+  // Track whether or not the camera is off
+  const [cameraOff, setCameraOff] = useState(false);
+
+  // Track whether or not the audio is muted
+  const [audioOff, setAudioOff] = useState(true);
+
   return (
     <div className="w-full h-full relative">
       {/* User info floating badge */}
@@ -42,10 +48,10 @@ export default function VideoPlayer({
 
       <video
         autoPlay
-        muted={muted}
+        muted={muted || audioOff}
         playsInline
         ref={(video) => {
-          if (video && stream) video.srcObject = stream;
+          if (video && stream && !cameraOff) video.srcObject = stream;
         }}
         className="w-full rounded-lg border border-gray-200"
       />
