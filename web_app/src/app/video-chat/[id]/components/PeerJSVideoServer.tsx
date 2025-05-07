@@ -5,11 +5,11 @@ import axios from "axios";
 import { BadgeAlert, FileWarning } from "lucide-react";
 import { Peer } from "peerjs";
 import { useEffect, useRef, useState } from "react";
-import VideoPlayer from "./LocalVideoPlayer";
+import VideoPlayer from "./videos/LocalVideoPlayer";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import RemoteVideoPlayer from "./RemoteVideoPlayer";
+import RemoteVideoPlayer from "./videos/RemoteVideoPlayer";
 
 export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   // My stream (my video data)

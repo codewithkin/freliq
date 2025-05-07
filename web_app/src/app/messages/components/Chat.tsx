@@ -22,16 +22,11 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import axios from "axios";
 import {
-  CheckCheck,
-  File,
-  FileIcon,
   FolderKanban,
-  GalleryThumbnails,
   Ghost,
   Loader,
   LoaderCircle,
   MessageCircleDashed,
-  MoreHorizontal,
   MoreVertical,
   Paperclip,
   PlusCircle,
