@@ -1,4 +1,4 @@
-import nodemailer from "nodemailer";
+import { resend } from "../sendMagicLink";
 
 export async function sendNotificationEmail({
   subject,
@@ -10,23 +10,19 @@ export async function sendNotificationEmail({
   to: string;
 }) {
   try {
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      auth: {
-        user: "kinzinzombe07@gmail.com",
-        pass: "uajp jvia mryy tdqx",
-      },
-    });
-
-    const info = await transporter.sendMail({
-      from: `"Freliq" <kinzinzombe@gmail.com>`,
+    const { data, error } = await resend.emails.send({
+      from: "Freliq <auth@aiseogen.com>",
       to,
       subject,
       html: content,
     });
 
-    console.log("Message sent: %s", info.messageId);
+    if (error) {
+      console.error("Failed to send email:", error);
+      throw new Error("Email sending failed");
+    }
+
+    console.log("Message sent successfully to %s", to);
   } catch (error) {
     console.error("Failed to send email:", error);
     throw new Error("Email sending failed");
