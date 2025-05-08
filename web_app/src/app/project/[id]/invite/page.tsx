@@ -32,10 +32,18 @@ export default function ProjectInvitePage() {
   const inviteType = searchParams.get("type") || "project";
   const params = useParams();
   const projectId = params.id;
-  const { data: session } = authClient.useSession();
+
+  // Get the user's full data
+  const { data: user, isLoading: loadingUser } = useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const res = await axios.get("/api/user");
+      return res.data.fullUser;
+    },
+  });
 
   // If not logged in, redirect to login
-  if (!session?.user) {
+  if (!user && !loadingUser) {
     return redirect("/auth");
   }
 
@@ -80,7 +88,7 @@ export default function ProjectInvitePage() {
     },
   });
 
-  if (status === "loading" || isLoading) {
+  if (isLoading || loadingUser) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="w-8 h-8 animate-spin" />
@@ -158,7 +166,7 @@ export default function ProjectInvitePage() {
         <CardFooter className="flex gap-2 justify-end">
           <Button
             onClick={() => router.push("/dashboard")}
-            variant="outline"
+            variant="destructive"
             disabled={accepting}
           >
             <XCircle className="w-4 h-4" />
