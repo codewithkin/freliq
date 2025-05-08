@@ -119,8 +119,8 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
   const { data: projects } = useQuery({
     queryKey: ["projects"],
     queryFn: async () => {
-      const res = await axios.get("/api/projects");
-      return res.data.projects;
+      const res = await axios.get("/api/projects/list");
+      return res.data;
     },
   });
 
@@ -208,11 +208,11 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
   };
 
   return (
-    <article className="md:w-3/4 h-full max-h-full bg-muted">
+    <article className="md:w-3/4 h-full max-h-screen bg-muted">
       {chat ? (
         <article className="w-full h-full max-h-full">
           {/* Header */}
-          <article className="flex justify-between items-center border-b border-slate-300 p-4 h-1/10 max-h-1/10">
+          <article className="flex justify-between items-center border-b border-slate-300 p-4 h-1/10 md:max-h-1/10">
             <article className="flex gap-2 items-center">
               {/* Avatar */}
               <Avatar className="bg-primary text-white h-12 w-12">
@@ -224,7 +224,7 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
 
               {/* Project and chat details */}
               <article className="flex flex-col">
-                <h3 className="text-xl font-medium">
+                <h3 className="text-md md:text-xl font-medium">
                   Chat for{" "}
                   <span className="font-semibold">{chat?.project?.title}</span>
                 </h3>
