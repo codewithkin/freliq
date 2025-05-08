@@ -2,7 +2,13 @@
 
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { BadgeAlert, FileWarning, MessageCircleWarning } from "lucide-react";
+import {
+  BadgeAlert,
+  DoorOpen,
+  FileWarning,
+  MessageCircleWarning,
+  RefreshCcw,
+} from "lucide-react";
 import { Peer } from "peerjs";
 import { useEffect, useRef, useState } from "react";
 import VideoPlayer from "./videos/LocalVideoPlayer";
@@ -14,6 +20,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { redirect } from "next/dist/server/api-utils";
 import { useRouter } from "next/navigation";
 import { User } from "@/generated/prisma";
+import { Button } from "@/components/ui/button";
 
 export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   // My stream (my video data)
@@ -203,6 +210,27 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
             <h2 className="text-xl font-medium">An error occured</h2>
 
             <p className="text-muted-foreground text-sm text-center">{error}</p>
+
+            <article className="mt-2 flex gap-2 items-center">
+              <Button
+                onClick={() => {
+                  router.refresh();
+                }}
+                variant="outline"
+              >
+                <RefreshCcw />
+                Refresh
+              </Button>
+              <Button
+                onClick={() => {
+                  router.push("/messages");
+                }}
+                variant="destructive"
+              >
+                <DoorOpen />
+                Leave Meeting
+              </Button>
+            </article>
           </article>
         </article>
       ) : (
