@@ -116,9 +116,9 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
     return (
       <section className="w-full h-full flex flex-col items-center justify-center p-8 gap-4 min-h-screen min-w-screen">
         <Skeleton className="w-32 h-32 rounded-full bg-slate-200" />
-        <p className="text-muted-foreground text-sm">
+        <h3 className="text-muted-foreground text-lg">
           Loading your call environment...
-        </p>
+        </h3>
         <Skeleton className="w-1/2 h-6 bg-slate-200" />
         <Skeleton className="w-3/4 h-6 bg-slate-200" />
       </section>
