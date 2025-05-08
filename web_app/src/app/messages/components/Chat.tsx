@@ -16,7 +16,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
-import socket from "@/lib/socket";
 import { queryClient } from "@/providers/QueryClientProvider";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useVirtualizer } from "@tanstack/react-virtual";
@@ -44,6 +43,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useRealtime } from "@/providers/RealtimeProvider";
 
 function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
   // Track the value of the message
@@ -68,6 +68,9 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
     estimateSize: () => 100,
     overscan: 5,
   });
+
+  // Get the socket
+  const { socket } = useRealtime();
 
   const { mutate: inviteUser, isPending: inviting } = useMutation({
     mutationKey: ["inviteUser"],
@@ -133,6 +136,8 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
   });
 
   useEffect(() => {
+    if (!socket) return;
+
     if (chat) {
       // Join the chat room when chat is selected
       socket.emit("join chat", { chat });
@@ -143,6 +148,8 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
   }, [chat]);
 
   useEffect(() => {
+    if (!socket) return;
+
     // Listen for user joining the chat
     socket.on("user joined", (data) => {
       toast.info(`Someone joined the chat`);
@@ -175,6 +182,9 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
     setSendingMessage(true);
 
     const attachment = { type, data };
+
+    if (!socket) return;
+
     socket.emit("sent message", {
       chat,
       user,
@@ -188,6 +198,8 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
   };
 
   const sendMessage = () => {
+    if (!socket) return;
+
     if (!message.trim()) return;
     setSendingMessage(true);
     socket.emit("sent message", { chat, user, message });

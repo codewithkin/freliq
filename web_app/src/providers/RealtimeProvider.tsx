@@ -3,8 +3,9 @@
 
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import Peer from "peerjs";
-import { io, Socket } from "socket.io-client";
 import { authClient } from "@/lib/auth-client";
+import { urls } from "@/lib/urls";
+import { io, Socket } from "socket.io-client";
 
 type RealtimeContextType = {
   socket: Socket | null;
@@ -27,10 +28,7 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
     if (!session?.user?.id) return;
 
     // Initialize WebSocket
-    const newSocket = io(process.env.NEXT_PUBLIC_BACKEND_URL!, {
-      query: { userId: session.user.id },
-    });
-    setSocket(newSocket);
+    const newSocket = io(urls.backend);
 
     // Initialize PeerJS
     const newPeer = new Peer(session.user.id, {
