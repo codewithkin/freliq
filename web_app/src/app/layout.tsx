@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import QueryClientProviderWrapper from "@/providers/QueryClientProvider";
 import { Toaster } from "sonner";
+import { ClientWrapper } from "@/providers/ClientWrapper";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -59,7 +60,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} antialiased`}>
-        <QueryClientProviderWrapper>{children}</QueryClientProviderWrapper>
+        <QueryClientProviderWrapper>
+          <ClientWrapper>{children}</ClientWrapper>
+        </QueryClientProviderWrapper>
         <Toaster richColors expand position="top-center" />
       </body>
     </html>
