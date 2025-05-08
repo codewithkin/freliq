@@ -75,7 +75,7 @@ function Auth() {
         <Card className="w-fit h-fit px-8 border border-green-400">
           <article className="flex flex-col justify-center items-center">
             <h2 className="text-2xl font-semibold">Welcome to Freliq</h2>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-sm text-center">
               Transparency. Trust. Teamwork. Delivered daily.
             </p>
           </article>
