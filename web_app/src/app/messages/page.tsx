@@ -1,12 +1,16 @@
 "use client";
+
 import ChatList from "./components/ChatList";
 import Chat from "./components/Chat";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function Messages() {
-  // Fetch the user's chats
+  const [chat, setChat] = useState<null | any>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Fetch chats
   const { data: chats, isLoading } = useQuery({
     queryKey: ["chats"],
     queryFn: async () => {
@@ -15,18 +19,34 @@ function Messages() {
     },
   });
 
-  // Track the selected chat
-  const [chat, setChat] = useState<null | any>(null);
+  // Detect if screen is mobile
+  useEffect(() => {
+    const checkScreen = () => {
+      setIsMobile(window.innerWidth < 768); // Tailwind md breakpoint
+    };
+
+    checkScreen(); // initial check
+    window.addEventListener("resize", checkScreen);
+
+    return () => window.removeEventListener("resize", checkScreen);
+  }, []);
 
   return (
-    <article className="w-full h-full flex md:flex-row flex-col">
-      <ChatList
-        selectedChat={chat}
-        setChat={setChat}
-        isLoading={isLoading}
-        chats={chats}
-      />
-      <Chat setChat={setChat} chat={chat} />
+    <article className="w-full h-full flex md:flex-row flex-col min-h-screen">
+      {/* Show ChatList on desktop OR when no chat is selected (on mobile) */}
+      {(!isMobile || (isMobile && !chat)) && (
+        <ChatList
+          selectedChat={chat}
+          setChat={setChat}
+          isLoading={isLoading}
+          chats={chats}
+        />
+      )}
+
+      {/* Show Chat on desktop OR when a chat is selected (on mobile) */}
+      {(!isMobile || (isMobile && chat)) && (
+        <Chat setChat={setChat} chat={chat} />
+      )}
     </article>
   );
 }
