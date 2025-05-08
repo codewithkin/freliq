@@ -21,6 +21,7 @@ import { redirect } from "next/dist/server/api-utils";
 import { useRouter } from "next/navigation";
 import { User } from "@/generated/prisma";
 import { Button } from "@/components/ui/button";
+import CallingUser from "./CallingUser";
 
 export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   // My stream (my video data)
@@ -56,6 +57,11 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
     },
   });
 
+  // Get the other member of the chat's id
+  const remoteUser = chat?.users?.filter(
+    (other: User) => other?.id !== user?.id,
+  )[0];
+
   const initializePeer = async () => {
     try {
       // Initialize peer
@@ -90,11 +96,6 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
             setRemoteStream(remoteStream);
           });
         });
-
-        // Get the other member of the chat's id
-        const remoteUser = chat?.users?.filter(
-          (user: User) => user.id !== peer.id,
-        )[0];
 
         console.log("Remote user: ", remoteUser);
 
@@ -234,7 +235,7 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
           </article>
         </article>
       ) : (
-        <Skeleton className="w-full bg-slate-200 h-full rounded-lg min-h-[300px]" />
+        <CallingUser user={remoteUser} />
       )}
     </article>
   );
