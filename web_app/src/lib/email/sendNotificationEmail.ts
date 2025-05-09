@@ -1,4 +1,4 @@
-import { resend } from "../sendMagicLink";
+import { transporter } from "./nodemailer";
 
 export async function sendNotificationEmail({
   subject,
@@ -10,17 +10,12 @@ export async function sendNotificationEmail({
   to: string;
 }) {
   try {
-    const { data, error } = await resend.emails.send({
-      from: "Freliq <auth@aiseogen.com>",
+    const info = await transporter.sendMail({
+      from: `Freliq <${process.env.GMAIL_USER}>`,
       to,
       subject,
       html: content,
     });
-
-    if (error) {
-      console.error("Failed to send email:", error);
-      throw new Error("Email sending failed");
-    }
 
     console.log("Message sent successfully to %s", to);
   } catch (error) {
