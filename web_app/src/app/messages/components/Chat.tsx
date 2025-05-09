@@ -200,7 +200,6 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
   const sendMessage = () => {
     if (!socket) return;
 
-    if (!message.trim()) return;
     setSendingMessage(true);
     socket.emit("sent message", { chat, user, message });
     setMessage("");
@@ -462,116 +461,120 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
           </article>
 
           {/* Message input */}
-          <article className="flex items-end justify-center gap-2 w-full h-1/10 max-h-1/10 p-4">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button className="p-6" variant="outline">
-                  <Paperclip />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80">
-                <Label>Send</Label>
-                <article className="flex mt-4 flex-col gap-2 justify-center">
-                  {/* Task */}
-                  <Button
-                    className="p-6 hover:cursor-pointer w-full"
-                    variant="outline"
-                    onClick={() => {
-                      setShowTaskSelect(true);
-                      setShowProjectSelect(false);
-                    }}
-                  >
-                    <SquareCheckBig className="text-blue-500 mr-2" />
-                    {selectedTask ? selectedTask.title : "Select Task"}
+          {socket && (
+            <article className="flex items-end justify-center gap-2 w-full h-1/10 max-h-1/10 p-4">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button className="p-6" variant="outline">
+                    <Paperclip />
                   </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80">
+                  <Label>Send</Label>
+                  <article className="flex mt-4 flex-col gap-2 justify-center">
+                    {/* Task */}
+                    <Button
+                      className="p-6 hover:cursor-pointer w-full"
+                      variant="outline"
+                      onClick={() => {
+                        setShowTaskSelect(true);
+                        setShowProjectSelect(false);
+                      }}
+                    >
+                      <SquareCheckBig className="text-blue-500 mr-2" />
+                      {selectedTask ? selectedTask.title : "Select Task"}
+                    </Button>
 
-                  {/* Project */}
-                  <Button
-                    className="p-6 hover:cursor-pointer w-full"
-                    variant="outline"
-                    onClick={() => {
-                      setShowProjectSelect(true);
-                      setShowTaskSelect(false);
-                    }}
-                  >
-                    <FolderKanban className="text-green-500 mr-2" />
-                    {selectedProject ? selectedProject.title : "Select Project"}
-                  </Button>
+                    {/* Project */}
+                    <Button
+                      className="p-6 hover:cursor-pointer w-full"
+                      variant="outline"
+                      onClick={() => {
+                        setShowProjectSelect(true);
+                        setShowTaskSelect(false);
+                      }}
+                    >
+                      <FolderKanban className="text-green-500 mr-2" />
+                      {selectedProject
+                        ? selectedProject.title
+                        : "Select Project"}
+                    </Button>
 
-                  {showProjectSelect && (
-                    <Command className="rounded-lg border shadow-md">
-                      <CommandInput placeholder="Search projects..." />
-                      <CommandList>
-                        <CommandEmpty>No projects found.</CommandEmpty>
-                        <CommandGroup heading="Projects">
-                          {projects?.map((project: any) => (
-                            <CommandItem
-                              key={project.id}
-                              onSelect={() => {
-                                sendAttachment("project", project);
-                                setShowProjectSelect(false);
-                              }}
-                            >
-                              <FolderKanban className="mr-2 h-4 w-4" />
-                              {project.title}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  )}
+                    {showProjectSelect && (
+                      <Command className="rounded-lg border shadow-md">
+                        <CommandInput placeholder="Search projects..." />
+                        <CommandList>
+                          <CommandEmpty>No projects found.</CommandEmpty>
+                          <CommandGroup heading="Projects">
+                            {projects?.map((project: any) => (
+                              <CommandItem
+                                key={project.id}
+                                onSelect={() => {
+                                  sendAttachment("project", project);
+                                  setShowProjectSelect(false);
+                                }}
+                              >
+                                <FolderKanban className="mr-2 h-4 w-4" />
+                                {project.title}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    )}
 
-                  {showTaskSelect && (
-                    <Command className="rounded-lg border shadow-md">
-                      <CommandInput placeholder="Search tasks..." />
-                      <CommandList>
-                        <CommandEmpty>No tasks found.</CommandEmpty>
-                        <CommandGroup heading="Tasks">
-                          {tasks?.map((task: any) => (
-                            <CommandItem
-                              key={task.id}
-                              onSelect={() => {
-                                sendAttachment("task", task);
-                                setShowTaskSelect(false);
-                              }}
-                            >
-                              <SquareCheckBig className="mr-2 h-4 w-4" />
-                              {task.title}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  )}
-                </article>
-              </PopoverContent>
-            </Popover>
-            <Input
-              className="p-6 bg-white"
-              placeholder="Say something about the project"
-              name="message"
-              id="message"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              onKeyPress={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  sendMessage();
-                }
-              }}
-            />
-            <Button
-              disabled={sendingMessage || message.length < 1}
-              onClick={sendMessage}
-              className="text-white p-6"
-            >
-              {sendingMessage ? (
-                <LoaderCircle className="animate-spin" />
-              ) : (
-                <FaPaperPlane />
-              )}
-            </Button>
-          </article>
+                    {showTaskSelect && (
+                      <Command className="rounded-lg border shadow-md">
+                        <CommandInput placeholder="Search tasks..." />
+                        <CommandList>
+                          <CommandEmpty>No tasks found.</CommandEmpty>
+                          <CommandGroup heading="Tasks">
+                            {tasks?.map((task: any) => (
+                              <CommandItem
+                                key={task.id}
+                                onSelect={() => {
+                                  sendAttachment("task", task);
+                                  setShowTaskSelect(false);
+                                }}
+                              >
+                                <SquareCheckBig className="mr-2 h-4 w-4" />
+                                {task.title}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    )}
+                  </article>
+                </PopoverContent>
+              </Popover>
+              <Input
+                className="p-6 bg-white"
+                placeholder="Say something about the project"
+                name="message"
+                id="message"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                  }
+                }}
+              />
+              <Button
+                disabled={sendingMessage || message.length < 1}
+                onClick={sendMessage}
+                className="text-white p-6"
+              >
+                {sendingMessage ? (
+                  <LoaderCircle className="animate-spin" />
+                ) : (
+                  <FaPaperPlane />
+                )}
+              </Button>
+            </article>
+          )}
         </article>
       ) : (
         <article className="flex flex-col gap-2 items-center justify-center h-full">
