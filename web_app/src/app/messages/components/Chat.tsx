@@ -347,15 +347,14 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
                       <article
                         className={`flex gap-2 max-w-[80%] ${
                           msg.sender.id === user?.id
-                            ? "bg-blue-500 text-white"
-                            : "bg-slate-800"
+                            && "bg-blue-500 text-white"
                         } rounded-lg p-3`}
                       >
                         {msg.sender.id !== user?.id && (
                           <div className="flex flex-col items-center gap-1">
                             <Avatar className="h-8 w-8">
                               <AvatarImage src={msg.sender.image} />
-                              <AvatarFallback className="bg-primary text-white">
+                              <AvatarFallback className="bg-blue-500 text-white">
                                 {msg.sender.name?.[0]?.toUpperCase() ||
                                   msg.sender.email?.[0]?.toUpperCase()}
                               </AvatarFallback>
