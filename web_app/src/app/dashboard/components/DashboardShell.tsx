@@ -205,7 +205,7 @@ function DashboardShell({
       <main className="flex-1 flex overflow-hidden flex-col">
         {/* Topbar */}
         {!hideHeader && (
-          <header className="flex items-center justify-between bg-white md:py-4 md:px-8 p-4">
+          <header className="flex flex-wrap items-center md:justify-between bg-white md:py-4 md:px-8 py-4 px-2">
             {/* Mobile menu */}
             <div className="flex items-center gap-3 lg:hidden">
               <Sheet>
@@ -272,15 +272,6 @@ function DashboardShell({
 
             {/* Topbar right */}
             <div className="flex items-center gap-4 ml-auto">
-              <Button asChild>
-                <Link href="/project/new">
-                  <Plus />
-                  New project
-                </Link>
-              </Button>
-
-              <NotificationsSheet />
-
               {isPending ? (
                 <Skeleton className="bg-slate-300 h-8 w-8 rounded-full" />
               ) : (
@@ -303,6 +294,15 @@ function DashboardShell({
               >
                 <LogOut className="h-5 w-5" />
               </Button>
+
+              <Button asChild>
+                <Link href="/project/new">
+                  <Plus />
+                  New project
+                </Link>
+              </Button>
+
+              <NotificationsSheet />
             </div>
           </header>
         )}
