@@ -169,14 +169,7 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
     socket.on("user left", (userId) => {
       toast.info(`Someone left the chat`);
     });
-
-    // Cleanup listeners on unmount
-    return () => {
-      socket.off("user joined");
-      socket.off("received message");
-      socket.off("user left");
-    };
-  }, []);
+  }, [chat, socket]);
 
   const sendAttachment = (type: "project" | "task", data: any) => {
     setSendingMessage(true);
