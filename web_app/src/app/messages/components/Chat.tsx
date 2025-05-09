@@ -150,31 +150,33 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
   useEffect(() => {
     if (!socket) return;
 
-    // Listen for user joining the chat
-    socket.on("user joined", (data) => {
-      toast.info(`Someone joined the chat`);
-    });
-
-    // Listen for incoming messages
-    socket.on("received message", (data) => {
+    const handleReceivedMessage = (data: any) => {
       console.log("Received message: ", data);
+      setMessages((prev) =>
+        [...prev, data].sort(
+          (a, b) =>
+            new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+        ),
+      );
+    };
 
-      // Only add the message to the state if it's from another user
-      if (data.sender.id !== user?.id) {
-        setMessages((prev) =>
-          [...prev, data].sort(
-            (a, b) =>
-              new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
-          ),
-        );
-      }
+    socket.on("user joined", () => {
+      toast.info("Someone joined the chat");
     });
 
-    // Listen for user leaving
-    socket.on("user left", (userId) => {
-      toast.info(`Someone left the chat`);
+    socket.on("received message", handleReceivedMessage);
+
+    socket.on("user left", () => {
+      toast.info("Someone left the chat");
     });
-  }, [chat, socket]);
+
+    // CLEANUP: Remove listeners when effect re-runs or unmounts
+    return () => {
+      socket.off("user joined");
+      socket.off("received message", handleReceivedMessage);
+      socket.off("user left");
+    };
+  }, [chat, socket, user?.id]);
 
   const sendAttachment = (type: "project" | "task", data: any) => {
     setSendingMessage(true);
