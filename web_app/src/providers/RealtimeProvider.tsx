@@ -36,8 +36,9 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
     });
     setPeer(newPeer);
 
+    setSocket(newSocket);
+
     return () => {
-      newSocket.disconnect();
       newPeer.destroy();
     };
   }, [session?.user?.id]);

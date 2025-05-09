@@ -347,8 +347,8 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
                       <article
                         className={`flex gap-2 max-w-[80%] ${
                           msg.sender.id === user?.id
-                            ? "bg-primary text-white"
-                            : "bg-white"
+                            ? "bg-blue-500 text-white"
+                            : "bg-slate-800"
                         } rounded-lg p-3`}
                       >
                         {msg.sender.id !== user?.id && (
