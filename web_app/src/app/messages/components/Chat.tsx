@@ -358,24 +358,22 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
                                   msg.sender.email?.[0]?.toUpperCase()}
                               </AvatarFallback>
                             </Avatar>
-                            <span className="text-[10px] text-muted-foreground whitespace-nowrap">
-                              {new Date(msg.timestamp).toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </span>
                           </div>
                         )}
                         <article
                           className={`flex flex-col ${msg.sender.id !== user?.id && "bg-slate-800 p-4 text-white rounded-xl"}`}
                         >
-                          {msg.sender.id !== user?.id && (
+                          {msg.sender.id !== user?.id ? (
                             <div className="flex flex-col mb-1">
-                              <span className="text-sm font-medium">
+                              <span className="text-xs font-medium">
                                 {msg.sender.name ||
                                   msg.sender.email ||
                                   "Unknown"}
                               </span>
+                            </div>
+                          ) : (
+                            <div className="flex flex-col mb-1">
+                              <span className="text-xs font-medium">You</span>
                             </div>
                           )}
                           {msg.attachment ? (
@@ -425,15 +423,20 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
                               </div>
                             </article>
                           ) : (
-                            <p className="break-words">{msg.content}</p>
-                          )}
-                          {msg.sender.id === user?.id && (
-                            <span className="text-xs opacity-70 text-right mt-1">
-                              {new Date(msg.timestamp).toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </span>
+                            <article className="flex flex-col">
+                              <p className="break-words mb-1">{msg.content} </p>{" "}
+                              <span
+                                className={` ${msg.sender.id !== user?.id ? "text-muted-foreground" : "text-white"} text-[10px] whitespace-nowrap self-end justify-self-end`}
+                              >
+                                {new Date(msg.timestamp).toLocaleTimeString(
+                                  [],
+                                  {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  },
+                                )}
+                              </span>
+                            </article>
                           )}
                         </article>
                       </article>
