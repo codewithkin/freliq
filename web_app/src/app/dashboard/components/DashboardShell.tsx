@@ -271,7 +271,7 @@ function DashboardShell({
             <Greeting />
 
             {/* Topbar right */}
-            <div className="flex items-center gap-4 ml-auto">
+            <div className="flex gap-2 items-center md:gap-4 ml-auto">
               {isPending ? (
                 <Skeleton className="bg-slate-300 h-8 w-8 rounded-full" />
               ) : (
