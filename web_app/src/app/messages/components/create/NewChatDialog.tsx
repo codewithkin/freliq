@@ -24,6 +24,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { queryClient } from "@/providers/QueryClientProvider";
+import Link from "next/link";
 
 function NewChatDialog({ setChat, sm }: { setChat: any; sm?: boolean | null }) {
   // Fetch all of the user's projects
@@ -143,7 +144,9 @@ function NewChatDialog({ setChat, sm }: { setChat: any; sm?: boolean | null }) {
                 Please create a project to create a chat
               </p>
               <Button asChild variant="outline">
-                <span>New Project</span>
+                <Link href="/project/new">
+                  <span>New Project</span>
+                </Link>
               </Button>
             </article>
           )}
