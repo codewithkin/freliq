@@ -22,12 +22,17 @@ function DashboardPage() {
   return (
     <article className="">
       {isPending ? (
-        <article className="w-screen h-screen flex flex-col gap-2 items-center justify-center text-center">
-          <article className="flex flex-col justify-center items-center text-center gap-2">
-            <h2 className="text-center">Preparing something awesome...</h2>
-            <Loader2 className="text-primary animate-spin" size={40} />
-          </article>
-        </article>
+        <section className="w-screen h-screen flex items-center justify-center bg-muted/40 animate-pulse">
+          <div className="bg-background p-6 rounded-2xl shadow-xl border w-[320px] flex flex-col items-center gap-4 text-center">
+            <Loader2 className="text-primary animate-spin" size={48} />
+            <h2 className="text-lg font-semibold text-foreground">
+              Just a moment...
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              We're getting your dashboard ready. Hang tight!
+            </p>
+          </div>
+        </section>
       ) : (
         <DashboardShell>
           <DashboardStats user={user} />
