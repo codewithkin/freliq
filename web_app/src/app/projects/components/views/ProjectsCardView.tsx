@@ -199,12 +199,12 @@ export function ProjectsCardView({
               <div className="flex -space-x-2">
                 {project.members.slice(0, 5).map((member) => (
                   <Avatar
-                    key={member.user.id}
+                    key={member?.user?.id}
                     className="h-8 w-8 border-2 border-background"
                   >
-                    <AvatarImage src={member.user.image || undefined} />
+                    <AvatarImage src={member?.user?.image || undefined} />
                     <AvatarFallback>
-                      {member.user.name
+                      {member?.user?.name
                         .split(" ")
                         .map((n) => n[0])
                         .join("")}
