@@ -197,9 +197,9 @@ export function ProjectsCardView({
 
             <CardFooter className="flex justify-between items-center border-t pt-4 gap-2">
               <div className="flex -space-x-2">
-                {project.members.slice(0, 5).map((member) => (
+                {project.members.slice(0, 5).map((member, index: number) => (
                   <Avatar
-                    key={member?.user?.id}
+                    key={index}
                     className="h-8 w-8 border-2 border-background"
                   >
                     <AvatarImage src={member?.user?.image || undefined} />
