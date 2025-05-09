@@ -118,12 +118,12 @@ export function ProjectsViewTabs({ projects }: ProjectsViewTabsProps) {
         </TabsTrigger>
       </TabsList>
 
-      <article className="w-full flex justify-between items-center mt-8 mb-4">
-        <h2 className="text-slate-800 text-2xl font-semibold">
+      <article className="w-full flex md:flex-row flex-col md:justify-between items-center mt-8 mb-4 gap-2 md:gap-0">
+        <h2 className="text-slate-800 text-xl md:text-2xl font-semibold">
           Your projects views
         </h2>
 
-        <article className="flex items-center gap-4">
+        <article className="flex md:flex-row flex-col items-center gap-2 md:gap-4 w-full">
           <Button
             onClick={() => {
               setType("csv");
@@ -132,6 +132,7 @@ export function ProjectsViewTabs({ projects }: ProjectsViewTabsProps) {
             disabled={converting}
             size="sm"
             variant="default"
+            className="w-full md:w-auto"
           >
             <FaFileExcel />
             <p>Download as CSV</p>
@@ -144,6 +145,7 @@ export function ProjectsViewTabs({ projects }: ProjectsViewTabsProps) {
             disabled={converting}
             size="sm"
             variant="secondary"
+            className="w-full md:w-auto"
           >
             <Braces />
             <p>Download as JSON</p>
