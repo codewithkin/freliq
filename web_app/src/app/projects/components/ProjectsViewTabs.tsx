@@ -118,7 +118,7 @@ export function ProjectsViewTabs({ projects }: ProjectsViewTabsProps) {
         </TabsTrigger>
       </TabsList>
 
-      <article className="w-full flex md:flex-row flex-col md:justify-between items-center mt-8 mb-4 gap-2 md:gap-0">
+      <article className="w-full flex md:flex-row flex-col md:justify-between md:items-center mt-8 mb-4 gap-2 md:gap-0">
         <h2 className="text-slate-800 text-xl md:text-2xl font-semibold">
           Your projects views
         </h2>
