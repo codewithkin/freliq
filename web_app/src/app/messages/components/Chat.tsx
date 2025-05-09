@@ -346,8 +346,7 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
                     >
                       <article
                         className={`flex gap-2 max-w-[80%] ${
-                          msg.sender.id === user?.id
-                            && "bg-blue-500 text-white"
+                          msg.sender.id === user?.id && "bg-blue-500 text-white"
                         } rounded-lg p-3`}
                       >
                         {msg.sender.id !== user?.id && (
@@ -367,14 +366,15 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
                             </span>
                           </div>
                         )}
-                        <article className="flex flex-col">
+                        <article
+                          className={`flex flex-col ${msg.sender.id !== user?.id && "bg-slate-800 p-4 text-white rounded-xl"}`}
+                        >
                           {msg.sender.id !== user?.id && (
                             <div className="flex flex-col mb-1">
                               <span className="text-sm font-medium">
-                                {msg.sender.name || "Unknown"}
-                              </span>
-                              <span className="text-xs text-muted-foreground">
-                                {msg.sender.email}
+                                {msg.sender.name ||
+                                  msg.sender.email ||
+                                  "Unknown"}
                               </span>
                             </div>
                           )}
