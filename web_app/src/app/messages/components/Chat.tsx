@@ -157,12 +157,17 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
 
     // Listen for incoming messages
     socket.on("received message", (data) => {
-      setMessages((prev) =>
-        [...prev, data].sort(
-          (a, b) =>
-            new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
-        ),
-      );
+      console.log("Received message: ", data);
+
+      // Only add the message to the state if it's from another user
+      if (data.sender.id !== user?.id) {
+        setMessages((prev) =>
+          [...prev, data].sort(
+            (a, b) =>
+              new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+          ),
+        );
+      }
     });
 
     // Listen for user leaving
