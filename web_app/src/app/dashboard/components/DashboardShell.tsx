@@ -308,7 +308,7 @@ function DashboardShell({
         )}
 
         {/* Page content */}
-        <section className={`flex-1 ${!hideHeader && "sm:p-3 md:p-6"}`}>
+        <section className={`flex-1 ${!hideHeader && "p-2 sm:p-3 md:p-6"}`}>
           {children}
         </section>
       </main>
