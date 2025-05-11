@@ -13,6 +13,7 @@ import { User } from "@/generated/prisma";
 import { Button } from "@/components/ui/button";
 import CallingUser from "./CallingUser";
 import RemoteVideoPlayer from "./videos/RemoteVideoPlayer";
+import { useRealtime } from "@/providers/RealtimeProvider";
 
 export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -44,7 +45,10 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
 
   const initializePeer = async () => {
     try {
-      const peer = new Peer(user?.id);
+      const { peer } = useRealtime();
+
+      if (!peer) return;
+
       peerRef.current = peer;
 
       console.log("My peer ID is: " + peer.id);
@@ -55,14 +59,6 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
       });
 
       setStream(mediaStream);
-
-      peer.on("call", (call) => {
-        toast.info("Incoming call");
-        call.answer(mediaStream);
-        call.on("stream", (remoteStream) => {
-          setRemoteStream(remoteStream);
-        });
-      });
 
       call({ peer, peerId: remoteUser?.id, myMediaStream: mediaStream });
 
