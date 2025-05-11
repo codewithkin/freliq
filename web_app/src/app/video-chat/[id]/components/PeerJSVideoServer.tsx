@@ -71,9 +71,15 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
       call({ peer, peerId: remoteUser?.id, myMediaStream: mediaStream });
 
       peer.on("error", (err) => {
-        setError("Connection error: " + err.message);
-        toast.error("Connection error: " + err.message);
-        console.error("Peer error:", err);
+        console.error("Call failed:", err);
+
+        if (err.message?.includes("Could not connect to peer")) {
+          setError("The user is currently unavailable or not online.");
+          toast.error("User is unavailable or not online.");
+        } else {
+          setError("Call error: " + err.message);
+          toast.error("Call error: " + err.message);
+        }
       });
     } catch (err) {
       setError("Failed to initialize peer connection");
