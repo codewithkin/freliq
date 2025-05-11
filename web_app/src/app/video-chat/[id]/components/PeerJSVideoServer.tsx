@@ -126,7 +126,9 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
 
   const hangUp = () => {
     if (stream) stream.getTracks().forEach((t) => t.stop());
-    if (peerRef.current) peerRef.current.destroy();
+
+    // NOTE: Do not destroy the connection as this will prevent the user from being able to use the video rooms until they refresh
+
     toast.info("Call ended successfully, hope it was a great one!");
     router.push("/messages");
   };
