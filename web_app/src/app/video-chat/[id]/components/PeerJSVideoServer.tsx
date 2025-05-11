@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { MessageCircleWarning, RefreshCcw, DoorOpen } from "lucide-react";
 import { Peer } from "peerjs";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import VideoPlayer from "./videos/LocalVideoPlayer";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -13,7 +13,7 @@ import { User } from "@/generated/prisma";
 import { Button } from "@/components/ui/button";
 import CallingUser from "./CallingUser";
 import RemoteVideoPlayer from "./videos/RemoteVideoPlayer";
-import { useRealtime } from "@/providers/RealtimeProvider";
+import { RealtimeContext } from "@/providers/RealtimeProvider";
 
 export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -22,6 +22,10 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   const [muted, setMuted] = useState(true);
   const peerRef = useRef<Peer | null>(null);
   const router = useRouter();
+
+  const useRealtime = () => useContext(RealtimeContext);
+
+  const { peer } = useRealtime();
 
   const { data: chat, isLoading: chatLoading } = useQuery({
     queryKey: ["chat"],
@@ -45,8 +49,6 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
 
   const initializePeer = async () => {
     try {
-      const { peer } = useRealtime();
-
       if (!peer) return;
 
       peerRef.current = peer;

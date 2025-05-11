@@ -14,12 +14,10 @@ type RealtimeContextType = {
   peer: Peer | null;
 };
 
-const RealtimeContext = createContext<RealtimeContextType>({
+export const RealtimeContext = createContext<RealtimeContextType>({
   socket: null,
   peer: null,
 });
-
-export const useRealtime = () => useContext(RealtimeContext);
 
 const answerCall = async ({
   call,
