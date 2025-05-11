@@ -77,15 +77,14 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
 
     // Handle incoming calls
     newPeer?.on("call", (call: any) => {
-      toast('Incoming call', {
+      toast("Incoming call", {
         action: {
-          label: 'Answer',
+          label: "Answer",
           onClick: () => {
-      answerCall({ call, chatId: call?.chatId });
-
-          }
+            answerCall({ call, chatId: call?.chatId });
+          },
         },
-      })
+      });
 
       console.log("Incoming call from: ", call.newPeer);
     });
