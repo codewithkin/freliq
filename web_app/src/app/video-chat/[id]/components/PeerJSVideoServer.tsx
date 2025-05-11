@@ -140,7 +140,6 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
 
     return () => {
       if (stream) stream.getTracks().forEach((track) => track.stop());
-      if (peerRef.current) peerRef.current.destroy();
     };
   }, [chat, user]);
 
