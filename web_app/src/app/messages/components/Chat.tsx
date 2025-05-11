@@ -34,7 +34,7 @@ import {
   Video,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { toast } from "sonner";
 import {
@@ -43,7 +43,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useRealtime } from "@/providers/RealtimeProvider";
+import { RealtimeContext } from "@/providers/RealtimeProvider";
 
 function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
   // Track the value of the message
@@ -56,6 +56,8 @@ function Chat({ chat, setChat }: Readonly<{ chat: any | null; setChat: any }>) {
   const [selectedTask, setSelectedTask] = useState<any>(null);
   const [showProjectSelect, setShowProjectSelect] = useState(false);
   const [showTaskSelect, setShowTaskSelect] = useState(false);
+
+  const useRealtime = () => useContext(RealtimeContext);
 
   const parentRef = useRef<HTMLDivElement>(null);
 
