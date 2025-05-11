@@ -94,6 +94,8 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   }) => {
     if (!peerId || !myMediaStream) return;
 
+    console.log("Calling: ", peerId);
+
     const call = peer.call(peerId, myMediaStream);
 
     const timeout = setTimeout(() => {

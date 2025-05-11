@@ -78,6 +78,7 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
     if (peer) {
       peer.on("call", (call: any) => {
         toast.info("Incoming call");
+        console.log("Incoming call from: ", call.peer);
         answerCall({ call, chatId: call?.chatId });
       });
     }
