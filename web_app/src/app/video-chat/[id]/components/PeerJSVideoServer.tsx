@@ -7,6 +7,7 @@ import {
   RefreshCcw,
   DoorOpen,
   Clock,
+  UserX,
 } from "lucide-react";
 import { Peer } from "peerjs";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -30,7 +31,6 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   const router = useRouter();
 
   const useRealtime = () => useContext(RealtimeContext);
-
   const { peer } = useRealtime();
 
   const { data: chat, isLoading: chatLoading } = useQuery({
@@ -74,7 +74,7 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
         console.error("Call failed:", err);
 
         if (err.message?.includes("Could not connect to peer")) {
-          setError("The user is currently unavailable or not online.");
+          setError("unavailable");
           toast.error("User is unavailable or not online.");
         } else {
           setError("Call error: " + err.message);
@@ -101,12 +101,11 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
     toast.info("Calling " + peerId);
     const call = peer.call(peerId, myMediaStream);
 
-    // Set a timeout in case the remote user doesn't answer
     const timeout = setTimeout(() => {
-      call.close(); // Close the call attempt
+      call.close();
       setMissedCall(true);
       toast.error("Call timed out. No response from the other user.");
-    }, 15000); // 15 seconds
+    }, 15000);
 
     call.on("stream", (remoteStream) => {
       clearTimeout(timeout);
@@ -122,7 +121,7 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
       console.error("Call failed:", err);
 
       if (err.message?.includes("Could not connect to peer")) {
-        setError("The user is currently unavailable or not online.");
+        setError("unavailable");
         toast.error("User is unavailable or not online.");
       } else {
         setError("Call error: " + err.message);
@@ -176,6 +175,29 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
 
       {remoteStream ? (
         <RemoteVideoPlayer stream={remoteStream} />
+      ) : error === "unavailable" ? (
+        <article className="md:p-8 p-4 rounded-lg border border-2 border-slate-300 flex flex-col justify-center items-center gap-2">
+          <UserX strokeWidth={1.2} size={72} className="text-red-500" />
+          <article className="flex flex-col justify-center items-center">
+            <h2 className="text-xl font-medium">User Unavailable</h2>
+            <p className="text-muted-foreground text-sm text-center">
+              The user is currently offline or not available for a call.
+            </p>
+            <article className="mt-2 flex gap-2 items-center">
+              <Button onClick={() => router.refresh()} variant="outline">
+                <RefreshCcw />
+                Retry
+              </Button>
+              <Button
+                onClick={() => router.push("/messages")}
+                variant="destructive"
+              >
+                <DoorOpen />
+                Go Back
+              </Button>
+            </article>
+          </article>
+        </article>
       ) : error ? (
         <article className="md:p-8 p-4 rounded-lg border border-2 border-slate-300 flex flex-col justify-center items-center gap-2">
           <MessageCircleWarning
