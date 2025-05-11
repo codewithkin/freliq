@@ -59,8 +59,6 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
 
       peerRef.current = peer;
 
-      console.log("My peer ID is: " + peer.id);
-
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: true,

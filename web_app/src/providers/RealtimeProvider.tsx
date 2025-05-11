@@ -69,6 +69,9 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
     // Set state
     setPeer(newPeer);
 
+    // Log your peer id
+    console.log("My peer ID is: ", peer?.id);
+
     setSocket(newSocket);
 
     // Handle incoming calls
