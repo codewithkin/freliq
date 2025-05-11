@@ -2,7 +2,12 @@
 
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { MessageCircleWarning, RefreshCcw, DoorOpen } from "lucide-react";
+import {
+  MessageCircleWarning,
+  RefreshCcw,
+  DoorOpen,
+  Clock,
+} from "lucide-react";
 import { Peer } from "peerjs";
 import { useContext, useEffect, useRef, useState } from "react";
 import VideoPlayer from "./videos/LocalVideoPlayer";
@@ -19,6 +24,7 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [missedCall, setMissedCall] = useState(false);
   const [muted, setMuted] = useState(true);
   const peerRef = useRef<Peer | null>(null);
   const router = useRouter();
@@ -85,10 +91,30 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
     myMediaStream?: MediaStream | null;
   }) => {
     if (!peerId || !myMediaStream) return;
+
     toast.info("Calling " + peerId);
     const call = peer.call(peerId, myMediaStream);
+
+    // Set a timeout in case the remote user doesn't answer
+    const timeout = setTimeout(() => {
+      call.close(); // Close the call attempt
+      setMissedCall(true);
+      toast.error("Call timed out. No response from the other user.");
+    }, 15000); // 15 seconds
+
     call.on("stream", (remoteStream) => {
+      clearTimeout(timeout);
       setRemoteStream(remoteStream);
+    });
+
+    call.on("close", () => {
+      clearTimeout(timeout);
+    });
+
+    call.on("error", (err) => {
+      clearTimeout(timeout);
+      setError("Call error: " + err.message);
+      toast.error("Call error: " + err.message);
     });
   };
 
@@ -151,6 +177,29 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
               <Button onClick={() => router.refresh()} variant="outline">
                 <RefreshCcw />
                 Refresh
+              </Button>
+              <Button
+                onClick={() => router.push("/messages")}
+                variant="destructive"
+              >
+                <DoorOpen />
+                Leave Meeting
+              </Button>
+            </article>
+          </article>
+        </article>
+      ) : missedCall ? (
+        <article className="md:p-8 p-4 rounded-lg border border-2 border-yellow-400 flex flex-col justify-center items-center gap-2">
+          <Clock strokeWidth={1.2} size={72} className="text-yellow-500" />
+          <article className="flex flex-col justify-center items-center">
+            <h2 className="text-xl font-medium">No Answer</h2>
+            <p className="text-muted-foreground text-sm text-center">
+              The user didn’t answer the call in time.
+            </p>
+            <article className="mt-2 flex gap-2 items-center">
+              <Button onClick={() => router.refresh()} variant="outline">
+                <RefreshCcw />
+                Try Again
               </Button>
               <Button
                 onClick={() => router.push("/messages")}
