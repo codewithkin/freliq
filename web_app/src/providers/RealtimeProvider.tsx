@@ -69,19 +69,18 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
     // Set state
     setPeer(newPeer);
 
-    // Log your peer id
-    console.log("My peer ID is: ", newPeer?.id);
+    // Log your newPeer id
+    console.log("My newPeer ID is: ", newPeer?.id);
 
     setSocket(newSocket);
 
     // Handle incoming calls
-    if (peer) {
-      peer.on("call", (call: any) => {
-        toast.info("Incoming call");
-        console.log("Incoming call from: ", call.peer);
-        answerCall({ call, chatId: call?.chatId });
-      });
-    }
+    newPeer?.on("call", (call: any) => {
+      toast.info("Incoming call");
+
+      console.log("Incoming call from: ", call.newPeer);
+      answerCall({ call, chatId: call?.chatId });
+    });
 
     return () => {
       newPeer.destroy();
