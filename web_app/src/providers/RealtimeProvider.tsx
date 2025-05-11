@@ -37,6 +37,7 @@ const answerCall = async ({
 
     // Answer the call with your own media stream
     call.answer(mediaStream);
+
     call.on("stream", (remoteStream) => {
       setRemoteStream(remoteStream);
     });
@@ -76,10 +77,17 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
 
     // Handle incoming calls
     newPeer?.on("call", (call: any) => {
-      toast.info("Incoming call");
+      toast('Incoming call', {
+        action: {
+          label: 'Answer',
+          onClick: () => {
+      answerCall({ call, chatId: call?.chatId });
+
+          }
+        },
+      })
 
       console.log("Incoming call from: ", call.newPeer);
-      answerCall({ call, chatId: call?.chatId });
     });
 
     return () => {
