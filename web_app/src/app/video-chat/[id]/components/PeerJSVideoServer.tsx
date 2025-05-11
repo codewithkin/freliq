@@ -143,7 +143,7 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
     };
   }, [chat, user]);
 
-  if (chatLoading || userLoading) {
+  if (chatLoading || userLoading || !stream) {
     return (
       <section className="w-full h-full flex flex-col items-center justify-center p-8 gap-4 min-h-screen min-w-screen">
         <Skeleton className="w-32 h-32 rounded-full bg-slate-200" />
