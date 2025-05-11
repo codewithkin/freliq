@@ -87,6 +87,7 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
         action: {
           label: "Answer",
           onClick: () => {
+            play();
             answerCall({ call, chatId: call?.chatId });
           },
         },
