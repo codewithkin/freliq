@@ -75,10 +75,8 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
 
         if (err.message?.includes("Could not connect to peer")) {
           setError("unavailable");
-          toast.error("User is unavailable or not online.");
         } else {
           setError("Call error: " + err.message);
-          toast.error("Call error: " + err.message);
         }
       });
     } catch (err) {
@@ -98,13 +96,11 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   }) => {
     if (!peerId || !myMediaStream) return;
 
-    toast.info("Calling " + peerId);
     const call = peer.call(peerId, myMediaStream);
 
     const timeout = setTimeout(() => {
       call.close();
       setMissedCall(true);
-      toast.error("Call timed out. No response from the other user.");
     }, 15000);
 
     call.on("stream", (remoteStream) => {
@@ -122,10 +118,8 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
 
       if (err.message?.includes("Could not connect to peer")) {
         setError("unavailable");
-        toast.error("User is unavailable or not online.");
       } else {
         setError("Call error: " + err.message);
-        toast.error("Call error: " + err.message);
       }
     });
   };
