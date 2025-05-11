@@ -2,9 +2,9 @@ export const urls = {
   backend:
     process.env.NODE_ENV === "production"
       ? "https://freliq-chat-backend.onrender.com"
-      : "http://localhost:8080/",
+      : process.env.BETTER_AUTH_URL,
   frontend:
     process.env.NODE_ENV === "production"
       ? "freliq.com"
-      : "http://localhost:3000",
+      : process.env.BETTER_AUTH_URL,
 };
