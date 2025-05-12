@@ -7,6 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { PhoneCall, PhoneOff } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { Howl } from "howler";
 import { v4 as uuidv4 } from "uuid";
@@ -58,10 +59,6 @@ export function IncomingCallDialog() {
     };
 
     peer.on("call", handleCall);
-
-    return () => {
-      peer.off("call", handleCall);
-    };
   }, [peer]);
 
   const handleAnswer = (call?: MediaConnection) => {
@@ -86,7 +83,7 @@ export function IncomingCallDialog() {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
       <DialogContent className="flex flex-col gap-4 max-w-sm justify-center items-center">
-        <DialogHeader>
+        <DialogHeader className="flex flex-col justify-center items-center">
           <DialogTitle>Incoming Call</DialogTitle>
         </DialogHeader>
         <p className="text-muted-foreground text-sm">
@@ -96,9 +93,11 @@ export function IncomingCallDialog() {
         </p>
         <div className="flex gap-2 justify-end">
           <Button variant="default" size="lg" onClick={() => handleAnswer()}>
+            <PhoneCall />
             Answer
           </Button>
           <Button variant="destructive" size="lg" onClick={handleReject}>
+            <PhoneOff />
             Reject
           </Button>
         </div>
