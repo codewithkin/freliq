@@ -9,11 +9,14 @@ import {
 } from "@/components/ui/dialog";
 
 import { Button } from "@/components/ui/button";
+import {v4} from "uuid";
 
 import { Howl, Howler } from "howler";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import useIncomingCallStore from "@/stores/incomingCallStore";
 import { MediaConnection } from "peerjs";
+import { RealtimeContext } from "@/providers/RealtimeProvider";
+import { toast } from "sonner";
 
 const ring = new Howl({
   src: ["../sounds/ring.mp3"],
@@ -49,6 +52,37 @@ export function IncomingCallDialog({}: {}) {
       removeCall(call?.id);
     };
   }, [incomingCalls]);
+
+  const useRealtime = () => useContext(RealtimeContext);
+
+
+  // Get the peer
+  const {peer} = useRealtime();
+
+  useEffect(() => {
+
+     // Handle incoming calls
+     peer?.on("call", (call: MediaConnection) => {
+      // Play the ring tone
+      ring.play();
+
+      // Generat an idea for the call
+
+      call.id = v4();
+
+      toast("Incoming call", {
+        action: {
+          label: "Answer",
+          onClick: () => {
+            ring.play();
+            answer(call?.id || v4());
+          },
+        },
+      });
+
+      console.log("Incoming call ");
+    });
+  }, [])
 
   // Answer / reject buttons
   const answer = useIncomingCallStore((state) => state.answer);
