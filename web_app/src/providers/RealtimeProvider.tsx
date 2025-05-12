@@ -13,7 +13,6 @@ import { Howl, Howler } from "howler";
 
 const ring = new Howl({
   src: ["../sounds/ring.mp3"],
-  loop: true,
 });
 
 type RealtimeContextType = {
@@ -68,6 +67,8 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
 
     // Initialize WebSocket
     const newSocket = io(urls.backend);
+
+    console.log("Backend url: ", urls.backend);
 
     // Initialize PeerJS
     const newPeer = new Peer(session.user.id, {
