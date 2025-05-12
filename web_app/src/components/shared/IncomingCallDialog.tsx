@@ -8,15 +8,17 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { PhoneCall, PhoneOff } from "lucide-react";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { Howl } from "howler";
 import { v4 as uuidv4 } from "uuid";
 import { MediaConnection } from "peerjs";
 import { RealtimeContext } from "@/providers/RealtimeProvider";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { toast } from "sonner";
 
 const ring = new Howl({
-  src: ["/sounds/ring.mp3"], // Make sure this file is in public/sounds
+  src: ["/sounds/ring.mp3"],
+  loop: true,
   volume: 0.6,
 });
 
@@ -34,6 +36,7 @@ export function IncomingCallDialog() {
 
   const [incomingCall, setIncomingCall] = useState<IncomingCall | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!peer) return;
@@ -48,6 +51,7 @@ export function IncomingCallDialog() {
       setIsOpen(true);
       ring.play();
 
+      // Show toast
       toast("Incoming call", {
         description: `From ${metadata?.name ?? "Unknown Caller"}`,
         action: {
@@ -55,9 +59,20 @@ export function IncomingCallDialog() {
           onClick: () => handleAnswer(call),
         },
       });
+
+      // Set 30-second timeout to auto-reject
+      timeoutRef.current = setTimeout(() => {
+        console.log("Call timed out");
+        handleReject();
+      }, 30_000);
     };
 
     peer.on("call", handleCall);
+
+    return () => {
+      peer.off("call", handleCall);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
   }, [peer]);
 
   const handleAnswer = (call?: MediaConnection) => {
@@ -67,6 +82,7 @@ export function IncomingCallDialog() {
       ring.stop();
       setIsOpen(false);
       setIncomingCall(null);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     }
   };
 
@@ -76,6 +92,7 @@ export function IncomingCallDialog() {
       ring.stop();
       setIsOpen(false);
       setIncomingCall(null);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     }
   };
 
@@ -83,13 +100,12 @@ export function IncomingCallDialog() {
     <Dialog open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
       <DialogContent className="flex flex-col gap-4 max-w-sm justify-center items-center">
         <DialogHeader className="flex flex-col justify-center items-center">
-          {/* User avatar */}
           <Avatar className="w-32 h-32 rounded-full bg-slate-200 text-2xl mb-2">
             <AvatarImage
-              className="w-32 h-32 rounded-full bg-slate-200 text-2xl mb-2"
+              className="w-32 h-32 rounded-full"
               src={incomingCall?.metadata?.image || ""}
             />
-            <AvatarFallback className="w-32 h-32 rounded-full bg-slate-200 text-2xl mb-2">
+            <AvatarFallback>
               {incomingCall?.metadata?.name?.charAt(0)}
             </AvatarFallback>
           </Avatar>
