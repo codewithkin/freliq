@@ -13,7 +13,7 @@ import { Howl } from "howler";
 import { v4 as uuidv4 } from "uuid";
 import { MediaConnection } from "peerjs";
 import { RealtimeContext } from "@/providers/RealtimeProvider";
-import { toast } from "sonner";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 const ring = new Howl({
   src: ["/sounds/ring.mp3"], // Make sure this file is in public/sounds
@@ -84,13 +84,20 @@ export function IncomingCallDialog() {
     <Dialog open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
       <DialogContent className="flex flex-col gap-4 max-w-sm justify-center items-center">
         <DialogHeader className="flex flex-col justify-center items-center">
-          <DialogTitle>Incoming Call</DialogTitle>
+          {/* User avatar */}
+          <Avatar className="w-32 h-32 rounded-full bg-slate-200 text-2xl mb-2">
+            <AvatarImage
+              className="w-32 h-32 rounded-full bg-slate-200 text-2xl mb-2"
+              src={incomingCall?.metadata?.image || ""}
+            />
+            <AvatarFallback className="w-32 h-32 rounded-full bg-slate-200 text-2xl mb-2">
+              {incomingCall?.metadata?.name?.charAt(0)}
+            </AvatarFallback>
+          </Avatar>
+
+          <DialogTitle>{incomingCall?.metadata?.name || "Someone"}</DialogTitle>
+          <p className="text-muted-foreground text-sm">Is calling you now...</p>
         </DialogHeader>
-        <p className="text-muted-foreground text-sm">
-          {incomingCall?.metadata?.name
-            ? `You have a call from ${incomingCall.metadata.name}`
-            : "You have an incoming call."}
-        </p>
         <div className="flex gap-2 justify-end">
           <Button variant="default" size="lg" onClick={() => handleAnswer()}>
             <PhoneCall />
