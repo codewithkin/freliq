@@ -99,7 +99,9 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
     const call = peer.call(peerId, myMediaStream, {
       metadata: {
         name: user?.name,
+        image: user?.image,
         chat,
+        chatId: chat?.id,
       },
     });
     const timeout = setTimeout(() => {

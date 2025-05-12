@@ -15,6 +15,7 @@ import { MediaConnection } from "peerjs";
 import { RealtimeContext } from "@/providers/RealtimeProvider";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { toast } from "sonner";
+import { redirect } from "next/navigation";
 
 const ring = new Howl({
   src: ["/sounds/ring.mp3"],
@@ -79,10 +80,17 @@ export function IncomingCallDialog() {
     const activeCall = call ?? incomingCall?.call;
     if (activeCall) {
       activeCall.answer();
+
       ring.stop();
+
       setIsOpen(false);
+
       setIncomingCall(null);
+
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+      // Redirect to the video chat page
+      return redirect(`/video-chat/${incomingCall?.metadata?.chatId}`);
     }
   };
 
