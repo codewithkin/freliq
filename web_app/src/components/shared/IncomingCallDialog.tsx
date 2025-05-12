@@ -17,7 +17,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 const ring = new Howl({
   src: ["/sounds/ring.mp3"], // Make sure this file is in public/sounds
-  loop: true,
   volume: 0.6,
 });
 
