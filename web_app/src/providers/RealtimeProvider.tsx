@@ -9,12 +9,6 @@ import { toast } from "sonner";
 import { useRemoteStream } from "@/stores/useRemoteStream";
 import { redirect } from "next/navigation";
 
-import { Howl, Howler } from "howler";
-
-const ring = new Howl({
-  src: ["../sounds/ring.mp3"],
-});
-
 type RealtimeContextType = {
   socket: Socket | null;
   peer: Peer | null;
@@ -82,24 +76,6 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
     console.log("My newPeer ID is: ", newPeer?.id);
 
     setSocket(newSocket);
-
-    // Handle incoming calls
-    newPeer?.on("call", (call: any) => {
-      // Play the ring tone
-      ring.play();
-
-      toast("Incoming call", {
-        action: {
-          label: "Answer",
-          onClick: () => {
-            ring.play();
-            answerCall({ call, chatId: call?.chatId });
-          },
-        },
-      });
-
-      console.log("Incoming call from: ", call.newPeer);
-    });
 
     return () => {
       newPeer.destroy();
