@@ -96,8 +96,12 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
 
     console.log("Calling: ", peerId);
 
-    const call = peer.call(peerId, myMediaStream);
-
+    const call = peer.call(peerId, myMediaStream, {
+      metadata: {
+        name: user?.name,
+        chat,
+      },
+    });
     const timeout = setTimeout(() => {
       call.close();
       setMissedCall(true);

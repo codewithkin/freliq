@@ -1,133 +1,108 @@
 "use client";
+
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-
 import { Button } from "@/components/ui/button";
-import {v4} from "uuid";
-
-import { Howl, Howler } from "howler";
 import { useContext, useEffect, useState } from "react";
-import useIncomingCallStore from "@/stores/incomingCallStore";
+import { Howl } from "howler";
+import { v4 as uuidv4 } from "uuid";
 import { MediaConnection } from "peerjs";
 import { RealtimeContext } from "@/providers/RealtimeProvider";
 import { toast } from "sonner";
 
 const ring = new Howl({
-  src: ["../sounds/ring.mp3"],
+  src: ["/sounds/ring.mp3"], // Make sure this file is in public/sounds
+  loop: true,
+  volume: 0.6,
 });
 
-export function IncomingCallDialog({}: {}) {
-  // Get the incoming calls
-  const incomingCalls = useIncomingCallStore((state) => state.incomingCalls);
+type IncomingCall = {
+  call: MediaConnection & { id: string };
+  metadata: {
+    name?: string;
+    chat?: string;
+    [key: string]: any;
+  };
+};
 
-  // Remove call function
-  const removeCall = useIncomingCallStore((state) => state.removeIncomingCall);
+export function IncomingCallDialog() {
+  const { peer } = useContext(RealtimeContext);
 
-  const [incomingCall, setCall] = useState<
-    (MediaConnection & { id: string }) | null
-  >(null);
-
-  // Show the component
-  useEffect(() => {
-    let call: any;
-
-    if (incomingCalls.length > 1) {
-      // Open the Dialog
-      document.getElementById("open")?.click();
-
-      // Play the ring sound
-      ring.play();
-
-      call = incomingCalls[0];
-    }
-
-    // Cleanup (remove the call from the state)
-    return () => {
-      removeCall(call?.id);
-    };
-  }, [incomingCalls]);
-
-  const useRealtime = () => useContext(RealtimeContext);
-
-
-  // Get the peer
-  const {peer} = useRealtime();
+  const [incomingCall, setIncomingCall] = useState<IncomingCall | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
+    if (!peer) return;
 
-     // Handle incoming calls
-     peer?.on("call", (call: MediaConnection) => {
-      // Play the ring tone
+    const handleCall = (call: MediaConnection) => {
+      const id = uuidv4();
+      call.id = id;
+
+      const metadata = call.metadata || {};
+
+      setIncomingCall({ call, metadata });
+      setIsOpen(true);
       ring.play();
-
-      // Generat an idea for the call
-
-      call.id = v4();
 
       toast("Incoming call", {
+        description: `From ${metadata?.name ?? "Unknown Caller"}`,
         action: {
           label: "Answer",
-          onClick: () => {
-            ring.play();
-            answer(call?.id || v4());
-          },
+          onClick: () => handleAnswer(call),
         },
       });
+    };
 
-      console.log("Incoming call ");
-    });
-  }, [])
+    peer.on("call", handleCall);
 
-  // Answer / reject buttons
-  const answer = useIncomingCallStore((state) => state.answer);
-  const reject = useIncomingCallStore((state) => state.reject);
+    return () => {
+      peer.off("call", handleCall);
+    };
+  }, [peer]);
+
+  const handleAnswer = (call?: MediaConnection) => {
+    const activeCall = call ?? incomingCall?.call;
+    if (activeCall) {
+      activeCall.answer();
+      ring.stop();
+      setIsOpen(false);
+      setIncomingCall(null);
+    }
+  };
+
+  const handleReject = () => {
+    if (incomingCall) {
+      incomingCall.call.close();
+      ring.stop();
+      setIsOpen(false);
+      setIncomingCall(null);
+    }
+  };
 
   return (
-    <Dialog>
-      <DialogTrigger className="hideen" id="open">
-        HI
-      </DialogTrigger>
-      <DialogHeader className="sr-only">
-        <DialogTitle>Incoming Call</DialogTitle>
-      </DialogHeader>
-      <DialogContent className="flex flex-col gap-4">
+    <Dialog open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
+      <DialogContent className="flex flex-col gap-4 max-w-sm justify-center items-center">
+        <DialogHeader>
+          <DialogTitle>Incoming Call</DialogTitle>
+        </DialogHeader>
         <p className="text-muted-foreground text-sm">
-          You have an incoming call from an unknown number.
+          {incomingCall?.metadata?.name
+            ? `You have a call from ${incomingCall.metadata.name}`
+            : "You have an incoming call."}
         </p>
-        <div className="flex gap-2">
-          <Button
-            variant="default"
-            size="sm"
-            onClick={() => {
-              if (incomingCall) {
-                answer(incomingCall.id);
-              }
-            }}
-          >
+        <div className="flex gap-2 justify-end">
+          <Button variant="default" size="lg" onClick={() => handleAnswer()}>
             Answer
           </Button>
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => {
-              if (incomingCall) {
-                reject(incomingCall.id);
-              }
-            }}
-          >
+          <Button variant="destructive" size="lg" onClick={handleReject}>
             Reject
           </Button>
         </div>
       </DialogContent>
-      <DialogClose className="hideen" id="close">
-        HI
-      </DialogClose>
     </Dialog>
   );
 }
