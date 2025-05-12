@@ -52,15 +52,6 @@ export function IncomingCallDialog() {
       setIsOpen(true);
       ring.play();
 
-      // Show toast
-      toast("Incoming call", {
-        description: `From ${metadata?.name ?? "Unknown Caller"}`,
-        action: {
-          label: "Answer",
-          onClick: () => handleAnswer(call),
-        },
-      });
-
       // Set 30-second timeout to auto-reject
       timeoutRef.current = setTimeout(() => {
         console.log("Call timed out");
