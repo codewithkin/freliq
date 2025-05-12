@@ -8,7 +8,13 @@ import { io, Socket } from "socket.io-client";
 import { toast } from "sonner";
 import { useRemoteStream } from "@/stores/useRemoteStream";
 import { redirect } from "next/navigation";
-import useSound from "use-sound";
+
+import { Howl, Howler } from "howler";
+
+const ring = new Howl({
+  src: ["../sounds/ring.mp3"],
+  loop: true,
+});
 
 type RealtimeContextType = {
   socket: Socket | null;
@@ -57,8 +63,6 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [peer, setPeer] = useState<Peer | null>(null);
 
-  const [play] = useSound("../sounds/ring.wav");
-
   useEffect(() => {
     if (!session?.user?.id) return;
 
@@ -81,13 +85,13 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
     // Handle incoming calls
     newPeer?.on("call", (call: any) => {
       // Play the ring tone
-      play();
+      ring.play();
 
       toast("Incoming call", {
         action: {
           label: "Answer",
           onClick: () => {
-            play();
+            ring.play();
             answerCall({ call, chatId: call?.chatId });
           },
         },
