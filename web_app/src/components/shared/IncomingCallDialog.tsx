@@ -91,7 +91,10 @@ export function IncomingCallDialog() {
       ring.stop();
       setIsOpen(false);
       setIncomingCall(null);
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
     }
   };
 
@@ -102,7 +105,7 @@ export function IncomingCallDialog() {
           <Avatar className="w-32 h-32 rounded-full bg-slate-200 text-2xl mb-2">
             <AvatarImage
               className="w-32 h-32 rounded-full"
-              src={incomingCall?.metadata?.image || ""}
+              src={incomingCall?.metadata?.image}
             />
             <AvatarFallback>
               {incomingCall?.metadata?.name?.charAt(0)}

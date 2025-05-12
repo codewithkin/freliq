@@ -54,11 +54,9 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   )[0];
 
   const initializePeer = async () => {
+    if (!peer) return;
+
     try {
-      if (!peer) return;
-
-      peerRef.current = peer;
-
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: true,
@@ -66,20 +64,16 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
 
       setStream(mediaStream);
 
+      // Don't cache peer.call from previous attempts
       call({ peer, peerId: remoteUser?.id, myMediaStream: mediaStream });
 
       peer.on("error", (err) => {
-        console.error("Call failed:", err);
-
-        if (err.message?.includes("Could not connect to peer")) {
-          setError("unavailable");
-        } else {
-          setError("Call error: " + err.message);
-        }
+        console.error("Peer error:", err);
+        setError("Call error: " + err.message);
       });
     } catch (err) {
-      setError("Failed to initialize peer connection");
       console.error("Peer init error:", err);
+      setError("Failed to initialize peer connection");
     }
   };
 
