@@ -15,7 +15,7 @@ import { MediaConnection } from "peerjs";
 import { RealtimeContext } from "@/providers/RealtimeProvider";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { useRemoteStream } from "@/stores/useRemoteStream"; // <-- Make sure path is correct
 
 const ring = new Howl({
   src: ["/sounds/ring.mp3"],
@@ -36,6 +36,7 @@ type IncomingCall = {
 export function IncomingCallDialog() {
   const { peer } = useContext(RealtimeContext);
   const router = useRouter();
+  const setRemoteStream = useRemoteStream((s) => s.setRemoteStream);
 
   const [incomingCall, setIncomingCall] = useState<IncomingCall | null>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -70,21 +71,30 @@ export function IncomingCallDialog() {
   const handleAnswer = async () => {
     if (!incomingCall) return;
 
-    // Get the user's media stream
-    const mediaStream = await navigator.mediaDevices.getUserMedia({
-      audio: true,
-      video: true,
-    });
+    try {
+      // Get the user's media stream (callee's own stream)
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: true,
+      });
 
-    incomingCall.call.answer(mediaStream);
+      // Answer the call with your media
+      incomingCall.call.answer(mediaStream);
 
-    ring.stop();
-    setIsOpen(false);
-    setIncomingCall(null);
+      // Listen for the remote stream (from caller)
+      incomingCall.call.on("stream", (remoteStream) => {
+        setRemoteStream(remoteStream); // store the caller's stream
+      });
 
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      ring.stop();
+      setIsOpen(false);
+      setIncomingCall(null);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
-    router.push(`/video-chat/${incomingCall.metadata.chatId}?callee=true`);
+      router.push(`/video-chat/${incomingCall.metadata.chatId}?callee=true`);
+    } catch (err) {
+      console.error("Error answering call:", err);
+    }
   };
 
   const handleReject = () => {

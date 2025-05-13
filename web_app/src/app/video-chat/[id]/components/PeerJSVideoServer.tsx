@@ -19,10 +19,10 @@ import { Button } from "@/components/ui/button";
 import RemoteVideoPlayer from "./videos/RemoteVideoPlayer";
 import { RealtimeContext } from "@/providers/RealtimeProvider";
 import ParticipantsCard from "./ParticipantsCard";
+import { useRemoteStream } from "@/stores/useRemoteStream";
 
 export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   const [stream, setStream] = useState<MediaStream | null>(null);
-  const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [muted, setMuted] = useState(false);
   const connRef = useRef<MediaConnection | null>(null);
@@ -30,6 +30,9 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
 
   const useRealtime = () => useContext(RealtimeContext);
   const { peer, peerId: myPeerId } = useRealtime();
+
+  const remoteStream = useRemoteStream((s) => s.remoteStream);
+  const setRemoteStream = useRemoteStream((s) => s.setRemoteStream);
 
   const { data: chat, isLoading: chatLoading } = useQuery({
     queryKey: ["chat", chatId],
