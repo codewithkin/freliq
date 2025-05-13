@@ -25,7 +25,7 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [muted, setMuted] = useState(true);
+  const [muted, setMuted] = useState(false);
   const connRef = useRef<MediaConnection | null>(null);
   const router = useRouter();
 
