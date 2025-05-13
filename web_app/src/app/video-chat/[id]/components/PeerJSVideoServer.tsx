@@ -6,7 +6,6 @@ import {
   MessageCircleWarning,
   RefreshCcw,
   DoorOpen,
-  Clock,
   UserX,
 } from "lucide-react";
 import { MediaConnection, Peer } from "peerjs";
@@ -14,10 +13,9 @@ import { useContext, useEffect, useRef, useState } from "react";
 import VideoPlayer from "./videos/LocalVideoPlayer";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { User } from "@/generated/prisma";
 import { Button } from "@/components/ui/button";
-import CallingUser from "./CallingUser";
 import RemoteVideoPlayer from "./videos/RemoteVideoPlayer";
 import { RealtimeContext } from "@/providers/RealtimeProvider";
 import ParticipantsCard from "./ParticipantsCard";
@@ -33,11 +31,8 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   const useRealtime = () => useContext(RealtimeContext);
   const { peer, peerId: myPeerId } = useRealtime();
 
-  const searchParams = useSearchParams();
-  const peerId = searchParams?.get("peerId");
-
   const { data: chat, isLoading: chatLoading } = useQuery({
-    queryKey: ["chat"],
+    queryKey: ["chat", chatId],
     queryFn: async () => {
       const res = await axios.get(`/api/chats/${chatId}`);
       return res.data.chat;
@@ -61,9 +56,9 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
         audio: true,
       });
       setStream(mediaStream);
-      console.log("Local stream initialized", mediaStream);
+      console.log("Local stream initialized");
     } catch (err) {
-      console.error("Error getting user media:", err);
+      console.error("Error accessing user media:", err);
       setError("Failed to access your camera or microphone.");
     }
   };
@@ -71,40 +66,59 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   const hangUp = () => {
     if (stream) stream.getTracks().forEach((t) => t.stop());
     connRef.current?.close();
-    console.log("Call ended, navigating to messages");
     toast.info("Call ended successfully!");
     router.push("/messages");
   };
 
+  // Initialize local media when user, chat and peer are ready
   useEffect(() => {
-    if (!peer) return;
-
-    initializeLocalStream();
-
-    // Only initiate call if both peerId and local stream are available
-    if (peerId && stream) {
-      console.log("Connecting to existing peer:", peerId);
-      const call = peer.call(peerId, stream);
-      connRef.current = call;
-
-      call.on("stream", (remoteStream) => {
-        setRemoteStream(remoteStream);
-      });
-
-      call.on("error", (err) => {
-        console.error("Call error:", err);
-        setError("Call error: " + err.message);
-      });
+    if (peer && chat && user) {
+      initializeLocalStream();
     }
+  }, [peer, chat, user]);
 
-    return () => {
-      stream?.getTracks().forEach((t) => t.stop());
-      connRef.current?.close();
-    };
-  }, [peer, peerId]); // 🔁 Include stream dependency
+  // Start the call when stream is ready
+  useEffect(() => {
+    if (!peer || !stream || !user || !chat) return;
+
+    const remote = chat.users.find((u: User) => u.id !== user.id);
+    if (!remote) return;
+
+    // Don't call if you're the callee
+    const search = new URLSearchParams(window.location.search);
+    const isCallee = !!search.get("callee");
+
+    if (isCallee) return;
+
+    console.log("Calling remote peer", remote.id);
+    const call = peer.call(remote.id, stream, {
+      metadata: {
+        name: user.name,
+        chatId: chat.id,
+        image: user.image || "",
+      },
+    });
+
+    connRef.current = call;
+
+    // When the user answers (giving us their own mediaStream)
+    call.on("stream", (remoteStream) => {
+      // Log for debugging
+      console.log("Received remote stream");
+
+      // Show their mediaStream (video)
+      setRemoteStream(remoteStream);
+
+      // Send our own mediaStream back
+    });
+
+    call.on("error", (err) => {
+      console.error("Call error:", err);
+      setError("Call error: " + err.message);
+    });
+  }, [peer, stream, user, chat]);
 
   if (chatLoading || userLoading || !stream) {
-    console.log("Loading chat or user data, or local stream not ready");
     return (
       <section className="w-full h-full flex flex-col items-center justify-center p-8 gap-4 min-h-screen">
         <Skeleton className="w-32 h-32 rounded-full bg-slate-200" />
@@ -118,7 +132,6 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   }
 
   if (error) {
-    console.log("An error occurred", error);
     const icon =
       error === "unavailable" ? (
         <UserX strokeWidth={1.2} size={72} className="text-red-500" />

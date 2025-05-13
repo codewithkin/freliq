@@ -14,8 +14,8 @@ import { v4 as uuidv4 } from "uuid";
 import { MediaConnection } from "peerjs";
 import { RealtimeContext } from "@/providers/RealtimeProvider";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { redirect } from "next/navigation";
 
 const ring = new Howl({
   src: ["/sounds/ring.mp3"],
@@ -27,13 +27,15 @@ type IncomingCall = {
   call: MediaConnection & { id: string };
   metadata: {
     name?: string;
-    chat?: string;
+    chatId?: string;
+    image?: string;
     [key: string]: any;
   };
 };
 
 export function IncomingCallDialog() {
   const { peer } = useContext(RealtimeContext);
+  const router = useRouter();
 
   const [incomingCall, setIncomingCall] = useState<IncomingCall | null>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -52,9 +54,7 @@ export function IncomingCallDialog() {
       setIsOpen(true);
       ring.play();
 
-      // Set 30-second timeout to auto-reject
       timeoutRef.current = setTimeout(() => {
-        console.log("Call timed out");
         handleReject();
       }, 30_000);
     };
@@ -67,22 +67,24 @@ export function IncomingCallDialog() {
     };
   }, [peer]);
 
-  const handleAnswer = (call?: MediaConnection) => {
-    const activeCall = call ?? incomingCall?.call;
-    if (activeCall) {
-      activeCall.answer();
+  const handleAnswer = async () => {
+    if (!incomingCall) return;
 
-      ring.stop();
+    // Get the user's media stream
+    const mediaStream = await navigator.mediaDevices.getUserMedia({
+      audio: true,
+      video: true,
+    });
 
-      setIsOpen(false);
+    incomingCall.call.answer(mediaStream);
 
-      setIncomingCall(null);
+    ring.stop();
+    setIsOpen(false);
+    setIncomingCall(null);
 
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
-      // Redirect to the video chat page
-      return redirect(`/video-chat/${incomingCall?.metadata?.chatId}`);
-    }
+    router.push(`/video-chat/${incomingCall.metadata.chatId}?callee=true`);
   };
 
   const handleReject = () => {
@@ -111,17 +113,20 @@ export function IncomingCallDialog() {
               {incomingCall?.metadata?.name?.charAt(0)}
             </AvatarFallback>
           </Avatar>
-
-          <DialogTitle>{incomingCall?.metadata?.name || "Someone"}</DialogTitle>
-          <p className="text-muted-foreground text-sm">Is calling you now...</p>
+          <DialogTitle>
+            {incomingCall?.metadata?.name || "Someone"} is calling you
+          </DialogTitle>
+          <p className="text-muted-foreground text-sm">
+            Incoming call — pick up or reject
+          </p>
         </DialogHeader>
         <div className="flex gap-2 justify-end">
-          <Button variant="default" size="lg" onClick={() => handleAnswer()}>
-            <PhoneCall />
+          <Button variant="default" size="lg" onClick={handleAnswer}>
+            <PhoneCall className="mr-1" />
             Answer
           </Button>
           <Button variant="destructive" size="lg" onClick={handleReject}>
-            <PhoneOff />
+            <PhoneOff className="mr-1" />
             Reject
           </Button>
         </div>
