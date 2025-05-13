@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     subject: `${senderName} invited you to a call`,
     content: `<p>${senderName} has invited you to join a video call.</p>
            <p>Click the link below to join:</p>
-           <a href="${process.env.NEXT_PUBLIC_APP_URL}/messages/${req.nextUrl.searchParams.get(
+           <a href="${process.env.NEXT_PUBLIC_APP_URL}/video-chat/${req.nextUrl.searchParams.get(
              "chatId",
            )}?peerId=${peerId}">Join Call</a>`,
   });
