@@ -77,59 +77,31 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   };
 
   useEffect(() => {
-    if (!peer) {
-      console.log("Peer not available yet");
-      return;
-    }
-    console.log("Initializing local stream");
+    if (!peer) return;
+
     initializeLocalStream();
 
-    peer.on("call", (incomingCall: MediaConnection) => {
-      console.log("Incoming call received", incomingCall);
-      if (!stream) {
-        setError("No local stream to answer call with.");
-        return;
-      }
-
-      incomingCall.answer(stream);
-
-      incomingCall.on("stream", (remoteStream) => {
-        console.log("Incoming stream received", remoteStream);
-        toast.info("Received incoming stream.");
-        setRemoteStream(remoteStream);
-      });
-
-      incomingCall.on("error", (err) => {
-        console.error("Call error:", err);
-        setError("Call error: " + err.message);
-      });
-
-      connRef.current = incomingCall;
-    });
-
+    // Only initiate call if both peerId and local stream are available
     if (peerId && stream) {
-      console.log("Making outgoing call to peer", peerId);
-      const outgoingCall = peer.call(peerId, stream);
-      connRef.current = outgoingCall;
+      console.log("Connecting to existing peer:", peerId);
+      const call = peer.call(peerId, stream);
+      connRef.current = call;
 
-      outgoingCall.on("stream", (remoteStream) => {
-        console.log("Outgoing call stream received", remoteStream);
-        toast.info("Connected to peer, receiving their stream.");
+      call.on("stream", (remoteStream) => {
         setRemoteStream(remoteStream);
       });
 
-      outgoingCall.on("error", (err) => {
-        console.error("Outgoing call error:", err);
+      call.on("error", (err) => {
+        console.error("Call error:", err);
         setError("Call error: " + err.message);
       });
     }
 
     return () => {
-      console.log("Cleaning up streams and connections");
-      stream?.getTracks().forEach((track) => track.stop());
+      stream?.getTracks().forEach((t) => t.stop());
       connRef.current?.close();
     };
-  }, [peer, peerId]);
+  }, [peer, peerId]); // 🔁 Include stream dependency
 
   if (chatLoading || userLoading || !stream) {
     console.log("Loading chat or user data, or local stream not ready");
