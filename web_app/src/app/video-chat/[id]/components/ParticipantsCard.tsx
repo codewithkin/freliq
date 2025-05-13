@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import axios from "axios";
 import { toast } from "sonner";
 import { User } from "@/generated/prisma";
+import { Card, CardHeader } from "@/components/ui/card";
 
 export default function ParticipantsCard({
   currentUser,
@@ -41,14 +42,14 @@ export default function ParticipantsCard({
   };
 
   return (
-    <div className="fixed bottom-4 left-4 bg-white dark:bg-neutral-900 shadow-lg rounded-md w-64 border z-50 overflow-hidden">
-      <div
+    <Card className="fixed bottom-4 left-4 bg-white dark:bg-neutral-900 shadow-lg rounded-md w-64 border z-50 overflow-hidde">
+      <CardHeader
         className="flex items-center justify-between px-4 py-2 cursor-pointer border-b"
         onClick={() => setOpen((prev) => !prev)}
       >
         <h4 className="text-sm font-medium">Participants</h4>
         {open ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
-      </div>
+      </CardHeader>
 
       {open && (
         <ul className="p-3 space-y-2 text-sm">
@@ -77,6 +78,6 @@ export default function ParticipantsCard({
           )}
         </ul>
       )}
-    </div>
+    </Card>
   );
 }
