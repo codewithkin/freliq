@@ -9,12 +9,12 @@ import {
   Clock,
   UserX,
 } from "lucide-react";
-import { Peer } from "peerjs";
+import { MediaConnection, Peer } from "peerjs";
 import { useContext, useEffect, useRef, useState } from "react";
 import VideoPlayer from "./videos/LocalVideoPlayer";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { User } from "@/generated/prisma";
 import { Button } from "@/components/ui/button";
 import CallingUser from "./CallingUser";
@@ -25,13 +25,15 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [missedCall, setMissedCall] = useState(false);
   const [muted, setMuted] = useState(true);
-  const peerRef = useRef<Peer | null>(null);
+  const connRef = useRef<MediaConnection | null>(null);
   const router = useRouter();
 
   const useRealtime = () => useContext(RealtimeContext);
   const { peer } = useRealtime();
+
+  const searchParams = useSearchParams();
+  const peerId = searchParams?.get("peerId");
 
   const { data: chat, isLoading: chatLoading } = useQuery({
     queryKey: ["chat"],
@@ -49,103 +51,89 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
     },
   });
 
-  const remoteUser = chat?.users?.filter(
-    (other: User) => other?.id !== user?.id,
-  )[0];
+  const remoteUser = chat?.users?.find((u: User) => u?.id !== user?.id);
 
-  const initializePeer = async () => {
-    if (!peer) return;
-
+  const initializeLocalStream = async () => {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: true,
       });
-
       setStream(mediaStream);
-
-      // Don't cache peer.call from previous attempts
-      call({ peer, peerId: remoteUser?.id, myMediaStream: mediaStream });
-
-      peer.on("error", (err) => {
-        console.error("Peer error:", err);
-        setError("Call error: " + err.message);
-      });
+      console.log("Local stream initialized", mediaStream);
     } catch (err) {
-      console.error("Peer init error:", err);
-      setError("Failed to initialize peer connection");
+      console.error("Error getting user media:", err);
+      setError("Failed to access your camera or microphone.");
     }
-  };
-
-  const call = ({
-    peer,
-    peerId,
-    myMediaStream,
-  }: {
-    peer: Peer;
-    peerId?: string;
-    myMediaStream?: MediaStream | null;
-  }) => {
-    if (!peerId || !myMediaStream) return;
-
-    console.log("Calling: ", peerId);
-
-    const call = peer.call(peerId, myMediaStream, {
-      metadata: {
-        name: user?.name,
-        image: user?.image,
-        chat,
-        chatId: chat?.id,
-      },
-    });
-    const timeout = setTimeout(() => {
-      call.close();
-      setMissedCall(true);
-    }, 15000);
-
-    call.on("stream", (remoteStream) => {
-      clearTimeout(timeout);
-      setRemoteStream(remoteStream);
-    });
-
-    call.on("close", () => {
-      clearTimeout(timeout);
-    });
-
-    call.on("error", (err) => {
-      clearTimeout(timeout);
-      console.error("Call failed:", err);
-
-      if (err.message?.includes("Could not connect to peer")) {
-        setError("unavailable");
-      } else {
-        setError("Call error: " + err.message);
-      }
-    });
   };
 
   const hangUp = () => {
     if (stream) stream.getTracks().forEach((t) => t.stop());
-
-    // NOTE: Do not destroy the connection as this will prevent the user from being able to use the video rooms until they refresh
-
-    toast.info("Call ended successfully, hope it was a great one!");
+    connRef.current?.close();
+    console.log("Call ended, navigating to messages");
+    toast.info("Call ended successfully!");
     router.push("/messages");
   };
 
   useEffect(() => {
-    if (typeof window !== "undefined" && chat && user) {
-      initializePeer();
+    if (!peer) {
+      console.log("Peer not available yet");
+      return;
+    }
+    console.log("Initializing local stream");
+    initializeLocalStream();
+
+    peer.on("call", (incomingCall: MediaConnection) => {
+      console.log("Incoming call received", incomingCall);
+      if (!stream) {
+        setError("No local stream to answer call with.");
+        return;
+      }
+
+      incomingCall.answer(stream);
+
+      incomingCall.on("stream", (remoteStream) => {
+        console.log("Incoming stream received", remoteStream);
+        toast.info("Received incoming stream.");
+        setRemoteStream(remoteStream);
+      });
+
+      incomingCall.on("error", (err) => {
+        console.error("Call error:", err);
+        setError("Call error: " + err.message);
+      });
+
+      connRef.current = incomingCall;
+    });
+
+    if (peerId && stream) {
+      console.log("Making outgoing call to peer", peerId);
+      const outgoingCall = peer.call(peerId, stream);
+      connRef.current = outgoingCall;
+
+      outgoingCall.on("stream", (remoteStream) => {
+        console.log("Outgoing call stream received", remoteStream);
+        toast.info("Connected to peer, receiving their stream.");
+        setRemoteStream(remoteStream);
+      });
+
+      outgoingCall.on("error", (err) => {
+        console.error("Outgoing call error:", err);
+        setError("Call error: " + err.message);
+      });
     }
 
     return () => {
-      if (stream) stream.getTracks().forEach((track) => track.stop());
+      console.log("Cleaning up streams and connections");
+      stream?.getTracks().forEach((track) => track.stop());
+      connRef.current?.close();
     };
-  }, [chat, user]);
+  }, [peer, peerId]);
 
   if (chatLoading || userLoading || !stream) {
+    console.log("Loading chat or user data, or local stream not ready");
     return (
-      <section className="w-full h-full flex flex-col items-center justify-center p-8 gap-4 min-h-screen min-w-screen">
+      <section className="w-full h-full flex flex-col items-center justify-center p-8 gap-4 min-h-screen">
         <Skeleton className="w-32 h-32 rounded-full bg-slate-200" />
         <h3 className="text-muted-foreground text-lg">
           Loading your call environment...
@@ -156,8 +144,54 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
     );
   }
 
+  if (error) {
+    console.log("An error occurred", error);
+    const icon =
+      error === "unavailable" ? (
+        <UserX strokeWidth={1.2} size={72} className="text-red-500" />
+      ) : (
+        <MessageCircleWarning
+          strokeWidth={1.2}
+          size={72}
+          className="text-red-500"
+        />
+      );
+
+    const heading =
+      error === "unavailable" ? "User Unavailable" : "An error occurred";
+    const message =
+      error === "unavailable"
+        ? "The user is currently offline or not available for a call."
+        : error;
+
+    return (
+      <section className="flex flex-col items-center justify-center text-center gap-4 p-6 md:p-12 w-full h-screen">
+        {icon}
+        <h2 className="text-xl font-medium">{heading}</h2>
+        <p className="text-muted-foreground text-sm max-w-sm">{message}</p>
+        <div className="mt-2 flex gap-2 items-center">
+          <Button onClick={() => router.refresh()} variant="outline">
+            <RefreshCcw className="mr-1" />
+            Retry
+          </Button>
+          <Button
+            onClick={() => router.push("/messages")}
+            variant="destructive"
+          >
+            <DoorOpen className="mr-1" />
+            Go Back
+          </Button>
+        </div>
+      </section>
+    );
+  }
+
   return (
-    <article className="grid w-full p-4 grid-cols-1 h-full md:grid-cols-2 gap-12 md:p-12">
+    <section
+      className={`w-full h-full p-4 md:p-12 ${
+        remoteStream ? "grid md:grid-cols-2 gap-12" : ""
+      }`}
+    >
       {stream && user && (
         <VideoPlayer
           muted={muted}
@@ -168,82 +202,7 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
         />
       )}
 
-      {remoteStream ? (
-        <RemoteVideoPlayer stream={remoteStream} />
-      ) : error === "unavailable" ? (
-        <article className="md:p-8 p-4 rounded-lg border border-2 border-slate-300 flex flex-col justify-center items-center gap-2">
-          <UserX strokeWidth={1.2} size={72} className="text-red-500" />
-          <article className="flex flex-col justify-center items-center">
-            <h2 className="text-xl font-medium">User Unavailable</h2>
-            <p className="text-muted-foreground text-sm text-center">
-              The user is currently offline or not available for a call.
-            </p>
-            <article className="mt-2 flex gap-2 items-center">
-              <Button onClick={() => router.refresh()} variant="outline">
-                <RefreshCcw />
-                Retry
-              </Button>
-              <Button
-                onClick={() => router.push("/messages")}
-                variant="destructive"
-              >
-                <DoorOpen />
-                Go Back
-              </Button>
-            </article>
-          </article>
-        </article>
-      ) : error ? (
-        <article className="md:p-8 p-4 rounded-lg border border-2 border-slate-300 flex flex-col justify-center items-center gap-2">
-          <MessageCircleWarning
-            strokeWidth={1.2}
-            size={72}
-            className="text-red-500"
-          />
-          <article className="flex flex-col justify-center items-center">
-            <h2 className="text-xl font-medium">An error occurred</h2>
-            <p className="text-muted-foreground text-sm text-center">{error}</p>
-            <article className="mt-2 flex gap-2 items-center">
-              <Button onClick={() => router.refresh()} variant="outline">
-                <RefreshCcw />
-                Refresh
-              </Button>
-              <Button
-                onClick={() => router.push("/messages")}
-                variant="destructive"
-              >
-                <DoorOpen />
-                Leave Meeting
-              </Button>
-            </article>
-          </article>
-        </article>
-      ) : missedCall ? (
-        <article className="md:p-8 p-4 rounded-lg border border-2 border-yellow-400 flex flex-col justify-center items-center gap-2">
-          <Clock strokeWidth={1.2} size={72} className="text-yellow-500" />
-          <article className="flex flex-col justify-center items-center">
-            <h2 className="text-xl font-medium">No Answer</h2>
-            <p className="text-muted-foreground text-sm text-center">
-              The user didn’t answer the call in time.
-            </p>
-            <article className="mt-2 flex gap-2 items-center">
-              <Button onClick={() => router.refresh()} variant="outline">
-                <RefreshCcw />
-                Try Again
-              </Button>
-              <Button
-                onClick={() => router.push("/messages")}
-                variant="destructive"
-              >
-                <DoorOpen />
-                Leave Meeting
-              </Button>
-            </article>
-          </article>
-        </article>
-      ) : (
-        <CallingUser user={remoteUser} />
-      )}
-    </article>
+      {remoteStream && <RemoteVideoPlayer stream={remoteStream} />}
+    </section>
   );
 }
