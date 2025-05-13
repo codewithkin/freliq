@@ -188,7 +188,7 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
 
   return (
     <section
-      className={`w-full h-full p-4 md:p-12 ${
+      className={`w-full h-full p-4 md:p-8 ${
         remoteStream ? "grid md:grid-cols-2 gap-12" : ""
       }`}
     >
