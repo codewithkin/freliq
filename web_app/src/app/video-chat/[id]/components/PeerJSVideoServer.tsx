@@ -31,7 +31,7 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   const router = useRouter();
 
   const useRealtime = () => useContext(RealtimeContext);
-  const { peer } = useRealtime();
+  const { peer, peerId: myPeerId } = useRealtime();
 
   const searchParams = useSearchParams();
   const peerId = searchParams?.get("peerId");
@@ -207,7 +207,7 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
         <ParticipantsCard
           currentUser={user}
           remoteUser={remoteUser}
-          peerId={peer?.id ?? ""}
+          peerId={myPeerId || ""}
         />
       )}
 

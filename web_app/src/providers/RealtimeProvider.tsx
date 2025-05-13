@@ -12,11 +12,13 @@ import { redirect } from "next/navigation";
 type RealtimeContextType = {
   socket: Socket | null;
   peer: Peer | null;
+  peerId: string | null;
 };
 
 export const RealtimeContext = createContext<RealtimeContextType>({
   socket: null,
   peer: null,
+  peerId: null,
 });
 
 const answerCall = async ({
@@ -55,6 +57,7 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
   const { data: session } = authClient.useSession();
   const [socket, setSocket] = useState<Socket | null>(null);
   const [peer, setPeer] = useState<Peer | null>(null);
+  const [peerId, setPeerId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!session?.user?.id) return;
@@ -74,6 +77,7 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
 
     // Log your newPeer id
     console.log("My newPeer ID is: ", newPeer?.id);
+    setPeerId(newPeer?.id);
 
     setSocket(newSocket);
 
@@ -83,7 +87,7 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
   }, [session?.user?.id]);
 
   return (
-    <RealtimeContext.Provider value={{ socket, peer }}>
+    <RealtimeContext.Provider value={{ socket, peer, peerId }}>
       {children}
     </RealtimeContext.Provider>
   );
