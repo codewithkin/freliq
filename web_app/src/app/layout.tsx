@@ -59,9 +59,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${inter.className} antialiased relative overflow-hidden`}
-      >
+      <body className={`${inter.className} antialiased`}>
         <QueryClientProviderWrapper>
           <ClientWrapper>{children}</ClientWrapper>
         </QueryClientProviderWrapper>
