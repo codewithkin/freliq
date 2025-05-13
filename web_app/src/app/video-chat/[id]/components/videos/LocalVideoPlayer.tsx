@@ -10,7 +10,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Camera, CameraOff, Mic, MicOff, PhoneCall } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
 export default function VideoPlayer({
   stream,
@@ -25,20 +25,16 @@ export default function VideoPlayer({
   muted: any;
   setMuted: any;
 }) {
-  // Track whether or not the camera is off
   const [cameraOff, setCameraOff] = useState(false);
 
   return (
     <div className="w-full h-full relative">
       {/* User info floating badge */}
       <Badge className="bg-white py-2 gap-2 flex items-center text-slate-600 absolute left-4 top-4">
-        {/* User avatar */}
         <Avatar>
           <AvatarFallback>{user?.email?.charAt(0)}</AvatarFallback>
           <AvatarImage src={user?.image} />
         </Avatar>
-
-        {/* User info */}
         <article className="flex flex-col">
           <h3 className="text-lg font-semibold">You</h3>
         </article>
@@ -52,7 +48,7 @@ export default function VideoPlayer({
           ref={(video) => {
             if (video && stream) video.srcObject = stream;
           }}
-          className="w-full rounded-2xl border border-gray-200"
+          className="w-full h-full rounded-lg border border-gray-200"
         />
       ) : (
         <article
@@ -62,7 +58,7 @@ export default function VideoPlayer({
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
           }}
-          className="w-full rounded-2xl border border-gray-200 h-full min-h-[400px] md:min-h-[600px] bg-slate-900 flex justify-center items-center"
+          className="w-full h-full min-h-[400px] md:min-h-[600px] rounded-lg border border-gray-200 bg-slate-900 flex justify-center items-center"
         >
           <video
             autoPlay
@@ -71,9 +67,8 @@ export default function VideoPlayer({
             ref={(video) => {
               if (video && stream) video.srcObject = stream;
             }}
-            className="w-full rounded-2xl border border-gray-200 hidden"
+            className="w-full h-full rounded-lg border border-gray-200 hidden"
           />
-          {/* User avatar */}
           {!user?.image && (
             <Avatar className="w-48 h-48">
               <AvatarFallback className="w-48 h-48">
@@ -92,9 +87,7 @@ export default function VideoPlayer({
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
-                  onClick={() => {
-                    setCameraOff(!cameraOff);
-                  }}
+                  onClick={() => setCameraOff(!cameraOff)}
                   size="lg"
                   variant="secondary"
                   className="rounded-full"
@@ -108,14 +101,11 @@ export default function VideoPlayer({
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
-                {/* End call */}
                 <Button
                   className="rounded-full"
                   size="lg"
                   variant="destructive"
-                  onClick={() => {
-                    hangUp();
-                  }}
+                  onClick={hangUp}
                 >
                   <PhoneCall />
                 </Button>
@@ -127,9 +117,7 @@ export default function VideoPlayer({
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
-                  onClick={() => {
-                    setMuted(!muted);
-                  }}
+                  onClick={() => setMuted(!muted)}
                   size="lg"
                   variant="secondary"
                   className="rounded-full"
@@ -144,8 +132,6 @@ export default function VideoPlayer({
           </TooltipProvider>
         </article>
       </article>
-
-      {/* Floating remote videos */}
     </div>
   );
 }
