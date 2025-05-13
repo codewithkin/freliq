@@ -204,7 +204,9 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
         />
       )}
 
-      {remoteStream && <RemoteVideoPlayer stream={remoteStream} />}
+      {remoteStream && (
+        <RemoteVideoPlayer user={remoteUser} stream={remoteStream} />
+      )}
     </section>
   );
 }

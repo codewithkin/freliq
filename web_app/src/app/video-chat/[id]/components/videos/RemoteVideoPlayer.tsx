@@ -21,7 +21,7 @@ export default function RemoteVideoPlayer({
           <AvatarImage src={user?.image} />
         </Avatar>
         <article className="flex flex-col">
-          <h3 className="text-lg font-semibold">{user?.email}</h3>
+          <h3 className="text-xs md:text-sm font-semibold">{user?.email}</h3>
         </article>
       </Badge>
 
