@@ -208,6 +208,7 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
           currentUser={user}
           remoteUser={remoteUser}
           peerId={myPeerId || ""}
+          chatId={chat?.id}
         />
       )}
 

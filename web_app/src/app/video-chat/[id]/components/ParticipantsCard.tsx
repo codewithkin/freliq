@@ -13,10 +13,12 @@ export default function ParticipantsCard({
   currentUser,
   remoteUser,
   peerId,
+  chatId,
 }: {
   currentUser: User;
   remoteUser?: User;
   peerId: string;
+  chatId: string;
 }) {
   const [open, setOpen] = useState(true);
   const [inviting, setInviting] = useState(false);
@@ -30,6 +32,7 @@ export default function ParticipantsCard({
         email: remoteUser.email,
         peerId,
         senderName: currentUser.name,
+        chatId,
       });
       toast.success("Invitation sent!");
       setInvited(true);
