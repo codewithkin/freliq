@@ -33,6 +33,7 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
 
   const remoteStream = useRemoteStream((s) => s.remoteStream);
   const setRemoteStream = useRemoteStream((s) => s.setRemoteStream);
+  const clearRemoteStream = useRemoteStream((s) => s.clearMediaStream);
 
   const { data: chat, isLoading: chatLoading } = useQuery({
     queryKey: ["chat", chatId],
@@ -68,6 +69,9 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
 
   const hangUp = () => {
     if (stream) stream.getTracks().forEach((t) => t.stop());
+
+    clearRemoteStream();
+
     connRef.current?.close();
     toast.info("Call ended successfully!");
     router.push("/messages");
