@@ -62,7 +62,7 @@ export default function VideoPlayer({
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
           }}
-          className="w-full rounded-2xl border border-gray-200 h-full min-h-[400px] md:min-h-[800px] bg-slate-900 flex justify-center items-center"
+          className="w-full rounded-2xl border border-gray-200 h-full min-h-[400px] md:min-h-[600px] bg-slate-900 flex justify-center items-center"
         >
           <video
             autoPlay
