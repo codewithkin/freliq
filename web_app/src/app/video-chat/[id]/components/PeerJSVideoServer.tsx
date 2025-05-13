@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import CallingUser from "./CallingUser";
 import RemoteVideoPlayer from "./videos/RemoteVideoPlayer";
 import { RealtimeContext } from "@/providers/RealtimeProvider";
+import ParticipantsCard from "./ParticipantsCard";
 
 export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -199,6 +200,14 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
           hangUp={hangUp}
           user={user}
           stream={stream}
+        />
+      )}
+
+      {user && (
+        <ParticipantsCard
+          currentUser={user}
+          remoteUser={remoteUser}
+          peerId={peer?.id ?? ""}
         />
       )}
 
