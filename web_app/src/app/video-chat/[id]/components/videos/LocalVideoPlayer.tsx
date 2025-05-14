@@ -50,6 +50,31 @@ export default function VideoPlayer({
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [screenShareSupported, setScreenShareSupported] = useState(true);
+
+  useEffect(() => {
+    // Check if device is mobile
+    const checkIfMobile = () => {
+      const isMobileDevice =
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent,
+        );
+      setIsMobile(isMobileDevice);
+    };
+
+    // Check if screen sharing is supported
+    const checkScreenShareSupport = () => {
+      const isSupported =
+        navigator.mediaDevices &&
+        "getDisplayMedia" in navigator.mediaDevices &&
+        !!navigator.mediaDevices.getDisplayMedia;
+      setScreenShareSupported(isSupported);
+    };
+
+    checkIfMobile();
+    checkScreenShareSupport();
+  }, []);
 
   const toggleFullscreen = () => {
     if (!containerRef.current) return;
@@ -71,6 +96,8 @@ export default function VideoPlayer({
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
     };
   }, []);
+
+  const showScreenShareButton = !isMobile && screenShareSupported;
 
   return (
     <div ref={containerRef} className="w-full h-full relative">
@@ -182,23 +209,26 @@ export default function VideoPlayer({
                 <p>{muted ? "Unmute" : "Mute"} Microphone</p>
               </TooltipContent>
             </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  onClick={async () => {
-                    await shareScreen();
-                  }}
-                  size="lg"
-                  variant="secondary"
-                  className="rounded-full"
-                >
-                  {sharingScreen ? <MonitorX /> : <MonitorUp />}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{sharingScreen ? "Stop Sharing" : "Share"} Screen</p>
-              </TooltipContent>
-            </Tooltip>
+
+            {showScreenShareButton && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={async () => {
+                      await shareScreen();
+                    }}
+                    size="lg"
+                    variant="secondary"
+                    className="rounded-full"
+                  >
+                    {sharingScreen ? <MonitorX /> : <MonitorUp />}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{sharingScreen ? "Stop Sharing" : "Share"} Screen</p>
+                </TooltipContent>
+              </Tooltip>
+            )}
           </TooltipProvider>
         </div>
       </div>
