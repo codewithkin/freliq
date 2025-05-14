@@ -25,8 +25,23 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [muted, setMuted] = useState(false);
+  const [videoMuted, setVideoMuted] = useState(false);
+
   const connRef = useRef<MediaConnection | null>(null);
   const router = useRouter();
+
+  const toggleVideo = () => {
+    const videoTracks = stream?.getVideoTracks();
+    if (!videoTracks || videoTracks.length === 0) return;
+
+    if (videoMuted) {
+      setVideoMuted(false);
+      videoTracks.forEach((track) => (track.enabled = true));
+    } else {
+      setVideoMuted(true);
+      videoTracks.forEach((track) => (track.enabled = false));
+    }
+  };
 
   const useRealtime = () => useContext(RealtimeContext);
   const { peer, peerId: myPeerId } = useRealtime();
@@ -203,6 +218,8 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
     >
       {stream && user && (
         <VideoPlayer
+          videoDisabled={videoMuted}
+          disableVideo={toggleVideo}
           muted={muted}
           setMuted={mute}
           hangUp={hangUp}

@@ -18,15 +18,17 @@ export default function VideoPlayer({
   hangUp,
   muted,
   setMuted,
+  disableVideo,
+  videoDisabled,
 }: {
   stream: MediaStream;
   user: any;
   hangUp: any;
   muted: any;
   setMuted: any;
+  disableVideo: any;
+  videoDisabled: any;
 }) {
-  const [cameraOff, setCameraOff] = useState(false);
-
   return (
     <div className="w-full h-full relative">
       {/* User info floating badge */}
@@ -40,7 +42,7 @@ export default function VideoPlayer({
         </article>
       </Badge>
 
-      {!cameraOff ? (
+      {!videoDisabled ? (
         <video
           autoPlay
           muted={muted}
@@ -87,16 +89,16 @@ export default function VideoPlayer({
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
-                  onClick={() => setCameraOff(!cameraOff)}
+                  onClick={() => disableVideo()}
                   size="lg"
                   variant="secondary"
                   className="rounded-full"
                 >
-                  {cameraOff ? <CameraOff /> : <Camera />}
+                  {videoDisabled ? <CameraOff /> : <Camera />}
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>{cameraOff ? "Turn on" : "Turn off"} Camera</p>
+                <p>{videoDisabled ? "Turn on" : "Turn off"} Camera</p>
               </TooltipContent>
             </Tooltip>
             <Tooltip>
