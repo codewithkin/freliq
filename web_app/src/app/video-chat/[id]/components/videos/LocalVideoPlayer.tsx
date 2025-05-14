@@ -10,7 +10,17 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Camera, CameraOff, Mic, MicOff, PhoneCall } from "lucide-react";
-import { useState } from "react";
+import { User } from "@/generated/prisma";
+
+interface Props {
+  stream: MediaStream;
+  user: User;
+  hangUp: () => void;
+  muted: boolean;
+  setMuted: () => void;
+  toggleVideo: () => void;
+  videoDisabled: boolean;
+}
 
 export default function VideoPlayer({
   stream,
@@ -18,24 +28,17 @@ export default function VideoPlayer({
   hangUp,
   muted,
   setMuted,
-  disableVideo,
+  toggleVideo,
   videoDisabled,
-}: {
-  stream: MediaStream;
-  user: any;
-  hangUp: any;
-  muted: any;
-  setMuted: any;
-  disableVideo: any;
-  videoDisabled: any;
-}) {
+}: Props) {
   return (
     <div className="w-full h-full relative">
-      {/* User info floating badge */}
       <Badge className="bg-white py-2 gap-2 flex items-center text-slate-600 absolute left-4 top-4">
         <Avatar>
-          <AvatarFallback>{user?.email?.charAt(0)}</AvatarFallback>
-          <AvatarImage src={user?.image} />
+          <AvatarFallback>
+            {user?.email?.[0]?.toUpperCase() ?? "U"}
+          </AvatarFallback>
+          <AvatarImage src={user?.image ?? ""} />
         </Avatar>
         <article className="flex flex-col">
           <h3 className="text-lg font-semibold">You</h3>
@@ -48,7 +51,7 @@ export default function VideoPlayer({
           muted={muted}
           playsInline
           ref={(video) => {
-            if (video && stream) video.srcObject = stream;
+            if (video) video.srcObject = stream;
           }}
           className="w-full h-full rounded-lg border border-gray-200"
         />
@@ -58,38 +61,26 @@ export default function VideoPlayer({
             backgroundImage: `url(${user?.image})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
           }}
           className="w-full h-full min-h-[400px] md:min-h-[600px] rounded-lg border border-gray-200 bg-slate-900 flex justify-center items-center"
         >
-          <video
-            autoPlay
-            muted={muted}
-            playsInline
-            ref={(video) => {
-              if (video && stream) video.srcObject = stream;
-            }}
-            className="w-full h-full rounded-lg border border-gray-200 hidden"
-          />
           {!user?.image && (
             <Avatar className="w-48 h-48">
-              <AvatarFallback className="w-48 h-48">
-                {user?.email?.charAt(0)}
+              <AvatarFallback className="text-5xl">
+                {user?.email?.[0]?.toUpperCase() ?? "U"}
               </AvatarFallback>
-              <AvatarImage className="w-48 h-48" src={user?.image} />
             </Avatar>
           )}
         </article>
       )}
 
-      {/* Controls */}
-      <article className="absolute bottom-5 w-full justify-center items-center flex">
-        <article className="rounded-full bg-transparent backdrop-blur-xl w-fit p-4 gap-2 flex items-center justify-center shadow-lg">
+      <div className="absolute bottom-5 w-full flex justify-center items-center">
+        <div className="rounded-full bg-transparent backdrop-blur-xl p-4 gap-2 flex items-center shadow-lg">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
-                  onClick={() => disableVideo()}
+                  onClick={toggleVideo}
                   size="lg"
                   variant="secondary"
                   className="rounded-full"
@@ -101,13 +92,14 @@ export default function VideoPlayer({
                 <p>{videoDisabled ? "Turn on" : "Turn off"} Camera</p>
               </TooltipContent>
             </Tooltip>
+
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
-                  className="rounded-full"
+                  onClick={hangUp}
                   size="lg"
                   variant="destructive"
-                  onClick={hangUp}
+                  className="rounded-full"
                 >
                   <PhoneCall />
                 </Button>
@@ -116,10 +108,11 @@ export default function VideoPlayer({
                 <p>Hang up</p>
               </TooltipContent>
             </Tooltip>
+
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
-                  onClick={() => setMuted()}
+                  onClick={setMuted}
                   size="lg"
                   variant="secondary"
                   className="rounded-full"
@@ -132,8 +125,8 @@ export default function VideoPlayer({
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-        </article>
-      </article>
+        </div>
+      </div>
     </div>
   );
 }

@@ -218,13 +218,13 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
     >
       {stream && user && (
         <VideoPlayer
-          videoDisabled={videoMuted}
-          disableVideo={toggleVideo}
+          stream={stream}
+          user={user}
           muted={muted}
           setMuted={mute}
+          toggleVideo={toggleVideo}
+          videoDisabled={videoMuted}
           hangUp={hangUp}
-          user={user}
-          stream={stream}
         />
       )}
 
