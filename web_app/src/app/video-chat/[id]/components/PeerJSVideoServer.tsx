@@ -35,6 +35,22 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   const setRemoteStream = useRemoteStream((s) => s.setRemoteStream);
   const clearRemoteStream = useRemoteStream((s) => s.clearMediaStream);
 
+  const mute = () => {
+    const audioTracks = stream?.getAudioTracks();
+
+    if (!audioTracks || audioTracks.length === 0) return;
+
+    if (muted) {
+      setMuted(false);
+      // Re-enable the audio track
+      audioTracks.forEach((track) => (track.enabled = true));
+    } else {
+      setMuted(true);
+      // Disable the audio track (mutes it)
+      audioTracks.forEach((track) => (track.enabled = false));
+    }
+  };
+
   const { data: chat, isLoading: chatLoading } = useQuery({
     queryKey: ["chat", chatId],
     queryFn: async () => {
@@ -188,7 +204,7 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
       {stream && user && (
         <VideoPlayer
           muted={muted}
-          setMuted={setMuted}
+          setMuted={mute}
           hangUp={hangUp}
           user={user}
           stream={stream}

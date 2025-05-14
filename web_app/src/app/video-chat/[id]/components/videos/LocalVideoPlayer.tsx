@@ -117,7 +117,7 @@ export default function VideoPlayer({
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
-                  onClick={() => setMuted(!muted)}
+                  onClick={() => setMuted()}
                   size="lg"
                   variant="secondary"
                   className="rounded-full"
