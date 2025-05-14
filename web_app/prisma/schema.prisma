@@ -149,6 +149,8 @@ model Project {
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
 
+  progress String @default("DETAILS") // DETAILS, IMAGE, INVITE, TASK
+
   ownerId     String
   owner       User               @relation("ProjectOwner", fields: [ownerId], references: [id], map: "project_owner_fkey")
 
