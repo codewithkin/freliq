@@ -198,7 +198,7 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
 
     // Cleanup previous connection
     const cleanup = () => {
-      if (connRef.current) {
+      if (connRef?.current?.peerConnection) {
         connRef.current.off("stream");
         connRef.current.off("error");
         connRef.current.peerConnection.ontrack = null;
