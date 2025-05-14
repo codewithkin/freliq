@@ -18,6 +18,8 @@ import {
   PhoneCall,
   Maximize,
   Minimize,
+  MonitorX,
+  MonitorUp,
 } from "lucide-react";
 import { User } from "@/generated/prisma";
 
@@ -29,6 +31,9 @@ interface Props {
   setMuted: () => void;
   toggleVideo: () => void;
   videoDisabled: boolean;
+  shareScreen: any;
+  sharingScreen: any;
+  setSharingScreen: any;
 }
 
 export default function VideoPlayer({
@@ -39,6 +44,9 @@ export default function VideoPlayer({
   setMuted,
   toggleVideo,
   videoDisabled,
+  shareScreen,
+  sharingScreen,
+  setSharingScreen,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -166,6 +174,23 @@ export default function VideoPlayer({
               </TooltipTrigger>
               <TooltipContent>
                 <p>{muted ? "Unmute" : "Mute"} Microphone</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={async () => {
+                    await shareScreen();
+                  }}
+                  size="lg"
+                  variant="secondary"
+                  className="rounded-full"
+                >
+                  {sharingScreen ? <MonitorX /> : <MonitorUp />}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{sharingScreen ? "Stop Sharing" : "Share"} Screen</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

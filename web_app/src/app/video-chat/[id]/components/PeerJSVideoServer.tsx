@@ -25,6 +25,7 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [muted, setMuted] = useState(false);
+  const [sharingScreen, setSharingScreen] = useState(false);
   const [videoMuted, setVideoMuted] = useState(false);
 
   const connRef = useRef<MediaConnection | null>(null);
@@ -40,6 +41,62 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
     } else {
       setVideoMuted(true);
       videoTracks.forEach((track) => (track.enabled = false));
+    }
+  };
+
+  const shareScreen = async () => {
+    if (!sharingScreen) {
+      // Step 1: Start sharing the screen
+      try {
+        const screenStream = await navigator.mediaDevices.getDisplayMedia({
+          video: true,
+          audio: false,
+        });
+
+        // Step 2: Get the video track from the screen stream
+        const screenTrack = screenStream.getVideoTracks()[0];
+
+        // Step 3: Replace the current video track with the screen track
+        const sender = connRef.current?.peerConnection
+          .getSenders()
+          .find((s) => s.track?.kind === "video");
+
+        if (sender) {
+          sender.replaceTrack(screenTrack);
+        }
+
+        // Step 4: Set the stream to the screen stream
+        setStream(screenStream);
+        setSharingScreen(true);
+      } catch (err) {
+        setError("Failed to start screen sharing.");
+        console.error("Error starting screen sharing:", err);
+      }
+    } else {
+      // Step 5: Stop screen sharing and revert to camera
+      try {
+        const mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+
+        // Step 6: Revert back to the camera stream
+        const cameraTrack = mediaStream.getVideoTracks()[0];
+        const sender = connRef.current?.peerConnection
+          .getSenders()
+          .find((s) => s.track?.kind === "video");
+
+        if (sender) {
+          sender.replaceTrack(cameraTrack);
+        }
+
+        // Step 7: Set the stream back to the camera stream
+        setStream(mediaStream);
+        setSharingScreen(false);
+      } catch (err) {
+        setError("Failed to stop screen sharing.");
+        console.error("Error stopping screen sharing:", err);
+      }
     }
   };
 
@@ -225,6 +282,9 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
           toggleVideo={toggleVideo}
           videoDisabled={videoMuted}
           hangUp={hangUp}
+          shareScreen={shareScreen}
+          sharingScreen={sharingScreen}
+          setSharingScreen={setSharingScreen}
         />
       )}
 
