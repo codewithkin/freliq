@@ -126,13 +126,15 @@ export default function ProjectPage() {
     return <ProjectSkeleton />;
   }
 
-  const project = data.project;
+  const project = data.project.project;
   const user = data.user;
 
   console.log("Tasks: ", project.tasks);
 
-  const isOwner = session?.user?.id === project.owner.id;
+  const isOwner = session?.user?.id === project?.owner?.id;
   const isFreelancer = user?.type === "freelancer";
+
+  console.log("Project: ", project);
 
   return (
     <DashboardShell>
@@ -147,7 +149,10 @@ export default function ProjectPage() {
               <span>Deadline: {format(new Date(project.deadline), "PPP")}</span>
             )}
             <span>
-              Last updated: {format(new Date(project.updatedAt), "PPP")}
+              Last updated:{" "}
+              {project?.updatedAt
+                ? format(new Date(project?.updatedAt), "PPP")
+                : "None"}
             </span>
           </div>
         </div>
@@ -158,7 +163,7 @@ export default function ProjectPage() {
             <CardTitle>Project Members</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[project.owner, ...project.members.map((m: any) => m.user)].map(
+            {[project.owner, ...project?.members?.map((m: any) => m.user)]?.map(
               (user) => (
                 <div
                   key={user.id}
