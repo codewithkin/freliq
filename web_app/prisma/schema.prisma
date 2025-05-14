@@ -22,6 +22,8 @@ model User {
   createdAt     DateTime
   updatedAt     DateTime
 
+  plan          String @default("free") // Either free, basic or pro
+
   sessions Session[]
   accounts Account[]
 
