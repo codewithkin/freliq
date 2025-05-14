@@ -86,6 +86,12 @@ export default function VideoPlayer({
         </article>
       </Badge>
 
+      {sharingScreen && (
+        <div className="absolute top-4 right-4 bg-yellow-500 text-white px-2 py-1 rounded-md text-xs">
+          Screen Sharing
+        </div>
+      )}
+
       {!videoDisabled ? (
         <video
           autoPlay

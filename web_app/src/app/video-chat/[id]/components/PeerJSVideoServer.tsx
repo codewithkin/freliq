@@ -44,61 +44,87 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
     }
   };
 
+  // Update the shareScreen function in PeerJSVideoChat
   const shareScreen = async () => {
-    if (!sharingScreen) {
-      // Step 1: Start sharing the screen
-      try {
+    try {
+      if (!sharingScreen) {
+        // Get screen stream
         const screenStream = await navigator.mediaDevices.getDisplayMedia({
           video: true,
           audio: false,
         });
 
-        // Step 2: Get the video track from the screen stream
-        const screenTrack = screenStream.getVideoTracks()[0];
+        // Create a new stream combining screen video and original audio
+        const newStream = new MediaStream();
 
-        // Step 3: Replace the current video track with the screen track
-        const sender = connRef.current?.peerConnection
-          .getSenders()
-          .find((s) => s.track?.kind === "video");
+        // Add original audio tracks if they exist
+        const audioTracks = stream?.getAudioTracks() || [];
+        audioTracks.forEach((track) => newStream.addTrack(track));
 
-        if (sender) {
-          sender.replaceTrack(screenTrack);
-        }
+        // Add screen video track
+        screenStream
+          .getVideoTracks()
+          .forEach((track) => newStream.addTrack(track));
 
-        // Step 4: Set the stream to the screen stream
-        setStream(screenStream);
-        setSharingScreen(true);
-      } catch (err) {
-        setError("Failed to start screen sharing.");
-        console.error("Error starting screen sharing:", err);
-      }
-    } else {
-      // Step 5: Stop screen sharing and revert to camera
-      try {
-        const mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true,
+        // Handle when user stops sharing via browser controls
+        screenStream.getVideoTracks()[0].onended = () => {
+          stopScreenShare();
+        };
+
+        // Replace tracks in the connection
+        connRef.current?.peerConnection.getSenders().forEach((sender) => {
+          if (sender.track?.kind === "video") {
+            sender.replaceTrack(newStream.getVideoTracks()[0]);
+          }
         });
 
-        // Step 6: Revert back to the camera stream
-        const cameraTrack = mediaStream.getVideoTracks()[0];
-        const sender = connRef.current?.peerConnection
-          .getSenders()
-          .find((s) => s.track?.kind === "video");
-
-        if (sender) {
-          sender.replaceTrack(cameraTrack);
-        }
-
-        // Step 7: Set the stream back to the camera stream
-        setStream(mediaStream);
-        setSharingScreen(false);
-      } catch (err) {
-        setError("Failed to stop screen sharing.");
-        console.error("Error stopping screen sharing:", err);
+        // Update local stream state
+        setStream(newStream);
+        setSharingScreen(true);
+      } else {
+        await stopScreenShare();
       }
+    } catch (err) {
+      setError("Failed to handle screen sharing.");
+      console.error("Screen sharing error:", err);
     }
   };
+
+  const stopScreenShare = async () => {
+    try {
+      // Get fresh camera stream
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
+
+      // Replace tracks in the connection
+      connRef.current?.peerConnection.getSenders().forEach((sender) => {
+        if (sender.track?.kind === "video") {
+          sender.replaceTrack(mediaStream.getVideoTracks()[0]);
+        }
+        if (sender.track?.kind === "audio") {
+          sender.replaceTrack(mediaStream.getAudioTracks()[0]);
+        }
+      });
+
+      // Update local stream state
+      setStream(mediaStream);
+      setSharingScreen(false);
+    } catch (err) {
+      setError("Failed to stop screen sharing.");
+      console.error("Error stopping screen sharing:", err);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      // Clean up streams when component unmounts
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, [stream]);
 
   const useRealtime = () => useContext(RealtimeContext);
   const { peer, peerId: myPeerId } = useRealtime();
@@ -172,46 +198,93 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
     }
   }, [peer, chat, user]);
 
-  // Start the call when stream is ready
+  // Update the call-related useEffect to handle both caller and callee cases
   useEffect(() => {
     if (!peer || !stream || !user || !chat) return;
 
     const remote = chat.users.find((u: User) => u.id !== user.id);
     if (!remote) return;
 
-    // Don't call if you're the callee
     const search = new URLSearchParams(window.location.search);
     const isCallee = !!search.get("callee");
 
-    if (isCallee) return;
+    // Cleanup previous connection
+    const cleanup = () => {
+      if (connRef.current) {
+        connRef.current.off("stream");
+        connRef.current.off("error");
+        connRef.current.peerConnection.ontrack = null;
+      }
+    };
 
-    console.log("Calling remote peer", remote.id);
-    const call = peer.call(remote.id, stream, {
-      metadata: {
-        name: user.name,
-        chatId: chat.id,
-        image: user.image || "",
-      },
-    });
+    if (isCallee) {
+      // Handle incoming calls (callee)
+      const handleCall = (call: MediaConnection) => {
+        connRef.current = call;
+        call.answer(stream); // Answer with our stream
 
-    connRef.current = call;
+        call.on("stream", (remoteStream) => {
+          setRemoteStream(remoteStream);
+        });
 
-    // When the user answers (giving us their own mediaStream)
-    call.on("stream", (remoteStream) => {
-      // Log for debugging
-      console.log("Received remote stream");
+        call.peerConnection.ontrack = (event) => {
+          if (event.streams && event.streams.length > 0) {
+            setRemoteStream(event.streams[0]);
+          }
+        };
 
-      // Show their mediaStream (video)
-      setRemoteStream(remoteStream);
+        call.on("error", (err) => {
+          console.error("Call error:", err);
+          setError("Call error: " + err.message);
+        });
+      };
 
-      // Send our own mediaStream back
-    });
+      peer.on("call", handleCall);
+      return () => {
+        peer.off("call", handleCall);
+        cleanup();
+      };
+    } else {
+      // Handle outgoing calls (caller)
+      const call = peer.call(remote.id, stream, {
+        metadata: {
+          name: user.name,
+          chatId: chat.id,
+          image: user.image || "",
+        },
+      });
 
-    call.on("error", (err) => {
-      console.error("Call error:", err);
-      setError("Call error: " + err.message);
-    });
+      connRef.current = call;
+
+      call.on("stream", (remoteStream) => {
+        setRemoteStream(remoteStream);
+      });
+
+      call.peerConnection.ontrack = (event) => {
+        if (event.streams && event.streams.length > 0) {
+          setRemoteStream(event.streams[0]);
+        }
+      };
+
+      call.on("error", (err) => {
+        console.error("Call error:", err);
+        setError("Call error: " + err.message);
+      });
+
+      return () => {
+        cleanup();
+      };
+    }
   }, [peer, stream, user, chat]);
+
+  // Add this useEffect to handle peer cleanup
+  useEffect(() => {
+    return () => {
+      if (connRef.current) {
+        connRef.current.close();
+      }
+    };
+  }, []);
 
   if (chatLoading || userLoading || !stream) {
     return (
