@@ -1,8 +1,10 @@
 "use client";
 
+import { useRef, useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { User } from "@/generated/prisma";
+import { Maximize, Minimize } from "lucide-react";
 
 interface Props {
   stream: MediaStream;
@@ -15,8 +17,32 @@ export default function RemoteVideoPlayer({
   muted = false,
   user,
 }: Props) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const toggleFullscreen = () => {
+    if (!containerRef.current) return;
+
+    if (!isFullscreen) {
+      containerRef.current.requestFullscreen?.();
+    } else {
+      document.exitFullscreen?.();
+    }
+  };
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+    };
+  }, []);
+
   return (
-    <div className="w-full h-full relative">
+    <div ref={containerRef} className="w-full h-full relative">
       <Badge className="bg-white py-2 gap-2 flex items-center text-slate-600 absolute left-4 top-4">
         <Avatar>
           <AvatarFallback>
@@ -38,6 +64,17 @@ export default function RemoteVideoPlayer({
         }}
         className="w-full h-full rounded-lg border border-gray-200"
       />
+
+      <button
+        onClick={toggleFullscreen}
+        className="absolute bottom-4 right-4 p-2 bg-black/40 text-white rounded-md hover:bg-black/60 transition"
+      >
+        {isFullscreen ? (
+          <Minimize className="w-4 h-4" />
+        ) : (
+          <Maximize className="w-4 h-4" />
+        )}
+      </button>
     </div>
   );
 }

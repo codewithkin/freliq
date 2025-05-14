@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Camera, CameraOff, Mic, MicOff, PhoneCall } from "lucide-react";
+import {
+  Camera,
+  CameraOff,
+  Mic,
+  MicOff,
+  PhoneCall,
+  Maximize,
+  Minimize,
+} from "lucide-react";
 import { User } from "@/generated/prisma";
 
 interface Props {
@@ -31,8 +40,32 @@ export default function VideoPlayer({
   toggleVideo,
   videoDisabled,
 }: Props) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const toggleFullscreen = () => {
+    if (!containerRef.current) return;
+
+    if (!isFullscreen) {
+      containerRef.current.requestFullscreen?.();
+    } else {
+      document.exitFullscreen?.();
+    }
+  };
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+    };
+  }, []);
+
   return (
-    <div className="w-full h-full relative">
+    <div ref={containerRef} className="w-full h-full relative">
       <Badge className="bg-white py-2 gap-2 flex items-center text-slate-600 absolute left-4 top-4">
         <Avatar>
           <AvatarFallback>
@@ -73,6 +106,17 @@ export default function VideoPlayer({
           )}
         </article>
       )}
+
+      <button
+        onClick={toggleFullscreen}
+        className="absolute bottom-24 right-4 p-2 bg-black/40 text-white rounded-md hover:bg-black/60 transition"
+      >
+        {isFullscreen ? (
+          <Minimize className="w-4 h-4" />
+        ) : (
+          <Maximize className="w-4 h-4" />
+        )}
+      </button>
 
       <div className="absolute bottom-5 w-full flex justify-center items-center">
         <div className="rounded-full bg-transparent backdrop-blur-xl p-4 gap-2 flex items-center shadow-lg">
