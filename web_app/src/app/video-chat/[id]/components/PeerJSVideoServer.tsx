@@ -48,37 +48,36 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
   const shareScreen = async () => {
     try {
       if (!sharingScreen) {
-        // Get screen stream
         const screenStream = await navigator.mediaDevices.getDisplayMedia({
           video: true,
           audio: false,
         });
 
-        // Create a new stream combining screen video and original audio
-        const newStream = new MediaStream();
-
-        // Add original audio tracks if they exist
-        const audioTracks = stream?.getAudioTracks() || [];
-        audioTracks.forEach((track) => newStream.addTrack(track));
-
-        // Add screen video track
-        screenStream
-          .getVideoTracks()
-          .forEach((track) => newStream.addTrack(track));
-
-        // Handle when user stops sharing via browser controls
+        // Add event listener to detect when screen sharing is stopped via browser UI
         screenStream.getVideoTracks()[0].onended = () => {
           stopScreenShare();
         };
 
-        // Replace tracks in the connection
+        // Create a new combined stream with screen video and original audio
+        const newStream = new MediaStream();
+        const audioTracks = stream?.getAudioTracks() || [];
+        audioTracks.forEach((track) => newStream.addTrack(track));
+        screenStream
+          .getVideoTracks()
+          .forEach((track) => newStream.addTrack(track));
+
+        console.log("Conn ref: ", connRef.current);
+
+        // Replace the entire stream in the connection
         connRef.current?.peerConnection.getSenders().forEach((sender) => {
           if (sender.track?.kind === "video") {
             sender.replaceTrack(newStream.getVideoTracks()[0]);
           }
+          if (sender.track?.kind === "audio" && audioTracks.length > 0) {
+            sender.replaceTrack(newStream.getAudioTracks()[0]);
+          }
         });
 
-        // Update local stream state
         setStream(newStream);
         setSharingScreen(true);
       } else {
@@ -92,7 +91,6 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
 
   const stopScreenShare = async () => {
     try {
-      // Get fresh camera stream
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: true,
@@ -108,7 +106,6 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
         }
       });
 
-      // Update local stream state
       setStream(mediaStream);
       setSharingScreen(false);
     } catch (err) {
@@ -116,15 +113,6 @@ export default function PeerJSVideoServer({ chatId }: { chatId: string }) {
       console.error("Error stopping screen sharing:", err);
     }
   };
-
-  useEffect(() => {
-    return () => {
-      // Clean up streams when component unmounts
-      if (stream) {
-        stream.getTracks().forEach((track) => track.stop());
-      }
-    };
-  }, [stream]);
 
   const useRealtime = () => useContext(RealtimeContext);
   const { peer, peerId: myPeerId } = useRealtime();
