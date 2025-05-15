@@ -1,19 +1,22 @@
 "use client";
-
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, AlertTriangle } from "lucide-react"; // Import icons
-import { cn } from "@/lib/utils"; // Utility for combining class names
+import { CheckCircle, AlertTriangle } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { NextRequest } from "next/server";
 
-function UpgradeConfirmPage() {
-  const searchParams = useSearchParams();
+// This component is now a server component
+const UpgradeConfirmPage = async (props: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) => {
   const router = useRouter();
   const [message, setMessage] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
 
-  const subscriptionId = searchParams.get("subscription_id");
-  const status = searchParams.get("status");
+  // Extract parameters directly
+  const subscriptionId = props.searchParams.subscription_id as string;
+  const status = props.searchParams.status as string;
 
   useEffect(() => {
     if (subscriptionId && status === "active") {
@@ -64,7 +67,7 @@ function UpgradeConfirmPage() {
       setIsSuccess(false);
       setMessage("Invalid upgrade confirmation link.");
     }
-  }, [subscriptionId, status]);
+  }, [subscriptionId, status]); // Remove searchParams from dependency array
 
   return (
     <div className="container mx-auto py-12 flex flex-col items-center justify-center gap-6">
@@ -112,6 +115,13 @@ function UpgradeConfirmPage() {
       )}
     </div>
   );
-}
+};
 
-export default UpgradeConfirmPage;
+// This wrapper is required to pass the searchParams to the component
+export default function Page({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+  return <UpgradeConfirmPage searchParams={searchParams} />;
+}
