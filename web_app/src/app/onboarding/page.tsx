@@ -11,6 +11,8 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Image from "next/image";
 import { Camera, Plus } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 
 export default function OnboardingPage() {
   const [image, setImage] = useState<string | File | null>(null);
@@ -23,7 +25,7 @@ export default function OnboardingPage() {
 
   useEffect(() => {
     async function fetchSession() {
-      const session = await authClient.useSession();
+      const session = await authClient.getSession();
       if (session?.user?.image) {
         setImage(session.user.image);
         setPreview(session.user.image);
@@ -42,6 +44,20 @@ export default function OnboardingPage() {
     }
   }
 
+  const mutation = useMutation({
+    mutationFn: async (data: FormData) => {
+      const res = await axios.post("/api/onboarding", data);
+      return res.data;
+    },
+    onSuccess: () => {
+      toast.success("Profile updated!");
+      router.push("/app");
+    },
+    onError: () => {
+      toast.error("Failed to update profile");
+    },
+  });
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
@@ -53,17 +69,7 @@ export default function OnboardingPage() {
       formData.append("image", image);
     }
 
-    const res = await fetch("/api/onboarding", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (res.ok) {
-      toast.success("Profile updated!");
-      router.push("/app");
-    } else {
-      toast.error("Failed to update profile");
-    }
+    mutation.mutate(formData);
   }
 
   return (
@@ -71,7 +77,7 @@ export default function OnboardingPage() {
       <h1 className="text-2xl font-semibold mb-6">Complete your profile</h1>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="flex flex-col items-center space-y-2">
-          <div className="relative z-2 w-48 h-48 rounded-full border-2 border-muted flex items-center justify-center overflow-hidden bg-muted/20 overflow-visible">
+          <div className="relative overflow-visible w-48 h-48 rounded-full border-2 border-muted flex items-center justify-center bg-muted/20">
             {preview ? (
               <Image
                 src={preview}
@@ -81,14 +87,14 @@ export default function OnboardingPage() {
               />
             ) : (
               <Camera
-                strokeWidth={1.5}
                 className="w-12 h-12 text-muted-foreground"
+                strokeWidth={1.5}
               />
             )}
             <Button
-              type="button"
               size="icon"
-              className="absolute bottom-4 right-4 bg-primary text-white rounded-full border shadow-lg z-10"
+              type="button"
+              className="absolute bottom-4 right-4 bg-primary text-white rounded-full shadow-lg"
               onClick={() => fileInputRef.current?.click()}
             >
               <Plus className="w-4 h-4" />
@@ -133,8 +139,12 @@ export default function OnboardingPage() {
           />
         </div>
 
-        <Button type="submit" className="w-full flex gap-2">
-          Save & Continue
+        <Button
+          type="submit"
+          className="w-full flex gap-2"
+          disabled={mutation.isPending}
+        >
+          {mutation.isPending ? "Saving..." : "Save & Continue"}
         </Button>
       </form>
     </div>
