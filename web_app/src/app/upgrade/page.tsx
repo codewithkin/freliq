@@ -1,3 +1,4 @@
+"use client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
@@ -16,8 +17,14 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+
+const NEXT_PUBLIC_APP_URL = process.env.NEXT_PUBLIC_APP_URL;
 
 function UpgradePage() {
+  const router = useRouter();
+
   const monthlyPlans = [
     {
       name: "Free",
@@ -57,6 +64,7 @@ function UpgradePage() {
       highlightIcon: (
         <StarIcon className="w-7 h-7 text-blue-700 fill-blue-700" />
       ),
+      productId: "pdt_SJtB93eSf3ZbvOwo3elq2", // Monthly Basic Product ID
     },
     {
       name: "Pro",
@@ -74,6 +82,7 @@ function UpgradePage() {
       buttonText: "Go Pro",
       buttonVariant: "outline",
       buttonClassName: "border-primary/50 text-primary hover:bg-primary/5",
+      productId: "pdt_hwEWNQB5mbTSelZJoMD47", // Monthly Pro Product ID
     },
   ];
 
@@ -118,6 +127,7 @@ function UpgradePage() {
         <StarIcon className="w-5 h-5 text-primary, fill-primary" />
       ),
       monthlyPrice: 15,
+      productId: "pdt_gaKZJsk8YZOfR5nJd3e7h", // Annual Basic Product ID
     },
     {
       name: "Pro",
@@ -137,8 +147,18 @@ function UpgradePage() {
       buttonVariant: "outline",
       buttonClassName: "border-primary/50 text-primary hover:bg-primary/5",
       monthlyPrice: 30,
+      productId: "pdt_hqUsbqoyac4cA3aWIsiyE", // Annual Pro Product ID
     },
   ];
+
+  const createPaymentLink = (productId: string) => {
+    if (productId) {
+      return `https://checkout.dodopayments.com/buy/${productId}?quantity=1&redirect_url=${encodeURIComponent(
+        `${NEXT_PUBLIC_APP_URL}/upgrade/confirm`,
+      )}`;
+    }
+    return "#"; // Or handle the case where productId is missing
+  };
 
   return (
     <section className="container mx-auto px-4 py-12 bg-gradient-to-b from-muted/10 to-background">
@@ -212,12 +232,29 @@ function UpgradePage() {
                         /month
                       </span>
                     </h4>
-                    <Button
-                      className={plan.buttonClassName}
-                      variant={plan.buttonVariant}
-                    >
-                      {plan.buttonText}
-                    </Button>
+                    {plan.productId ? (
+                      <Button
+                        asChild
+                        className={plan.buttonClassName}
+                        variant={plan.buttonVariant}
+                      >
+                        <Link href={createPaymentLink(plan?.productId)}>
+                          {" "}
+                          {plan.buttonText}
+                        </Link>
+                      </Button>
+                    ) : (
+                      <Button
+                        className={plan.buttonClassName}
+                        variant={plan.buttonVariant}
+                        disabled={plan.name === "Free" ? false : true}
+                      >
+                        <Link href={createPaymentLink(plan?.productId)}>
+                          {" "}
+                          {plan.buttonText}
+                        </Link>
+                      </Button>
+                    )}
                   </article>
 
                   <Separator className="text-slate-400 w-full h-1 my-8" />
@@ -277,16 +314,35 @@ function UpgradePage() {
                       </span>
                       {plan.discountPercentage > 0 && plan.monthlyPrice && (
                         <Badge className="ml-2 text-xs bg-green-500 rounded-full font-medium">
-                          Save ${plan.discountPercentage}%
+                          Save $
+                          {Math.round(plan.monthlyPrice * 12 - plan.price)} (
+                          {plan.discountPercentage}%)
                         </Badge>
                       )}
                     </h4>
-                    <Button
-                      className={plan.buttonClassName}
-                      variant={plan.buttonVariant}
-                    >
-                      {plan.buttonText}
-                    </Button>
+                    {plan.productId ? (
+                      <Button
+                        asChild
+                        className={plan.buttonClassName}
+                        variant={plan.buttonVariant}
+                      >
+                        <Link href={createPaymentLink(plan?.productId)}>
+                          {" "}
+                          {plan.buttonText}
+                        </Link>
+                      </Button>
+                    ) : (
+                      <Button
+                        className={plan.buttonClassName}
+                        variant={plan.buttonVariant}
+                        disabled={plan.name === "Free" ? false : true}
+                      >
+                        <Link href={createPaymentLink(plan?.productId)}>
+                          {" "}
+                          {plan.buttonText}
+                        </Link>
+                      </Button>
+                    )}
                   </article>
 
                   <Separator className="text-slate-400 w-full h-1 my-8" />
