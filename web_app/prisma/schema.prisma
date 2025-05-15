@@ -24,6 +24,11 @@ model User {
 
   plan          String @default("free") // Either free, basic or pro
 
+  // Customization options
+  bio           String?
+  occupation    String?
+  website       String?
+
   sessions Session[]
   accounts Account[]
 
