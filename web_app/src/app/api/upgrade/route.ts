@@ -1,7 +1,8 @@
-import { auth } from "@/lib/auth";
-import { prisma } from "@/prisma";
-import { headers } from "next/headers";
 import { NextResponse, NextRequest } from "next/server";
+import { auth } from "@/lib/auth"; // If you're using NextAuth.js
+import { headers } from "next/headers";
+import { prisma } from "@/prisma";
+import { sendNotificationEmail } from "@/lib/email/sendNotificationEmail";
 
 export async function POST(request: Request) {
   try {
@@ -48,7 +49,19 @@ export async function POST(request: Request) {
       },
     });
 
-    // 4. Return a success response.
+    // 4. Send a notification email to the user.
+    try {
+      await sendNotificationEmail({
+        to: session.user.email!,
+        subject: "Subscription Upgraded!",
+        content: `<p>Your subscription has been upgraded to the <strong>${plan}</strong> plan.</p>`,
+      });
+    } catch (emailError) {
+      console.error("Failed to send upgrade notification email:", emailError);
+      // Don't block the upgrade if the email fails, but log the error.
+    }
+
+    // 5. Return a success response.
     return new NextResponse(
       JSON.stringify({
         message: "Plan upgraded successfully",
