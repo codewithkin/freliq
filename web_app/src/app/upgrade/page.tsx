@@ -1,185 +1,316 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckIcon } from "lucide-react";
+import {
+  CheckIcon,
+  ZapIcon,
+  StarIcon,
+  CheckCheck,
+  CheckCircle,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 function UpgradePage() {
+  const monthlyPlans = [
+    {
+      name: "Free",
+      price: 0,
+      description:
+        "Get started and see the magic happen. Perfect for trying things out.",
+      features: [
+        "2 Active Projects",
+        "30 Tasks/Month",
+        "500MB Storage",
+        "100 Messages",
+        "❌ Video Calls",
+        "❌ Checklists",
+      ],
+      buttonText: "Current Plan",
+      buttonVariant: "outline",
+      buttonClassName: "border-muted-foreground/30",
+    },
+    {
+      name: "Basic",
+      price: 15,
+      description:
+        "Unlock essential tools to streamline your workflow and boost your productivity.",
+      features: [
+        "10 Active Projects",
+        "500 Tasks/Month",
+        "10GB Storage",
+        "Unlimited Messages",
+        "1:1 Video Calls (2hr limit)",
+        "Kickoff Checklists",
+      ],
+      buttonText: "Upgrade Now",
+      buttonVariant: "default",
+      buttonClassName: "bg-primary hover:bg-primary/90 shadow-md",
+      highlighted: true,
+      highlightLabel: "Best Value",
+      highlightIcon: (
+        <StarIcon className="w-7 h-7 text-blue-700 fill-blue-700" />
+      ),
+    },
+    {
+      name: "Pro",
+      price: 30,
+      description:
+        "Supercharge your solo performance with unlimited power and advanced features.",
+      features: [
+        "Unlimited Projects",
+        "Unlimited Tasks",
+        "50GB Storage",
+        "Unlimited Messages",
+        "Unlimited Video Calls",
+        "AI Checklist Templates",
+      ],
+      buttonText: "Go Pro",
+      buttonVariant: "outline",
+      buttonClassName: "border-primary/50 text-primary hover:bg-primary/5",
+    },
+  ];
+
+  const annualPlans = [
+    {
+      name: "Free",
+      price: 0,
+      description:
+        "Dip your toes in and experience the core features. No commitment needed.",
+      features: [
+        "2 Active Projects",
+        "30 Tasks/Month",
+        "500MB Storage",
+        "100 Messages",
+        "❌ Video Calls",
+        "❌ Checklists",
+      ],
+      buttonText: "Current Plan",
+      buttonVariant: "outline",
+      buttonClassName: "border-muted-foreground/30",
+    },
+    {
+      name: "Basic",
+      price: 126, // $15 * 12 * (1 - 0.3)
+      discountPercentage: 30,
+      description:
+        "Smart investment for serious freelancers. Get all the essentials and save big!",
+      features: [
+        "10 Active Projects",
+        "500 Tasks/Month",
+        "10GB Storage",
+        "Unlimited Messages",
+        "1:1 Video Calls (2hr limit)",
+        "Kickoff Checklists",
+      ],
+      buttonText: "Upgrade Now",
+      buttonVariant: "default",
+      buttonClassName: "bg-primary hover:bg-primary/90 shadow-md",
+      highlighted: true,
+      highlightLabel: "BEST VALUE",
+      highlightIcon: (
+        <StarIcon className="w-5 h-5 text-primary, fill-primary" />
+      ),
+      monthlyPrice: 15,
+    },
+    {
+      name: "Pro",
+      price: 180, // $30 * 12 * (1 - 0.5)
+      discountPercentage: 50,
+      description:
+        "Maximize your potential and dominate your projects. The ultimate toolkit for peak performance.",
+      features: [
+        "Unlimited Projects",
+        "Unlimited Tasks",
+        "50GB Storage",
+        "Unlimited Messages",
+        "Unlimited Video Calls",
+        "AI Checklist Templates",
+      ],
+      buttonText: "Go Pro",
+      buttonVariant: "outline",
+      buttonClassName: "border-primary/50 text-primary hover:bg-primary/5",
+      monthlyPrice: 30,
+    },
+  ];
+
   return (
-    <section className="container mx-auto px-4 py-8">
+    <section className="container mx-auto px-4 py-12 bg-gradient-to-b from-muted/10 to-background">
       {/* Header */}
-      <article className="flex flex-col items-center justify-center p-4 md:p-8 gap-2 mb-8">
-        <h3 className="font-semibold text-3xl text-center">Upgrade Plan</h3>
-        <p className="text-muted-foreground text-center max-w-md">
-          Upgrade your plan to unlock more features and support on Freliq. It's
-          as easy as ABC
+      <article className="flex flex-col items-center justify-center gap-3 mb-12 text-center">
+        <h3 className="font-bold text-4xl tracking-tight">
+          Upgrade Your Workflow
+        </h3>
+        <p className="text-muted-foreground max-w-lg">
+          Choose the plan that fits your freelance business.{" "}
+          <span className="text-primary font-medium">
+            Annual plans offer significant savings
+          </span>
+          .
         </p>
       </article>
 
       {/* Billing Toggle */}
-      <div className="flex justify-center mb-8">
-        <Tabs defaultValue="monthly" className="w-[300px]">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="monthly">Monthly</TabsTrigger>
-            <TabsTrigger value="annual">Annual (Save 20%)</TabsTrigger>
+      <div className="flex justify-center mb-10">
+        <Tabs defaultValue="monthly" className="w-fit">
+          <TabsList className="grid w-full grid-cols-2 bg-muted/50 p-1 h-12">
+            <TabsTrigger
+              value="monthly"
+              className="data-[state=active]:bg-background data-[state=active]:shadow-sm"
+            >
+              <span className="font-medium">Monthly</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="annual"
+              className="data-[state=active]:bg-background data-[state=active]:shadow-sm relative"
+            >
+              <span className="font-medium">Annual</span>
+              <span className="absolute -top-2 -right-4 bg-primary text-white text-xs px-2 py-0.5 rounded-full">
+                Save up to 50%
+              </span>
+            </TabsTrigger>
           </TabsList>
+
+          <TabsContent
+            className="grid md:grid-cols-3 md:gap-8 gap-4 md:p-8 p-4"
+            value="monthly"
+          >
+            {/* Map the monthly plans */}
+            {monthlyPlans.map((plan, index: number) => (
+              <Card
+                className={`relative ${plan.highlighted ? "shadow-lg border-2 border-blue-700" : ""}`}
+                key={index}
+              >
+                {/* Highlighted badge */}
+                {plan.highlighted && (
+                  <Badge
+                    className="flex font-medium items-center absolute top-4 right-4 rounded-full border text-blue-700 border-blue-700"
+                    variant="outline"
+                  >
+                    {plan?.highlightIcon}
+                    {plan.highlightLabel}
+                  </Badge>
+                )}
+
+                <CardHeader>
+                  <CardTitle className="text-xl">{plan.name}</CardTitle>
+                  <CardDescription>{plan.description}</CardDescription>
+                </CardHeader>
+
+                <CardContent>
+                  {/* Prices and CTA */}
+                  <article className="flex flex-col gap-8">
+                    <h4 className="text-5xl font-semibold">
+                      ${plan.price}{" "}
+                      <span className="text-muted-foreground text-sm">
+                        /month
+                      </span>
+                    </h4>
+                    <Button
+                      className={plan.buttonClassName}
+                      variant={plan.buttonVariant}
+                    >
+                      {plan.buttonText}
+                    </Button>
+                  </article>
+
+                  <Separator className="text-slate-400 w-full h-1 my-8" />
+
+                  {/* W's for the user */}
+                  <article className="flex flex-col gap-4">
+                    {plan.features.map((feature: string, index: number) => (
+                      <article
+                        className={`flex gap-2 items-center text-sm`}
+                        key={index}
+                      >
+                        {!feature.includes("❌") && (
+                          <CheckCircle strokeWidth={1.5} size={20} />
+                        )}
+                        {feature}
+                      </article>
+                    ))}
+                  </article>
+                </CardContent>
+              </Card>
+            ))}
+          </TabsContent>
+
+          <TabsContent
+            className="grid md:grid-cols-3 md:gap-8 gap-4 md:p-8 p-4"
+            value="annual"
+          >
+            {/* Map the annual plans */}
+            {annualPlans.map((plan, index: number) => (
+              <Card
+                className={`relative ${plan.highlighted ? "shadow-lg border-2 border-blue-700" : ""}`}
+                key={index}
+              >
+                {/* Highlighted badge */}
+                {plan.highlighted && (
+                  <Badge
+                    className="flex font-medium items-center absolute top-4 right-4 rounded-full border text-blue-700 border-blue-700"
+                    variant="outline"
+                  >
+                    {plan?.highlightIcon}
+                    {plan.highlightLabel}
+                  </Badge>
+                )}
+
+                <CardHeader>
+                  <CardTitle className="text-xl">{plan.name}</CardTitle>
+                  <CardDescription>{plan.description}</CardDescription>
+                </CardHeader>
+
+                <CardContent>
+                  {/* Prices and CTA */}
+                  <article className="flex flex-col gap-8">
+                    <h4 className="text-5xl font-semibold">
+                      ${plan.price}{" "}
+                      <span className="text-muted-foreground text-sm">
+                        /year
+                      </span>
+                      {plan.discountPercentage > 0 && plan.monthlyPrice && (
+                        <Badge className="ml-2 text-xs bg-green-500 rounded-full font-medium">
+                          Save ${plan.discountPercentage}%
+                        </Badge>
+                      )}
+                    </h4>
+                    <Button
+                      className={plan.buttonClassName}
+                      variant={plan.buttonVariant}
+                    >
+                      {plan.buttonText}
+                    </Button>
+                  </article>
+
+                  <Separator className="text-slate-400 w-full h-1 my-8" />
+
+                  {/* W's for the user */}
+                  <article className="flex flex-col gap-4">
+                    {plan.features.map((feature: string, index: number) => (
+                      <article
+                        className={`flex gap-2 items-center text-sm font-semibold`}
+                        key={index}
+                      >
+                        {!feature.includes("❌") && (
+                          <CheckCircle strokeWidth={1.5} size={20} />
+                        )}
+                        {feature}
+                      </article>
+                    ))}
+                  </article>
+                </CardContent>
+              </Card>
+            ))}
+          </TabsContent>
         </Tabs>
       </div>
-
-      {/* Plans Grid */}
-      <Tabs defaultValue="monthly">
-        <article className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          {/* Free Tier */}
-          <Card className="p-6 flex flex-col">
-            <h4 className="font-medium text-lg">Free</h4>
-            <p className="text-muted-foreground text-sm mb-4">
-              For testing the platform
-            </p>
-
-            <div className="my-4">
-              <span className="text-3xl font-bold">$0</span>
-              <span className="text-muted-foreground">/month</span>
-            </div>
-
-            <Button variant="outline" className="mt-auto">
-              Current Plan
-            </Button>
-
-            <div className="mt-6 space-y-3">
-              <div className="flex items-center gap-2">
-                <CheckIcon className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm">2 Active Projects</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckIcon className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm">30 Tasks/Month</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckIcon className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm">500MB Storage</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckIcon className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm">100 Messages/Month</span>
-              </div>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <span className="text-sm">❌ Video Calls</span>
-              </div>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <span className="text-sm">❌ Kickoff Checklists</span>
-              </div>
-            </div>
-          </Card>
-
-          {/* Basic Tier - Highlighted */}
-          <Card className="p-6 flex flex-col border-2 border-primary relative">
-            <div className="absolute top-0 right-0 bg-primary text-white px-3 py-1 text-xs font-medium rounded-bl-md">
-              POPULAR
-            </div>
-            <h4 className="font-medium text-lg">Basic</h4>
-            <p className="text-muted-foreground text-sm mb-4">
-              For serious freelancers
-            </p>
-
-            <TabsContent value="monthly">
-              <div className="my-4">
-                <span className="text-3xl font-bold">$9</span>
-                <span className="text-muted-foreground">/month</span>
-              </div>
-            </TabsContent>
-            <TabsContent value="annual">
-              <div className="my-4">
-                <span className="text-3xl font-bold">$90</span>
-                <span className="text-muted-foreground">/year</span>
-                <span className="ml-2 text-sm text-green-500">(Save $18)</span>
-              </div>
-            </TabsContent>
-
-            <Button className="mt-auto bg-primary hover:bg-primary/90">
-              Upgrade
-            </Button>
-
-            <div className="mt-6 space-y-3">
-              <div className="flex items-center gap-2">
-                <CheckIcon className="h-4 w-4 text-primary" />
-                <span className="text-sm">10 Active Projects</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckIcon className="h-4 w-4 text-primary" />
-                <span className="text-sm">300 Tasks/Month</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckIcon className="h-4 w-4 text-primary" />
-                <span className="text-sm">5GB Storage</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckIcon className="h-4 w-4 text-primary" />
-                <span className="text-sm">Unlimited Messages</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckIcon className="h-4 w-4 text-primary" />
-                <span className="text-sm">1:1 Video Calls (1hr limit)</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckIcon className="h-4 w-4 text-primary" />
-                <span className="text-sm">Kickoff Checklists</span>
-              </div>
-            </div>
-          </Card>
-
-          {/* Pro Tier */}
-          <Card className="p-6 flex flex-col">
-            <h4 className="font-medium text-lg">Pro</h4>
-            <p className="text-muted-foreground text-sm mb-4">
-              For power users
-            </p>
-
-            <TabsContent value="monthly">
-              <div className="my-4">
-                <span className="text-3xl font-bold">$19</span>
-                <span className="text-muted-foreground">/month</span>
-              </div>
-            </TabsContent>
-            <TabsContent value="annual">
-              <div className="my-4">
-                <span className="text-3xl font-bold">$190</span>
-                <span className="text-muted-foreground">/year</span>
-                <span className="ml-2 text-sm text-green-500">(Save $38)</span>
-              </div>
-            </TabsContent>
-
-            <Button variant="outline" className="mt-auto">
-              Upgrade
-            </Button>
-
-            <div className="mt-6 space-y-3">
-              <div className="flex items-center gap-2">
-                <CheckIcon className="h-4 w-4 text-primary" />
-                <span className="text-sm">Unlimited Projects</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckIcon className="h-4 w-4 text-primary" />
-                <span className="text-sm">Unlimited Tasks</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckIcon className="h-4 w-4 text-primary" />
-                <span className="text-sm">50GB Storage</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckIcon className="h-4 w-4 text-primary" />
-                <span className="text-sm">Unlimited Messages</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckIcon className="h-4 w-4 text-primary" />
-                <span className="text-sm">Unlimited Video Calls</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckIcon className="h-4 w-4 text-primary" />
-                <span className="text-sm">AI Checklist Templates</span>
-              </div>
-            </div>
-          </Card>
-        </article>
-      </Tabs>
     </section>
   );
 }
