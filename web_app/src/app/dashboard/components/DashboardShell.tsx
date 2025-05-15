@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 import Link from "next/link";
 import {
   Bell,
@@ -41,6 +41,13 @@ import { authClient } from "@/lib/auth-client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import NotificationsSheet from "@/components/shared/NotificationsSheet";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 // Sidebar items
 const sidebarItems = [
@@ -295,13 +302,6 @@ function DashboardShell({
                 <LogOut className="h-5 w-5" />
               </Button>
 
-              <Button asChild>
-                <Link href="/project/new">
-                  <Plus />
-                  New project
-                </Link>
-              </Button>
-
               <NotificationsSheet />
             </div>
           </header>
@@ -312,6 +312,34 @@ function DashboardShell({
           {children}
         </section>
       </main>
+      {/* Floating Action Button */}
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              asChild
+              size="lg"
+              className={cn(
+                "fixed bottom-6 right-6 rounded-full h-14 w-14 p-0 bg-blue-500 text-white shadow-lg hover:bg-blue-600 transition-colors",
+                "md:h-14 md:w-14 md:p-0", // Keep it round on desktop
+                "lg:h-auto lg:w-auto lg:px-4 lg:py-2 lg:rounded-full", // Adjust for mobile
+              )}
+            >
+              <Link
+                href="/project/new"
+                className="flex items-center gap-0 lg:gap-2"
+              >
+                <Plus className="w-6 h-6" />
+                <span className="hidden lg:block">New project</span>{" "}
+                {/* Show text on mobile */}
+              </Link>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent className="hidden md:block">
+            <p>New Project</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </section>
   );
 }
