@@ -21,6 +21,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 const NEXT_PUBLIC_APP_URL = process.env.NEXT_PUBLIC_APP_URL;
+const DODO_PAYMENTS_TEST_URL = "https://test.checkout.dodopayments.com/buy/";
 
 function UpgradePage() {
   const router = useRouter();
@@ -153,11 +154,28 @@ function UpgradePage() {
 
   const createPaymentLink = (productId: string) => {
     if (productId) {
-      return `https://checkout.dodopayments.com/buy/${productId}?quantity=1&redirect_url=${encodeURIComponent(
+      const redirectUrl = encodeURIComponent(
         `${NEXT_PUBLIC_APP_URL}/upgrade/confirm`,
-      )}`;
+      );
+      return `${DODO_PAYMENTS_TEST_URL}${productId}?quantity=1&redirect_url=${redirectUrl}`;
     }
     return "#"; // Or handle the case where productId is missing
+  };
+
+  const handleUpgradeClick = (
+    planName: string,
+    productId: string | undefined,
+  ) => {
+    if (productId) {
+      window.sessionStorage.setItem("selectedPlan", planName.toLowerCase());
+      window.location.href = createPaymentLink(productId);
+    } else if (planName !== "Free") {
+      toast({
+        title: "Error",
+        description: "Could not initiate payment for this plan.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -232,29 +250,16 @@ function UpgradePage() {
                         /month
                       </span>
                     </h4>
-                    {plan.productId ? (
-                      <Button
-                        asChild
-                        className={plan.buttonClassName}
-                        variant={plan.buttonVariant}
-                      >
-                        <Link href={createPaymentLink(plan?.productId)}>
-                          {" "}
-                          {plan.buttonText}
-                        </Link>
-                      </Button>
-                    ) : (
-                      <Button
-                        className={plan.buttonClassName}
-                        variant={plan.buttonVariant}
-                        disabled={plan.name === "Free" ? false : true}
-                      >
-                        <Link href={createPaymentLink(plan?.productId)}>
-                          {" "}
-                          {plan.buttonText}
-                        </Link>
-                      </Button>
-                    )}
+                    <Button
+                      className={plan.buttonClassName}
+                      variant={plan.buttonVariant}
+                      onClick={() =>
+                        handleUpgradeClick(plan.name, plan.productId)
+                      }
+                      disabled={plan.name === "Free"}
+                    >
+                      {plan.buttonText}
+                    </Button>
                   </article>
 
                   <Separator className="text-slate-400 w-full h-1 my-8" />
@@ -320,29 +325,16 @@ function UpgradePage() {
                         </Badge>
                       )}
                     </h4>
-                    {plan.productId ? (
-                      <Button
-                        asChild
-                        className={plan.buttonClassName}
-                        variant={plan.buttonVariant}
-                      >
-                        <Link href={createPaymentLink(plan?.productId)}>
-                          {" "}
-                          {plan.buttonText}
-                        </Link>
-                      </Button>
-                    ) : (
-                      <Button
-                        className={plan.buttonClassName}
-                        variant={plan.buttonVariant}
-                        disabled={plan.name === "Free" ? false : true}
-                      >
-                        <Link href={createPaymentLink(plan?.productId)}>
-                          {" "}
-                          {plan.buttonText}
-                        </Link>
-                      </Button>
-                    )}
+                    <Button
+                      className={plan.buttonClassName}
+                      variant={plan.buttonVariant}
+                      onClick={() =>
+                        handleUpgradeClick(plan.name, plan.productId)
+                      }
+                      disabled={plan.name === "Free"}
+                    >
+                      {plan.buttonText}
+                    </Button>
                   </article>
 
                   <Separator className="text-slate-400 w-full h-1 my-8" />
