@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { RocketIcon, PlayIcon } from "lucide-react";
+import Image from "next/image";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -23,7 +24,7 @@ export function LandingHeader() {
   return (
     <section
       className={cn(
-        "relative w-full py-24 md:py-32",
+        "relative w-full md:py-64 py-8",
         "bg-gradient-to-br from-background via-zinc-100 to-muted",
         "dark:from-[#0d0d0d] dark:via-[#1a1a1a] dark:to-[#0d0d0d]",
         "overflow-hidden min-h-screen flex flex-col justify-center items-center",
@@ -71,7 +72,7 @@ export function LandingHeader() {
           initial="hidden"
           animate="visible"
           variants={fadeUp}
-          className="mt-8 flex justify-center gap-4 flex-wrap"
+          className="mt-4 flex justify-center gap-4 flex-wrap"
         >
           <Button
             asChild
@@ -90,30 +91,15 @@ export function LandingHeader() {
             </Link>
           </Button>
         </motion.div>
-      </div>
 
-      {/* Hero Image */}
-      <motion.div
-        custom={4}
-        initial={{ opacity: 0, y: 60 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
-        className="absolute inset-x-0 bottom-[-2rem] md:bottom-[-4rem] flex justify-center pointer-events-none z-0"
-      >
-        <div
-          className={cn(
-            "rounded-2xl overflow-hidden border border-white/10 shadow-xl backdrop-blur-sm bg-white/10 dark:bg-zinc-800/20",
-            "w-[90%] max-w-6xl mx-auto",
-          )}
-        >
-          {/* Replace this with your real image path */}
-          <img
-            src="/images/freliq-preview.png"
-            alt="Freliq app preview"
-            className="w-full h-auto object-cover"
-          />
-        </div>
-      </motion.div>
+        <Image
+          src="/images/platform/dashboard.jpeg"
+          alt="Freliq app preview"
+          width={480}
+          height={480}
+          className="w-full h-auto object-cover rounded-xl mt-12"
+        />
+      </div>
     </section>
   );
 }
