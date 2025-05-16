@@ -22,6 +22,8 @@ model User {
   createdAt     DateTime
   updatedAt     DateTime
 
+  settings      Settings?
+
   plan          String @default("free") // Either free, basic or pro
 
   // Customization options
@@ -62,6 +64,19 @@ model UserRelation {
 
   @@unique([clientId, freelancerId])
   @@map("user_relation")
+}
+
+model Settings {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  emailNotifications Boolean @default(true)
+  projectUpdates     Boolean @default(true)
+  taskReminders      Boolean @default(true)
+  showProfile        Boolean @default(true)
+  showEmail          Boolean @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
 
 model Session {
