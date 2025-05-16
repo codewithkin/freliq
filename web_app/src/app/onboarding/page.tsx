@@ -19,24 +19,15 @@ import { ClientUploadedFileData } from "uploadthing/types";
 import { UploadButton } from "@/utils/uploadthing";
 
 export default function OnboardingPage() {
-  const [image, setImage] = useState<string>("");
-  const [preview, setPreview] = useState<string | null>(null);
+  const { data } = authClient.useSession();
+
+  const [image, setImage] = useState<string>(data?.user?.image || "");
+  const [preview, setPreview] = useState<string>(data?.user?.image || "");
   const [bio, setBio] = useState("");
   const [occupation, setOccupation] = useState("");
   const [website, setWebsite] = useState("");
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    async function fetchSession() {
-      const { data } = await authClient.useSession();
-      if (data?.user?.image) {
-        setImage(data?.user.image);
-        setPreview(data?.user.image);
-      }
-    }
-    fetchSession();
-  }, []);
 
   const mutation = useMutation({
     mutationFn: async (data: FormData) => {
