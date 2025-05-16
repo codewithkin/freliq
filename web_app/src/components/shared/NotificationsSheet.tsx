@@ -62,7 +62,7 @@ function NotificationsSheet() {
             <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full" />
           )}
 
-          <span className="font-medium">{unreadCount} unread</span>
+          <span className="font-medium">{unreadCount}</span>
         </Button>
       </SheetTrigger>
       <SheetContent
