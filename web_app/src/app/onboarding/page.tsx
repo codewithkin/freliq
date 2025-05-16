@@ -26,7 +26,7 @@ export default function OnboardingPage() {
   const [preview, setPreview] = useState<string>(data?.user?.image || "");
   const [bio, setBio] = useState("");
   const [occupation, setOccupation] = useState("");
-  const [website, setWebsite] = useState("");
+  const [website, setWebsite] = useState("https://your-site.com");
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -37,7 +37,7 @@ export default function OnboardingPage() {
     },
     onSuccess: () => {
       toast.success("Profile updated!");
-      router.push("/app");
+      router.push("/dashboard");
     },
     onError: () => {
       toast.error("Failed to update profile");
@@ -161,7 +161,6 @@ export default function OnboardingPage() {
             type="url"
             onChange={(e) => setWebsite(e.target.value)}
             placeholder="https://freliq.com"
-            required
             className="bg-background border-primary/30"
           />
         </motion.div>
