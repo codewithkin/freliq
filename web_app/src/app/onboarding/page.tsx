@@ -9,7 +9,7 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Image from "next/image";
-import { Camera, Plus } from "lucide-react";
+import { ArrowRight, Camera, Plus } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { motion } from "framer-motion";
@@ -17,6 +17,7 @@ import type { OurFileRouter } from "@/app/api/uploadthing/core";
 import { ProfileUploadButton } from "@/components/upload-button";
 import { ClientUploadedFileData } from "uploadthing/types";
 import { UploadButton } from "@/utils/uploadthing";
+import Link from "next/link";
 
 export default function OnboardingPage() {
   const { data } = authClient.useSession();
@@ -57,7 +58,7 @@ export default function OnboardingPage() {
 
   return (
     <motion.div
-      className="max-w-xl mx-auto py-12 px-4 flex flex-col min-h-screen"
+      className="max-w-xl mx-auto py-12 px-4 flex flex-col min-h-screen relative"
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
@@ -176,6 +177,18 @@ export default function OnboardingPage() {
           </Button>
         </motion.div>
       </form>
+
+      {/* Skip btn */}
+      <Button
+        className="absolute top-4 md:right-4 right-0"
+        variant="default"
+        asChild
+      >
+        <Link href="/dashboard">
+          Skip
+          <ArrowRight />
+        </Link>
+      </Button>
     </motion.div>
   );
 }
