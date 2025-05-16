@@ -58,7 +58,7 @@ export default function OnboardingPage() {
 
   return (
     <motion.div
-      className="max-w-xl mx-auto py-12 px-4 flex flex-col min-h-screen relative"
+      className="min-w-screen mx-auto py-12 px-4 flex flex-col justify-center items-center min-h-screen relative"
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
@@ -81,7 +81,10 @@ export default function OnboardingPage() {
         and what you do. It only takes a minute!
       </motion.p>
 
-      <form onSubmit={handleSubmit} className="space-y-6 p-2 sm:p-4 md:p-0">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-6 p-2 sm:p-4 md:p-0 md:max-w-xl md:min-w-xl min-w-full"
+      >
         <motion.div
           className="flex flex-col items-center space-y-4"
           initial={{ opacity: 0, scale: 0.95 }}
@@ -179,11 +182,7 @@ export default function OnboardingPage() {
       </form>
 
       {/* Skip btn */}
-      <Button
-        className="absolute top-4 md:right-4 right-0"
-        variant="default"
-        asChild
-      >
+      <Button className="absolute top-4 right-4" variant="default" asChild>
         <Link href="/dashboard">
           Skip
           <ArrowRight />
