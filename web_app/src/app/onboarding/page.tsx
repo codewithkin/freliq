@@ -50,7 +50,7 @@ export default function OnboardingPage() {
     formData.append("bio", bio);
     formData.append("occupation", occupation);
     formData.append("website", website);
-    formData.append("image", image); // URL from uploadthing
+    formData.append("imageUrl", image); // URL from uploadthing
 
     mutation.mutate(formData);
   }
@@ -122,6 +122,7 @@ export default function OnboardingPage() {
             value={bio}
             onChange={(e) => setBio(e.target.value)}
             placeholder="Tell us a bit about yourself..."
+            required
             className="bg-background border-primary/30"
           />
         </motion.div>
@@ -138,6 +139,7 @@ export default function OnboardingPage() {
             value={occupation}
             onChange={(e) => setOccupation(e.target.value)}
             placeholder="e.g. Freelance Developer"
+            required
             className="bg-background border-primary/30"
           />
         </motion.div>
@@ -152,8 +154,10 @@ export default function OnboardingPage() {
           <Input
             id="website"
             value={website}
+            type="url"
             onChange={(e) => setWebsite(e.target.value)}
-            placeholder="https://your-site.com"
+            placeholder="https://freliq.com"
+            required
             className="bg-background border-primary/30"
           />
         </motion.div>
