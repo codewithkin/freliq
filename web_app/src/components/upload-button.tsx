@@ -1,19 +1,21 @@
 import { UploadButton } from "@/utils/uploadthing";
 
 interface Props {
-  onUploadComplete: (url: string) => void;
+  setImage: any;
+  setPreview: any;
 }
 
-export function ProfileUploadButton({ onUploadComplete }: Props) {
+export function ProfileUploadButton({ setImage, setPreview }: Props) {
   return (
     <UploadButton
       endpoint="profileImageUploader"
       onClientUploadComplete={(res) => {
         console.log("Responseafter uploading file: ", res);
         if (res) {
-          onUploadComplete("Hi");
-
           console.log("Response: ", res);
+
+          setImage(res[0].ufsUrl);
+          setPreview(res[0].ufsUrl);
         }
       }}
       onUploadError={(err) => {

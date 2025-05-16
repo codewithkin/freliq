@@ -105,13 +105,9 @@ export default function OnboardingPage() {
             )}
           </div>
 
-          <ProfileUploadButton
-            onUploadComplete={(url: any) => {
-              setImage(url);
-
-              console.log("URL: ", url);
-            }}
-          />
+          {image.length < 1 && (
+            <ProfileUploadButton setImage={setImage} setPreview={setPreview} />
+          )}
         </motion.div>
 
         <motion.div
