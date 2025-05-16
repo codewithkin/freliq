@@ -4,6 +4,9 @@ import "./globals.css";
 import QueryClientProviderWrapper from "@/providers/QueryClientProvider";
 import { Toaster } from "sonner";
 import { ClientWrapper } from "@/providers/ClientWrapper";
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { extractRouterConfig } from "uploadthing/server";
+import { ourFileRouter } from "@/app/api/uploadthing/core";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -60,6 +63,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} antialiased`}>
+        <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
         <QueryClientProviderWrapper>
           <ClientWrapper>{children}</ClientWrapper>
         </QueryClientProviderWrapper>

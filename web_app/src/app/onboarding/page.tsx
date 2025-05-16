@@ -1,4 +1,3 @@
-// /app/onboarding/page.tsx
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -13,6 +12,11 @@ import Image from "next/image";
 import { Camera, Plus } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { motion } from "framer-motion";
+import { UploadButton } from "@uploadthing/react";
+import type { OurFileRouter } from "@/app/api/uploadthing/core";
+import { ProfileUploadButton } from "@/components/upload-button";
+import { ClientUploadedFileData } from "uploadthing/types";
 
 export default function OnboardingPage() {
   const [image, setImage] = useState<string | File | null>(null);
@@ -66,24 +70,55 @@ export default function OnboardingPage() {
     formData.append("occupation", occupation);
     formData.append("website", website);
     if (image && typeof image !== "string") {
-      formData.append("image", image);
+      formData.append("image", image); // raw File upload
+    } else if (typeof image === "string") {
+      formData.append("image", image); // URL from uploadthing
     }
 
     mutation.mutate(formData);
   }
 
   return (
-    <div className="max-w-xl mx-auto py-10 px-4">
-      <h1 className="text-2xl font-semibold mb-6">Complete your profile</h1>
+    <motion.div
+      className="max-w-xl mx-auto py-12 px-4 flex flex-col min-h-screen"
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.h1
+        className="text-3xl font-bold mb-4 text-primary text-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+      >
+        Welcome to Freliq!
+      </motion.h1>
+      <motion.p
+        className="text-muted-foreground text-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4 }}
+      >
+        Let’s get your profile ready. This helps others understand who you are
+        and what you do. It only takes a minute!
+      </motion.p>
+
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="flex flex-col items-center space-y-2">
+        <motion.div
+          className="flex flex-col items-center space-y-4"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.6 }}
+        >
           <div className="relative overflow-visible w-48 h-48 rounded-full border-2 border-muted flex items-center justify-center bg-muted/20">
             {preview ? (
               <Image
                 src={preview}
                 alt="Preview"
-                fill
-                className="object-cover rounded-full"
+                width={192}
+                height={192}
+                className="rounded-full"
+                style={{ objectFit: "cover" }}
               />
             ) : (
               <Camera
@@ -91,15 +126,8 @@ export default function OnboardingPage() {
                 strokeWidth={1.5}
               />
             )}
-            <Button
-              size="icon"
-              type="button"
-              className="absolute bottom-4 right-4 bg-primary text-white rounded-full shadow-lg"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <Plus className="w-4 h-4" />
-            </Button>
           </div>
+
           <Input
             type="file"
             accept="image/*"
@@ -107,46 +135,88 @@ export default function OnboardingPage() {
             ref={fileInputRef}
             onChange={handleFileChange}
           />
-        </div>
 
-        <div>
+          {/* UploadThing uploader */}
+          <UploadButton<OurFileRouter, "profileImageUploader">
+            endpoint="profileImageUploader"
+            onClientUploadComplete={(res: ClientUploadedFileData<null>[]) => {
+              // Do something with the response
+              console.log("Files: ", res);
+              alert("Upload Completed");
+
+              setImage(res[0].ufsUrl);
+            }}
+            onUploadError={(error: Error) => {
+              // Do something with the error.
+              alert(`ERROR! ${error.message}`);
+            }}
+            appearance={{
+              button:
+                "bg-primary text-white px-4 py-2 rounded shadow hover:scale-105 transition",
+              container: "mt-4",
+            }}
+          />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.7 }}
+        >
           <Label htmlFor="bio">Bio</Label>
           <Textarea
             id="bio"
             value={bio}
             onChange={(e) => setBio(e.target.value)}
-            placeholder="Tell us a bit about yourself"
+            placeholder="Tell us a bit about yourself..."
+            className="bg-background border-primary/30"
           />
-        </div>
+        </motion.div>
 
-        <div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+        >
           <Label htmlFor="occupation">Occupation</Label>
           <Input
             id="occupation"
             value={occupation}
             onChange={(e) => setOccupation(e.target.value)}
             placeholder="e.g. Freelance Developer"
+            className="bg-background border-primary/30"
           />
-        </div>
+        </motion.div>
 
-        <div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.9 }}
+        >
           <Label htmlFor="website">Website</Label>
           <Input
             id="website"
             value={website}
             onChange={(e) => setWebsite(e.target.value)}
             placeholder="https://your-site.com"
+            className="bg-background border-primary/30"
           />
-        </div>
+        </motion.div>
 
-        <Button
-          type="submit"
-          className="w-full flex gap-2"
-          disabled={mutation.isPending}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
         >
-          {mutation.isPending ? "Saving..." : "Save & Continue"}
-        </Button>
+          <Button
+            type="submit"
+            className="w-full flex gap-2 hover:scale-[1.02] transition"
+            disabled={mutation.isPending || !image}
+          >
+            {mutation.isPending ? "Saving..." : "Save & Continue 🚀"}
+          </Button>
+        </motion.div>
       </form>
-    </div>
+    </motion.div>
   );
 }
