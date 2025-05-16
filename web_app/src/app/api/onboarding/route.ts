@@ -1,6 +1,4 @@
-// /app/api/onboarding/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { uploadToR2 } from "@/lib/r2";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/prisma";
@@ -17,24 +15,16 @@ export async function POST(req: NextRequest) {
   const bio = formData.get("bio") as string;
   const occupation = formData.get("occupation") as string;
   const website = formData.get("website") as string;
-  const file = formData.get("image") as File | null;
+  const imageUrl = formData.get("imageUrl") as string;
 
   try {
-    let imageUrl: string | undefined = undefined;
-
-    if (file && file.size > 0) {
-      const buffer = Buffer.from(await file.arrayBuffer());
-      const fileName = `avatars/${session.user.id}-${Date.now()}.webp`;
-      imageUrl = await uploadToR2(fileName, buffer, file.type);
-    }
-
     await prisma.user.update({
       where: { email: session.user.email },
       data: {
         bio,
         occupation,
         website,
-        ...(imageUrl && { image: imageUrl }),
+        image: imageUrl,
         updatedAt: new Date(),
       },
     });

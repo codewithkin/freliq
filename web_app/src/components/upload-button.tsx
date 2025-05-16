@@ -11,7 +11,7 @@ export function ProfileUploadButton({ onUploadComplete }: Props) {
       onClientUploadComplete={(res) => {
         console.log("Responseafter uploading file: ", res);
         if (res) {
-          onUploadComplete(res);
+          onUploadComplete("Hi");
 
           console.log("Response: ", res);
         }

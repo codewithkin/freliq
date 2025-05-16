@@ -19,7 +19,7 @@ import { ClientUploadedFileData } from "uploadthing/types";
 import { UploadButton } from "@/utils/uploadthing";
 
 export default function OnboardingPage() {
-  const [image, setImage] = useState<string | File | null>(null);
+  const [image, setImage] = useState<string>("");
   const [preview, setPreview] = useState<string | null>(null);
   const [bio, setBio] = useState("");
   const [occupation, setOccupation] = useState("");
@@ -29,24 +29,14 @@ export default function OnboardingPage() {
 
   useEffect(() => {
     async function fetchSession() {
-      const session = await authClient.getSession();
-      if (session?.user?.image) {
-        setImage(session.user.image);
-        setPreview(session.user.image);
+      const { data } = await authClient.useSession();
+      if (data?.user?.image) {
+        setImage(data?.user.image);
+        setPreview(data?.user.image);
       }
     }
     fetchSession();
   }, []);
-
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setPreview(reader.result as string);
-      reader.readAsDataURL(file);
-      setImage(file);
-    }
-  }
 
   const mutation = useMutation({
     mutationFn: async (data: FormData) => {
@@ -69,11 +59,7 @@ export default function OnboardingPage() {
     formData.append("bio", bio);
     formData.append("occupation", occupation);
     formData.append("website", website);
-    if (image && typeof image !== "string") {
-      formData.append("image", image); // raw File upload
-    } else if (typeof image === "string") {
-      formData.append("image", image); // URL from uploadthing
-    }
+    formData.append("image", image); // URL from uploadthing
 
     mutation.mutate(formData);
   }
@@ -127,14 +113,6 @@ export default function OnboardingPage() {
               />
             )}
           </div>
-
-          <Input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-          />
 
           <ProfileUploadButton
             onUploadComplete={(url: any) => {
