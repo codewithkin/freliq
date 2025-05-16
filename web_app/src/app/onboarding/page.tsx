@@ -13,10 +13,10 @@ import { Camera, Plus } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { motion } from "framer-motion";
-import { UploadButton } from "@uploadthing/react";
 import type { OurFileRouter } from "@/app/api/uploadthing/core";
 import { ProfileUploadButton } from "@/components/upload-button";
 import { ClientUploadedFileData } from "uploadthing/types";
+import { UploadButton } from "@/utils/uploadthing";
 
 export default function OnboardingPage() {
   const [image, setImage] = useState<string | File | null>(null);
@@ -103,7 +103,7 @@ export default function OnboardingPage() {
         and what you do. It only takes a minute!
       </motion.p>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6 p-2 sm:p-4 md:p-0">
         <motion.div
           className="flex flex-col items-center space-y-4"
           initial={{ opacity: 0, scale: 0.95 }}
@@ -136,24 +136,11 @@ export default function OnboardingPage() {
             onChange={handleFileChange}
           />
 
-          {/* UploadThing uploader */}
-          <UploadButton<OurFileRouter, "profileImageUploader">
-            endpoint="profileImageUploader"
-            onClientUploadComplete={(res: ClientUploadedFileData<null>[]) => {
-              // Do something with the response
-              console.log("Files: ", res);
-              alert("Upload Completed");
+          <ProfileUploadButton
+            onUploadComplete={(url: any) => {
+              setImage(url);
 
-              setImage(res[0].ufsUrl);
-            }}
-            onUploadError={(error: Error) => {
-              // Do something with the error.
-              alert(`ERROR! ${error.message}`);
-            }}
-            appearance={{
-              button:
-                "bg-primary text-white px-4 py-2 rounded shadow hover:scale-105 transition",
-              container: "mt-4",
+              console.log("URL: ", url);
             }}
           />
         </motion.div>
@@ -162,6 +149,7 @@ export default function OnboardingPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.7 }}
+          className="flex flex-col gap-1"
         >
           <Label htmlFor="bio">Bio</Label>
           <Textarea
@@ -177,6 +165,7 @@ export default function OnboardingPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
+          className="flex flex-col gap-1"
         >
           <Label htmlFor="occupation">Occupation</Label>
           <Input
@@ -192,6 +181,7 @@ export default function OnboardingPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.9 }}
+          className="flex flex-col gap-1"
         >
           <Label htmlFor="website">Website</Label>
           <Input

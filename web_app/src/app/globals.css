@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@import "tailwindcss";
+
+@import "uploadthing/tw/v4";
+@source "../../node_modules/@uploadthing/react/dist";
+
 /* React-kanban css imports */
 @import "../../node_modules/@syncfusion/ej2-base/styles/bootstrap5.css";
 @import "../../node_modules/@syncfusion/ej2-buttons/styles/bootstrap5.css";

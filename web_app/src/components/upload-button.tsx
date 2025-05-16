@@ -1,5 +1,4 @@
-import { UploadButton } from "@uploadthing/react";
-import type { OurFileRouter } from "@/app/api/uploadthing/core";
+import { UploadButton } from "@/utils/uploadthing";
 
 interface Props {
   onUploadComplete: (url: string) => void;
@@ -7,22 +6,18 @@ interface Props {
 
 export function ProfileUploadButton({ onUploadComplete }: Props) {
   return (
-    <UploadButton<OurFileRouter, "profileImageUploader">
+    <UploadButton
       endpoint="profileImageUploader"
       onClientUploadComplete={(res) => {
+        console.log("Responseafter uploading file: ", res);
         if (res) {
-          onUploadComplete("Hello");
+          onUploadComplete(res);
 
           console.log("Response: ", res);
         }
       }}
       onUploadError={(err) => {
         alert("Upload failed: " + err.message);
-      }}
-      appearance={{
-        button:
-          "bg-primary text-white px-4 py-2 rounded shadow hover:scale-105 transition",
-        container: "mt-4",
       }}
     />
   );
