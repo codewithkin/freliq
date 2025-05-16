@@ -6,6 +6,7 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import Image from "next/image";
 
 const navLinks = [
   { name: "Features", href: "#features" },
@@ -25,8 +26,17 @@ export function LandingNav() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
         {/* Logo */}
-        <Link href="/" className="text-xl font-bold tracking-tight">
-          <span className="text-primary">Freliq</span>
+        <Link
+          href="/"
+          className="text-xl font-semibold flex items-center gap-2 tracking-tight"
+        >
+          <Image
+            src="/images/logo.png"
+            width={48}
+            height={48}
+            alt="Freliq logo"
+          />
+          <h1 className="text-primary">Freliq</h1>
         </Link>
 
         {/* Desktop Navigation */}
