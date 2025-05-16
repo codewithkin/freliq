@@ -70,7 +70,7 @@ export default function SettingsPage() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
-      <h1 className="text-3xl font-bold">Account Settings</h1>
+      <h1 className="text-3xl font-semibold">Account Settings</h1>
 
       <Form {...form}>
         <form
