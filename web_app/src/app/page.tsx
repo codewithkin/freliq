@@ -1,6 +1,7 @@
 "use client";
 import { CallToAction } from "@/components/landing/cta";
 import { FeaturesSection } from "@/components/landing/Features";
+import { FooterSection } from "@/components/landing/footer";
 import { LandingHeader } from "@/components/landing/header";
 import { HowItWorksTimeline } from "@/components/landing/how-it-works";
 import { LandingNav } from "@/components/landing/nav";
@@ -22,6 +23,7 @@ function Home() {
       <HowItWorksTimeline />
       <PricingSection />
       <CallToAction />
+      <FooterSection />
     </>
   );
 }
