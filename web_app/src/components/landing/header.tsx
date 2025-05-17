@@ -95,7 +95,7 @@ export function LandingHeader() {
           </Button>
         </motion.div>
 
-        <Imagek
+        <Image
           src="/images/platform/dashboard.jpeg"
           alt="Freliq app preview"
           width={480}

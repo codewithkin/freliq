@@ -1,4 +1,5 @@
 "use client";
+import { FeaturesSection } from "@/components/landing/Features";
 import { LandingHeader } from "@/components/landing/header";
 import { LandingNav } from "@/components/landing/nav";
 import { authClient } from "@/lib/auth-client";
@@ -16,6 +17,7 @@ function Home() {
     <>
       <LandingNav />
       <LandingHeader />
+      <FeaturesSection />
     </>
   );
 }
