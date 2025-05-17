@@ -5,7 +5,12 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import Image from "next/image";
 
 const navLinks = [
@@ -74,6 +79,9 @@ export function LandingNav() {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="md:w-[250px] p-6">
+              <SheetTitle className="text-xl text-primary font-semibold">
+                Freliq
+              </SheetTitle>
               <div className="flex flex-col gap-4">
                 {navLinks.map((link) => (
                   <Link
