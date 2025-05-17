@@ -1,10 +1,9 @@
 "use client";
 import { FeaturesSection } from "@/components/landing/Features";
 import { LandingHeader } from "@/components/landing/header";
+import { HowItWorksTimeline } from "@/components/landing/how-it-works";
 import { LandingNav } from "@/components/landing/nav";
 import { authClient } from "@/lib/auth-client";
-import { Loader2 } from "lucide-react";
-import { redirect } from "next/navigation";
 
 function Home() {
   // Make sure the user is logged in
@@ -18,6 +17,7 @@ function Home() {
       <LandingNav />
       <LandingHeader />
       <FeaturesSection />
+      <HowItWorksTimeline />
     </>
   );
 }
