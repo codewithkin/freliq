@@ -50,7 +50,10 @@ export function LandingHeader() {
           variants={fadeUp}
           className="text-4xl md:text-7xl sm:text-5xl font-semibold tracking-tight text-foreground"
         >
-          Transparency meets productivity.
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-600">
+            Transparency
+          </span>{" "}
+          meets productivity.
         </motion.h1>
 
         {/* Subheading */}
@@ -79,7 +82,7 @@ export function LandingHeader() {
             size="lg"
             className="bg-gradient-to-r from-primary to-violet-500 text-white hover:opacity-90"
           >
-            <Link href="/sign-up" className="flex items-center gap-2">
+            <Link href="/auth" className="flex items-center gap-2">
               <RocketIcon className="w-5 h-5" />
               Get Started
             </Link>
@@ -92,12 +95,12 @@ export function LandingHeader() {
           </Button>
         </motion.div>
 
-        <Image
+        <Imagek
           src="/images/platform/dashboard.jpeg"
           alt="Freliq app preview"
           width={480}
           height={480}
-          className="w-full h-auto object-cover rounded-xl mt-12"
+          className="w-full h-auto object-cover rounded-xl mt-12 md:mt-32"
         />
       </div>
     </section>
