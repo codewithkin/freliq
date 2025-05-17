@@ -50,7 +50,10 @@ export function HowItWorksTimeline() {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   return (
-    <section className="w-full py-24 md:py-32 bg-background text-foreground">
+    <section
+      id="how-it-works"
+      className="w-full py-24 md:py-32 bg-background text-foreground"
+    >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.h2
           initial="hidden"
